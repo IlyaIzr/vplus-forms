@@ -1,0 +1,45 @@
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const path = require('path');
+
+module.exports = {
+
+  entry: {
+    index: path.join(__dirname, './src/index.js'),
+    transactions: path.join(__dirname, './src/Transactions/Transactions.js')
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].js',
+    chunkFilename: '[name].common.js',
+  },
+
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      }
+    ]
+  },
+
+  plugins: [
+    new HtmlWebPackPlugin({
+      filename: 'transactions.html',
+      template: './public/transactions.html',
+      chunks: ['transactions']
+    }),
+    new HtmlWebPackPlugin({
+      template: "./public/index.html",
+      chunks: ['index']
+    })
+  ]
+};
