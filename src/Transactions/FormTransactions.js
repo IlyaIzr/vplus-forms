@@ -165,6 +165,7 @@ export const FormTransactions = () => {
         </div>
 
           <div className="two fields">
+
             <div className={recipientField.isRequired ? "required field" : "field"}>
               <label htmlFor="recipientId">Получатель</label>
               <select name="recipientId" ref={register} onChange={onChangeRecipient} className="ui dropdown"
@@ -173,7 +174,7 @@ export const FormTransactions = () => {
                 {!dirtyFields.recipientId && <option value=''></option>}
                 {recipientField.options.length && recipientField.options.map((recepient) => {
                   return (
-                    <option value={recepient.name} key={recepient.id}>{recepient.name}</option>
+                    <option value={recepient.id} key={recepient.id}>{recepient.name}</option>
                   )
                 })}
               </select>
@@ -181,7 +182,7 @@ export const FormTransactions = () => {
 
             <div className={recipientsAcc.isRequired ? "required field" : "field"}>
               <label htmlFor="recipientAccout">Счёт отправителя</label>
-              <select name="recipientAccout" ref={register} onChange={onChangeSenderAcc} className="ui dropdown"
+              <select name="recipientAccout" ref={register} onChange={onChangeRecipientAcc} className="ui dropdown"
                 required={recipientsAcc.isRequired} disabled={!recipientsAcc.isEditable}
               >
                 {!dirtyFields.recipientAccout && <option value=''></option>}
@@ -192,6 +193,7 @@ export const FormTransactions = () => {
                 })}
               </select>
             </div>
+            
           </div></>}
 
 

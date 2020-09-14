@@ -43,7 +43,7 @@ const recipientsList = [
 ]
 export const recipientListMeta = {
   options: recipientsList,
-  defOption: { name: 'Anton', id: '1414242' },
+  defOption: { name: 'Johny', id: '1441ag5252' },
   isEditable: true,
   isRequired: true
 }
