@@ -16,37 +16,17 @@ export const FormTransactions = () => {
   const { register, watch, handleSubmit, reset, formState, setValue, getValues } = useForm()
   const { isDirty, isSubmitting, touched, submitCount, dirtyFields } = formState //only last is used
 
-  const [groupField, setGroupField] = useState({
+  const fieldSettings = {
     options: [],
     defOption: false,
     isEditable: true,
     isRequired: true
-  })
-
-  const [senderField, setSenderField] = useState({
-    options: [],
-    defOption: false,
-    isEditable: false,
-    isRequired: true
-  })
-  const [senderAccs, setSenderAccs] = useState({
-    options: [],
-    defOption: false,
-    isEditable: false,
-    isRequired: true
-  })
-  const [recipientField, setRecipients] = useState({
-    options: [],
-    defOption: false,
-    isEditable: false,
-    isRequired: true
-  })
-  const [recipientsAcc, setRecipientsAcc] = useState({
-    options: [],
-    defOption: false,
-    isEditable: false,
-    isRequired: true
-  })
+  }
+  const [groupField, setGroupField] = useState(fieldSettings)
+  const [senderField, setSenderField] = useState(fieldSettings)
+  const [senderAccs, setSenderAccs] = useState(fieldSettings)
+  const [recipientField, setRecipients] = useState(fieldSettings)
+  const [recipientsAcc, setRecipientsAcc] = useState(fieldSettings)
 
   // Requests
   const senderAccsRequest = (id) => setSenderAccs(senderAccsMeta)
@@ -193,7 +173,7 @@ export const FormTransactions = () => {
                 })}
               </select>
             </div>
-            
+
           </div></>}
 
 
