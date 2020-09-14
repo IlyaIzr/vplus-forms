@@ -1,50 +1,40 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+//Fakes
+import { 
+  groupsFieldMetaData, senderList, senderAccounts, 
+  recipientsList, recipientAccounts, timeOut 
+} from './fakeData'
 
-// Fake data
-const groupsData = [
-  { name: 'Alpha', id: '1a' },
-  { name: 'Beta', id: '2a' },
-  { name: 'Gamma', id: '3a' }
-]
-const senderList = [
-  { name: 'Piotr', id: '1414' },
-  { name: 'Ivan', id: '14414' },
-]
-const senderAccounts = [
-  '14125215215', '1521512515', '1521512512515'
-]
-const recipientsList = [
-  { name: 'Anton', id: '1414242' },
-  { name: 'Johny', id: '1441425252' },
-]
-const recipientAccounts = [
-  '14125215215aa', '1521512515aa', '152151251251aa5'
-]
-const timeOut = 800
 const checkMessage = 'Укажите группу'
+
+const onSubmit = data => {
+  alert(JSON.stringify(data))
+};
 
 export const FormTransactions = () => {
   const { register, watch, handleSubmit, reset, formState, setValue } = useForm()
-  const { isDirty, isSubmitting, touched, submitCount, dirtyFields } = formState; //only last is used
+  const { isDirty, isSubmitting, touched, submitCount, dirtyFields } = formState //only last is used
 
-  const [gropus, setGropus] = useState([]);
+  const [groupField, setGroupField] = useState({
+    options: [],
+    defOption: {name: '', id: ''},
+    isEditable: true,
+    isRequired: true
+  })
+
   const [sender, setSender] = useState([])
   const [senderAcc, setSenderAcc] = useState([])
   const [recipients, setRecipients] = useState([])
   const [recipientsAcc, setRecipientsAcc] = useState([])
 
+  //Group
   useEffect(() => {
-    // kinda server call 
     setTimeout(() => {
-      setGropus(groupsData)
+      setGroupField(groupsFieldMetaData)
+      if (groupsFieldMetaData.defOption) setValue('group', groupsFieldMetaData.defOption.id)      
     }, timeOut);
   }, []);
-
-
-  const onSubmit = data => {
-    alert(JSON.stringify(data))
-  };
 
   const onChangeGroup = (e) => {
     // console.log(e.target.value);
@@ -53,6 +43,7 @@ export const FormTransactions = () => {
       setRecipients(recipientsList)
     }, timeOut);
   }
+
   //Sender chunk
   const onChangeSender = (e) => {
     // console.log(e.target.value);
@@ -86,13 +77,15 @@ export const FormTransactions = () => {
   return (
     <div className="ui container">
       <form onSubmit={handleSubmit(onSubmit)} className="ui form">
-        <div className="required field">
+        <div className={groupField.isRequired ? "required field" : "field"}>
           <label htmlFor="group">Группа</label>
-          <select name="group" ref={register} onChange={onChangeGroup} required className="ui dropdown">
-            {!dirtyFields.group && <option value=''>{checkMessage}</option>}
-            {gropus.length && gropus.map((group) => {
+          <select name="group" ref={register} onChange={onChangeGroup} className="ui dropdown"
+            required={groupField.isRequired} disabled={!groupField.isEditable}
+          >
+            {groupField.options.length && groupField.options.map((group) => {
+              {!dirtyFields.group && <option value=''>{checkMessage}</option>}
               return (
-                <option value={group.name} key={group.id}>{group.name}</option>
+                <option value={group.id} key={group.id}>{group.name}</option>
               )
             })}
           </select>
