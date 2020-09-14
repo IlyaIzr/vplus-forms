@@ -1,46 +1,86 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 //Fakes
-import { 
-  groupsFieldMetaData, senderList, senderAccounts, 
-  recipientsList, recipientAccounts, timeOut 
+import {
+  groupsFieldMetaData, senderAccsMeta, recipientListMeta, senderListMeta,
+  recipientsList, recipientAccounts, timeOut
 } from './fakeData'
 
 const checkMessage = 'Укажите группу'
 
 const onSubmit = data => {
-  alert(JSON.stringify(data))
+  console.log(data)
 };
 
 export const FormTransactions = () => {
-  const { register, watch, handleSubmit, reset, formState, setValue } = useForm()
+  const { register, watch, handleSubmit, reset, formState, setValue, getValues } = useForm()
   const { isDirty, isSubmitting, touched, submitCount, dirtyFields } = formState //only last is used
 
   const [groupField, setGroupField] = useState({
     options: [],
-    defOption: {name: '', id: ''},
+    defOption: false,
     isEditable: true,
     isRequired: true
   })
 
-  const [sender, setSender] = useState([])
-  const [senderAcc, setSenderAcc] = useState([])
-  const [recipients, setRecipients] = useState([])
-  const [recipientsAcc, setRecipientsAcc] = useState([])
+  const [senderField, setSenderField] = useState({
+    options: [],
+    defOption: false,
+    isEditable: false,
+    isRequired: true
+  })
+  const [senderAccs, setSenderAccs] = useState({
+    options: [],
+    defOption: false,
+    isEditable: false,
+    isRequired: true
+  })
+  const [recipientField, setRecipients] = useState({
+    options: [],
+    defOption: false,
+    isEditable: false,
+    isRequired: true
+  })
+  const [recipientsAcc, setRecipientsAcc] = useState({
+    options: [],
+    defOption: false,
+    isEditable: false,
+    isRequired: true
+  })
+
+  // Requests
+  const senderAccsRequest = (id) => setSenderAccs(senderAccsMeta)
+  const recipientAccsRequest = (id) => setRecipientsAcc(senderAccsMeta)
 
   //Group
   useEffect(() => {
     setTimeout(() => {
       setGroupField(groupsFieldMetaData)
-      if (groupsFieldMetaData.defOption) setValue('group', groupsFieldMetaData.defOption.id)      
-    }, timeOut);
+      if (groupsFieldMetaData.defOption) {
+        setValue('group', groupsFieldMetaData.defOption.id)
+        setTimeout(() => {  //call with default option
+          setSenderField(senderListMeta)
+          if (senderListMeta.defOption) {
+            setValue('sender', senderListMeta.defOption.id, { shouldDirty: true })
+            senderAccsRequest(senderListMeta.defOption.id)
+          }
+          setRecipients(recipientListMeta)
+          if (recipientListMeta.defOption) {
+            console.log(recipientListMeta.defOption.id)
+            setValue('recipientId', recipientListMeta.defOption.id, { shouldDirty: true })
+            recipientAccsRequest(recipientListMeta.defOption.id)
+          }
+        }, timeOut)
+      }
+    }, timeOut)
   }, []);
 
   const onChangeGroup = (e) => {
-    // console.log(e.target.value);
     setTimeout(() => {
-      setSender(senderList);
-      setRecipients(recipientsList)
+      setTimeout(() => {  //call with selected option e.target.value
+        setSenderField(senderListMeta)
+        setRecipients(recipientListMeta)
+      }, timeOut);
     }, timeOut);
   }
 
@@ -48,7 +88,7 @@ export const FormTransactions = () => {
   const onChangeSender = (e) => {
     // console.log(e.target.value);
     setTimeout(() => {
-      setSenderAcc(senderAccounts)
+      senderAccsRequest()
     }, timeOut);
   }
   const onChangeSenderAcc = (e) => {
@@ -57,7 +97,7 @@ export const FormTransactions = () => {
   // Recipient chunk 
   const onChangeRecipient = e => {
     setTimeout(() => {
-      setRecipientsAcc(recipientAccounts)
+      recipientAccsRequest()
     }, timeOut);
   }
   const onChangeRecipientAcc = (e) => {
@@ -82,8 +122,8 @@ export const FormTransactions = () => {
           <select name="group" ref={register} onChange={onChangeGroup} className="ui dropdown"
             required={groupField.isRequired} disabled={!groupField.isEditable}
           >
+            {!dirtyFields.group && <option value=''>{checkMessage}</option>}
             {groupField.options.length && groupField.options.map((group) => {
-              {!dirtyFields.group && <option value=''>{checkMessage}</option>}
               return (
                 <option value={group.id} key={group.id}>{group.name}</option>
               )
@@ -91,27 +131,32 @@ export const FormTransactions = () => {
           </select>
         </div>
 
-        <div className="two fields">
+        {/* USERS AND ACCOUNTS */}
+        {(getValues('group') || groupsFieldMetaData.defOption.id) && <><div className="two fields">
 
-          <div className="required field">
+          <div className={senderField.isRequired ? "required field" : "field"}>
             <label htmlFor="sender">Отправитель</label>
-            <select name="sender" ref={register} onChange={onChangeSender} required className="ui dropdown" >
-              {!dirtyFields.group && <option value=''>{checkMessage}</option>}
+            <select name="sender" ref={register} onChange={onChangeSender} className="ui dropdown"
+              required={senderField.isRequired} disabled={!senderField.isEditable}
+            >
               {!dirtyFields.sender && <option value=''></option>}
-              {sender.length && sender.map((aSender) => {
+              {senderField.options.length && senderField.options.map((sender) => {
                 return (
-                  <option value={aSender.name} key={aSender.id}>{aSender.name}</option>
+                  <option value={sender.id} key={sender.id}>{sender.name}</option>
                 )
               })}
             </select>
           </div>
 
-          <div className="required field">
+          <div className={senderAccs.isRequired ? "required field" : "field"}>
             <label htmlFor="senderAccout">Счёт отправителя</label>
-            <select name="senderAccout" ref={register} onChange={onChangeSenderAcc} required className="ui dropdown">
-              {senderAcc.length && senderAcc.map((aSenderAcc) => {
+            <select name="senderAccout" ref={register} onChange={onChangeSenderAcc} className="ui dropdown"
+              required={senderAccs.isRequired} disabled={!senderAccs.isEditable}
+            >
+              {!dirtyFields.senderAccout && <option value=''></option>}
+              {senderAccs.options.length && senderAccs.options.map((sender) => {
                 return (
-                  <option value={aSenderAcc} key={aSenderAcc}>{aSenderAcc}</option>
+                  <option value={sender.id} key={sender.id}>{sender.name}</option>
                 )
               })}
             </select>
@@ -119,31 +164,35 @@ export const FormTransactions = () => {
 
         </div>
 
-        <div className="two fields">
-          <div className="required field">
-            <label htmlFor="recipient">Получатель</label>
-            <select name="recipient" ref={register} onChange={onChangeRecipient} required className="ui dropdown">
-              {!dirtyFields.group && <option value=''>{checkMessage}</option>}
-              {!dirtyFields.recipient && <option value=''></option>}
-              {recipients.length && recipients.map((recepient) => {
-                return (
-                  <option value={recepient.name} key={recepient.id}>{recepient.name}</option>
-                )
-              })}
-            </select>
-          </div>
+          <div className="two fields">
+            <div className={recipientField.isRequired ? "required field" : "field"}>
+              <label htmlFor="recipientId">Получатель</label>
+              <select name="recipientId" ref={register} onChange={onChangeRecipient} className="ui dropdown"
+                required={recipientField.isRequired} disabled={!recipientField.isEditable}
+              >
+                {!dirtyFields.recipientId && <option value=''></option>}
+                {recipientField.options.length && recipientField.options.map((recepient) => {
+                  return (
+                    <option value={recepient.name} key={recepient.id}>{recepient.name}</option>
+                  )
+                })}
+              </select>
+            </div>
 
-          <div className="required field">
-            <label htmlFor="recipientAccout">Счёт получателя</label>
-            <select name="recipientAccout" ref={register} onChange={onChangeRecipientAcc} required className="ui dropdown">
-              {recipientsAcc.length && recipientsAcc.map((recipientAcc) => {
-                return (
-                  <option value={recipientAcc} key={recipientAcc}>{recipientAcc}</option>
-                )
-              })}
-            </select>
-          </div>
-        </div>
+            <div className={recipientsAcc.isRequired ? "required field" : "field"}>
+              <label htmlFor="recipientAccout">Счёт отправителя</label>
+              <select name="recipientAccout" ref={register} onChange={onChangeSenderAcc} className="ui dropdown"
+                required={recipientsAcc.isRequired} disabled={!recipientsAcc.isEditable}
+              >
+                {!dirtyFields.recipientAccout && <option value=''></option>}
+                {recipientsAcc.options.length && recipientsAcc.options.map((recipientAcc) => {
+                  return (
+                    <option value={recipientAcc.id} key={recipientAcc.id}>{recipientAcc.name}</option>
+                  )
+                })}
+              </select>
+            </div>
+          </div></>}
 
 
         <div className="two fields">
