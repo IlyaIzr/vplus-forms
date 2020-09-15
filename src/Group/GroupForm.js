@@ -37,13 +37,12 @@ export const GroupForm = () => {
     options: [],  // list of possible investors
     // currentOption: { name: '', id: '', share: 100 },
     investors: [  //list of included investors
-      { name: 'Pyotr', id: 'userId12412', share: 100 }
+      { name: '', id: '', share: 100 }
     ],
     isEditable: true,
     isRequired: true
   })
   const onInvestorValueChange = (e, index) => {
-
     const investors = [...investorsField.investors]
     investors[index] = { ...investors[index], [e.target.name]: e.target.value }
     // Set according name to obj. I know... it's bad
@@ -55,9 +54,27 @@ export const GroupForm = () => {
       ...investorsField,
       investors
     }
-    console.log(newObj.investors[0])
+    console.log(newObj.investors)
     setInvestorsField(newObj)
   }
+  const addField = () => {
+    const investors = [...investorsField.investors, {
+      name: investorsField.options[0].name,
+      id: 'asdf2as',
+      share: 1
+    }]
+    investors[0].share -= 1
+    setInvestorsField({
+      ...investorsField, investors //TODO a way to generate id
+    })
+  }
+  const removeField = index => {
+    const investors = [...investorsField.investors]
+    investors.splice(index, 1)
+    setInvestorsField({ ...investorsField, investors })
+  }
+  let total = 0
+  investorsField.investors.map(investor => total += Number(investor.share))
 
 
   useEffect(() => {
@@ -98,14 +115,18 @@ export const GroupForm = () => {
 
 
         {investorsField.investors.length ? investorsField.investors.map((field, index) => {
+          const isDeletable = investorsField.investors.length > 1
           return (
-            <InvestorField key={field.id}
+            <InvestorField key={field.id + index}
               field={field} changeFunc={onInvestorValueChange} index={index}
-              options={investorsField.options} />
+              options={investorsField.options} removeFunc={removeField} isDeletable={isDeletable}
+            />
           )
         }) : null}
-        <button className="ui button green" type="button">Добавить</button>
-
+        <button type="button" onClick={addField}
+          className={investorsField.options <= investorsField.investors ? "ui button green disabled" : "ui button green"}
+        >Добавить</button>
+        <span className={total==100 ? "ui green text" : "ui red text" }>{'Суммарно процентов: ' + total}</span>
         <hr />
 
 

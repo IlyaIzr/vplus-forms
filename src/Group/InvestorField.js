@@ -1,10 +1,11 @@
 import React from 'react'
 
-export const InvestorField = ({ field, options, changeFunc, index }) => {
+export const InvestorField = ({ field, options, changeFunc, index, removeFunc, isDeletable }) => {
   const onChange = e => changeFunc(e, index)
-  
+  const onClick = () => removeFunc(index)
+
   return (
-    <div className="ui three fields">
+    <div className="ui four fields">
       <div className="required field">
         <label htmlFor="id">Пользователь</label>
         <select name="id" className="ui dropdown"
@@ -20,10 +21,16 @@ export const InvestorField = ({ field, options, changeFunc, index }) => {
       </div>
 
       <label htmlFor="share">Доля</label>
-      <input type="range" name="share" min="1" className="ui range"
+      <input type="range" name="share" className="ui range"
         value={field.share} onChange={onChange}
       />
-      <div>{field.share + ' %'}</div>
+      <div className="field">{field.share + ' %'}</div>
+      <div className="field">
+        <button className={isDeletable ? "ui button red" : "ui button red disabled"}
+          onClick={onClick} type="button"
+        >Удалить
+        </button>
+      </div>
     </div>
   )
 }
