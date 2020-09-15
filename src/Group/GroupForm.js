@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 // Fake data
-import { groupFieldMeta, timeout, disciplineFieldMeta } from './fakeData';
+import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta } from './fakeData';
+import { InvestorField } from './InvestorField';
 const stringFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -25,17 +26,34 @@ export const GroupForm = () => {
     options: [],
     defOption: false, // mutable 
     isEditable: true,
-    isRequired: true    
+    isRequired: true
   })
   const onDisciplineChange = e => {
     const newObj = { ...disciplineField, defOption: e.target.value }
     setDisciplineField(newObj)
   }
 
+  const [investorsField, setInvestorsField] = useState({
+    options: [],  // list of possible investors
+    currentOption: { name: '', id: '', share: 100 },
+    investors: [], //list of included investors
+    isEditable: true,
+    isRequired: true
+  })
+  const onInvestorValueChange = e => {
+    const newObj = {
+      ...investorsField,
+      currentOption: { ...investorsField.currentOption, [e.target.name]: e.target.value }
+    }
+    setInvestorsField(newObj)
+  }
+
+
   useEffect(() => {
     setTimeout(() => {
       setGroupNameField(groupFieldMeta)
       setDisciplineField(disciplineFieldMeta)
+      setInvestorsField(investorsMeta)
     }, timeout);
   }, [])
 
@@ -65,7 +83,14 @@ export const GroupForm = () => {
           </select>
         </div>
 
+        <h3 className="ui title">Руководящий состав</h3>
 
+        <InvestorField field={investorsField} changeFunc={onInvestorValueChange} />
+        <button className="ui button green" type="button">Добавить</button>
+
+        <hr />
+
+        
         <button type="submit" className="ui red button">Sub</button>
       </form>
     </div>

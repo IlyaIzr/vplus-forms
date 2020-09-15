@@ -17,3 +17,17 @@ export const disciplineFieldMeta = {
 }
 
 export const timeout = 500
+
+const investorsOptions = [
+  { name: 'Pyotr', id: 'userId12412' },
+  { name: 'Stepan', id: 'userId1241fa' },
+  { name: 'Anton', id: 'userId124g3s' }
+]
+const currentOption = { name: 'Stepan', id: 'userId1241fa', share: 100 }
+export const investorsMeta = {
+  options: investorsOptions,  // list of possible investors
+  currentOption: currentOption,
+  investors: [], //list of included investors
+  isEditable: true,
+  isRequired: true
+}
