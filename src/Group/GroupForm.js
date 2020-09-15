@@ -35,16 +35,27 @@ export const GroupForm = () => {
 
   const [investorsField, setInvestorsField] = useState({
     options: [],  // list of possible investors
-    currentOption: { name: '', id: '', share: 100 },
-    investors: [], //list of included investors
+    // currentOption: { name: '', id: '', share: 100 },
+    investors: [  //list of included investors
+      { name: 'Pyotr', id: 'userId12412', share: 100 }
+    ],
     isEditable: true,
     isRequired: true
   })
-  const onInvestorValueChange = e => {
+  const onInvestorValueChange = (e, index) => {
+
+    const investors = [...investorsField.investors]
+    investors[index] = { ...investors[index], [e.target.name]: e.target.value }
+    // Set according name to obj. I know... it's bad
+    if (e.target.name === 'id') {
+      const currentOption = investorsField.options.filter(option => option.id == e.target.value)
+      investors[index] = { ...investors[index], name: currentOption[0].name }
+    }
     const newObj = {
       ...investorsField,
-      currentOption: { ...investorsField.currentOption, [e.target.name]: e.target.value }
+      investors
     }
+    console.log(newObj.investors[0])
     setInvestorsField(newObj)
   }
 
@@ -85,12 +96,19 @@ export const GroupForm = () => {
 
         <h3 className="ui title">Руководящий состав</h3>
 
-        <InvestorField field={investorsField} changeFunc={onInvestorValueChange} />
+
+        {investorsField.investors.length ? investorsField.investors.map((field, index) => {
+          return (
+            <InvestorField key={field.id}
+              field={field} changeFunc={onInvestorValueChange} index={index}
+              options={investorsField.options} />
+          )
+        }) : null}
         <button className="ui button green" type="button">Добавить</button>
 
         <hr />
 
-        
+
         <button type="submit" className="ui red button">Sub</button>
       </form>
     </div>

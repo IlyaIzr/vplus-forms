@@ -24,10 +24,17 @@ const investorsOptions = [
   { name: 'Anton', id: 'userId124g3s' }
 ]
 const currentOption = { name: 'Stepan', id: 'userId1241fa', share: 100 }
+const investors = [
+  { name: 'Pyotr', id: 'userId12412', share: 40 },
+  { name: 'Anton', id: 'userId124g3s', share: 60 }]
+  
+const investors1 = [
+  { name: 'Pyotr', id: 'userId12412', share: 100 }]
+  
 export const investorsMeta = {
   options: investorsOptions,  // list of possible investors
   currentOption: currentOption,
-  investors: [], //list of included investors
+  investors: investors1, //list of included investors
   isEditable: true,
   isRequired: true
 }
