@@ -114,23 +114,24 @@ export const GroupForm = () => {
         <h3 className="ui title">Руководящий состав</h3>
         <hr />
 
-        {investorsField.investors.length ? investorsField.investors.map((field, index) => {
-          const isDeletable = investorsField.investors.length > 1
-          return (
-            <InvestorField key={field.id + index}
-              field={field} changeFunc={onInvestorValueChange} index={index}
-              options={investorsField.options} removeFunc={removeField} isDeletable={isDeletable}
-            />
-          )
-        }) : null}
-        <button type="button" onClick={addField}
-          className={investorsField.options <= investorsField.investors ? "ui button green disabled" : "ui button green"}
-        >Добавить</button>
-        <span className={total == 100 ? "ui green text" : "ui red text"}>
-          {'Суммарно процентов: ' + total}
-        </span>
-        <hr />
-
+        <div className="ui segment">
+        <h4 className="ui title">Назначьте одного или нескольких инвесторов</h4>
+          {investorsField.investors.length ? investorsField.investors.map((field, index) => {
+            const isDeletable = investorsField.investors.length > 1
+            return (
+              <InvestorField key={field.id + index}
+                field={field} changeFunc={onInvestorValueChange} index={index}
+                options={investorsField.options} removeFunc={removeField} isDeletable={isDeletable}
+              />
+            )
+          }) : null}
+          <button type="button" onClick={addField}
+            className={investorsField.options <= investorsField.investors ? "ui button green disabled" : "ui button green"}
+          >Добавить</button>
+          <span className={total == 100 ? "ui green text" : "ui red text"}>
+            {'Суммарно процентов: ' + total}
+          </span>
+        </div>
 
         <button type="submit" className="ui red button">Sub</button>
       </form>
