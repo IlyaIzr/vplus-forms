@@ -41,12 +41,12 @@ export const FormTransactions = () => {
         setTimeout(() => {  //call with default option
           setSenderField(senderListMeta)
           if (senderListMeta.defOption) {
-            setValue('sender', senderListMeta.defOption.id, { shouldDirty: true })
+            setValue('sender', senderListMeta.defOption.id, { shouldDirty: true, shouldValidate: true })
+            console.log(getValues('sender')) 
             senderAccsRequest(senderListMeta.defOption.id)
           }
           setRecipients(recipientListMeta)
           if (recipientListMeta.defOption) {
-            console.log(recipientListMeta.defOption.id)
             setValue('recipientId', recipientListMeta.defOption.id, { shouldDirty: true })
             recipientAccsRequest(recipientListMeta.defOption.id)
           }
@@ -72,7 +72,7 @@ export const FormTransactions = () => {
     }, timeOut);
   }
   const onChangeSenderAcc = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
   }
   // Recipient chunk 
   const onChangeRecipient = e => {
@@ -85,10 +85,10 @@ export const FormTransactions = () => {
   }
 
   const resetSomeFields = (e) => {
-    setValue('sender', '')
-    setValue('senderAccout', '')
-    setValue('recipient', '')
-    setValue('recipientAccout', '')
+    setValue('sender', (senderListMeta.defOption && senderListMeta.defOption.id) || '' )
+    setValue('senderAccout', (senderAccsMeta.defOption && senderAccsMeta.defOption.id) || '' )
+    setValue('recipientId', (recipientListMeta.defOption && recipientListMeta.defOption.id) || '')
+    setValue('recipientAccout', (senderAccsMeta.defOption && senderAccsMeta.defOption.id) || '')
     setValue('payment', '')
     setValue('comission', '')
     setValue('comment', '')
@@ -186,7 +186,7 @@ export const FormTransactions = () => {
 
           <div className="field">
             <label htmlFor="comission">Комиссия</label>
-            <input name="comission" type="number" min="0" step="0.01" ref={register} />
+            <input name="comission" type="number" min="0.01" step="0.01" ref={register} />
           </div>
         </div>
 

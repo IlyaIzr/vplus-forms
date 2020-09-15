@@ -5,7 +5,8 @@ module.exports = {
 
   entry: {
     index: path.join(__dirname, './src/index.js'),
-    transactions: path.join(__dirname, './src/Transactions/Transactions.js')
+    transactions: path.join(__dirname, './src/Transactions/index.js'),
+    groupForm: path.join(__dirname, './src/Group/index.js')
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -36,6 +37,11 @@ module.exports = {
       filename: 'transactions.html',
       template: './public/transactions.html',
       chunks: ['transactions']
+    }),
+    new HtmlWebPackPlugin({
+      filename: 'groupForm.html',
+      template: './public/groupForm.html',
+      chunks: ['groupForm']
     }),
     new HtmlWebPackPlugin({
       template: "./public/index.html",

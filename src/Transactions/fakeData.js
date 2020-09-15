@@ -19,7 +19,7 @@ const senderList = [
 export const senderListMeta = {
   options: senderList,
   defOption: { name: 'Alex', id: '14414swS' }, //option objector false
-  isEditable: true,
+  isEditable: true, // TODO returns undefined if its uneditable
   isRequired: true
 }
 
@@ -44,7 +44,7 @@ const recipientsList = [
 export const recipientListMeta = {
   options: recipientsList,
   defOption: { name: 'Donald', id: '144ss252' },
-  isEditable: false,
+  isEditable: true, // TODO returns undefined if its uneditable
   isRequired: true
 }
 
