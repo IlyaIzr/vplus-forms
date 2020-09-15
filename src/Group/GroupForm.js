@@ -60,7 +60,7 @@ export const GroupForm = () => {
   const addField = () => {
     const investors = [...investorsField.investors, {
       name: investorsField.options[0].name,
-      id: 'asdf2as',
+      id: investorsField.options[0].id,
       share: 1
     }]
     investors[0].share -= 1
@@ -87,7 +87,7 @@ export const GroupForm = () => {
 
 
   return (
-    <div className="ui conainer">
+    <div className="ui conainer" style={{ padding: '20px' }}>
       <form onSubmit={onSubmit} className="ui form">
 
         <div className={groupNameField.isRequired ? "required field" : "field"}>
@@ -112,7 +112,7 @@ export const GroupForm = () => {
         </div>
 
         <h3 className="ui title">Руководящий состав</h3>
-
+        <hr />
 
         {investorsField.investors.length ? investorsField.investors.map((field, index) => {
           const isDeletable = investorsField.investors.length > 1
@@ -126,7 +126,9 @@ export const GroupForm = () => {
         <button type="button" onClick={addField}
           className={investorsField.options <= investorsField.investors ? "ui button green disabled" : "ui button green"}
         >Добавить</button>
-        <span className={total==100 ? "ui green text" : "ui red text" }>{'Суммарно процентов: ' + total}</span>
+        <span className={total == 100 ? "ui green text" : "ui red text"}>
+          {'Суммарно процентов: ' + total}
+        </span>
         <hr />
 
 
