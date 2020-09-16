@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 // Fake data
-import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta } from './fakeData';
+import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta, investorsOptions } from './fakeData';
 import { InvestorField } from './InvestorField';
+import { ManagerField } from './ManagerField';
 const stringFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -35,7 +36,6 @@ export const GroupForm = () => {
 
   const [investorsField, setInvestorsField] = useState({
     options: [],  // list of possible investors
-    // currentOption: { name: '', id: '', share: 100 },
     investors: [  //list of included investors
       { name: '', id: '', share: 100 }
     ],
@@ -54,7 +54,6 @@ export const GroupForm = () => {
       ...investorsField,
       investors
     }
-    console.log(newObj.investors)
     setInvestorsField(newObj)
   }
   const addField = () => {
@@ -73,8 +72,38 @@ export const GroupForm = () => {
     investors.splice(index, 1)
     setInvestorsField({ ...investorsField, investors })
   }
-  let total = 0
-  investorsField.investors.map(investor => total += Number(investor.share))
+  let total = 0; investorsField.investors.map(investor => total += Number(investor.share))
+
+  const [managersField, setManagersField] = useState({
+    options: [],
+    payOptions: [],
+    managers: [
+      { name: '', id: '' },
+    ],
+    isEditable: true,
+    isRequired: true
+  })
+  const removeManagerField = index => {
+    const managers = [...managersField.managers]
+    managers.splice(index, 1)
+    setManagersField({ ...managersField, managers })
+  }
+  const onManagerValueChange = (e, index) => {
+    const managers = [...managersField.managers]
+    managers[index] = { ...managers[index], [e.target.name]: e.target.value }
+    
+    if (e.target.name === 'id') {
+      const currentOption = managersField.options.filter(option => option.id == e.target.value)
+      managers[index] = { ...managers[index], name: currentOption[0].name }
+    }
+    const newObj = {
+      ...managersField,
+      managers
+    }
+    console.log(newObj.managers)
+    setManagersField(newObj)
+  }
+
 
 
   useEffect(() => {
@@ -82,6 +111,7 @@ export const GroupForm = () => {
       setGroupNameField(groupFieldMeta)
       setDisciplineField(disciplineFieldMeta)
       setInvestorsField(investorsMeta)
+      setManagersField(managersMeta)
     }, timeout);
   }, [])
 
@@ -115,7 +145,7 @@ export const GroupForm = () => {
         <hr />
 
         <div className="ui segment">
-        <h4 className="ui title">Назначьте одного или нескольких инвесторов</h4>
+          <h4 className="ui title">Назначьте одного или нескольких инвесторов</h4>
           {investorsField.investors.length ? investorsField.investors.map((field, index) => {
             const isDeletable = investorsField.investors.length > 1
             return (
@@ -132,6 +162,21 @@ export const GroupForm = () => {
             {'Суммарно процентов: ' + total}
           </span>
         </div>
+
+        <div className="ui segment">
+          <h4 className="ui title">Назначьте одного или нескольких управляющих</h4>
+          {managersField.managers && managersField.managers.length ? managersField.managers.map((field, index) => {
+            const isDeletable = managersField.managers.length > 1
+            return (
+              <ManagerField key={field.id+index}
+                changeFunc={onManagerValueChange} index={index} field={field} payOptions={managersField.payOptions}
+                options={managersField.options} removeFunc={removeManagerField} isDeletable={isDeletable}
+              />
+            )
+          }) : null}
+
+        </div>
+
 
         <button type="submit" className="ui red button">Sub</button>
       </form>

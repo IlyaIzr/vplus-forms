@@ -18,7 +18,8 @@ export const disciplineFieldMeta = {
 
 export const timeout = 500
 
-const investorsOptions = [
+export const investorsOptions = [
+  { name: 'Sergay', id: 'userId1a2rs' },
   { name: 'Pyotr', id: 'userId12412' },
   { name: 'Stepan', id: 'userId1241fa' },
   { name: 'Anton', id: 'userId124g3s' }
@@ -27,14 +28,64 @@ const currentOption = { name: 'Stepan', id: 'userId1241fa', share: 100 }
 const investors = [
   { name: 'Pyotr', id: 'userId12412', share: 40 },
   { name: 'Anton', id: 'userId124g3s', share: 60 }]
-  
+
 const investors1 = [
   { name: 'Pyotr', id: 'userId12412', share: 100 }]
-  
+
 export const investorsMeta = {
   options: investorsOptions,  // list of possible investors
-  currentOption: currentOption,
   investors: investors1, //list of included investors
+  isEditable: true,
+  isRequired: true
+}
+
+
+const paymentFormHourRate = {
+  fields: [{
+    type: 'text',
+    value: 'По часам',
+    isEditable: false,
+    isRequired: true,
+    name: 'payMethodName',
+    label: 'Способ оплаты'
+  }, {
+    type: 'nubmer',
+    value: '20',
+    isEditable: true,
+    isRequired: true,
+    name: 'payValue',
+    min: 0
+  }],
+  name: 'По часам',
+  payType: 'byHours'
+}
+const paymentFormManual = {
+  fields: [{
+    type: 'text',
+    value: '',
+    isEditable: true,
+    isRequired: true,
+    label: 'Способ оплаты',
+    name: 'payMethodName'
+  }, {
+    type: 'string',
+    value: '',
+    isEditable: true,
+    isRequired: false,
+    name: 'payValue',
+    label: 'Количество'
+  }],
+  name: 'Вручную',
+  payType: 'custom'
+}
+const managers = [
+  { name: 'Pyotr', id: 'userId12412', payType: 'byHours', payMethodName: 'По часам', payValue: '20' },
+  { name: 'Alexy', id: 'userIAff12', payType: 'custom', payMethodName: 'Вручную', payValue: '20' }
+]
+export const managersMeta = {
+  options: investorsOptions,
+  payOptions: [paymentFormHourRate, paymentFormManual],
+  managers: investors1,
   isEditable: true,
   isRequired: true
 }
