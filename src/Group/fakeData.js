@@ -41,7 +41,7 @@ export const investorsMeta = {
 
 
 const paymentFormHourRate = {
-  fields: [{
+  fields: [{  //Order is crucual. First fields value will be in select list
     type: 'text',
     value: 'По часам',
     isEditable: false,
@@ -85,7 +85,7 @@ const managers = [
 export const managersMeta = {
   options: investorsOptions,
   payOptions: [paymentFormHourRate, paymentFormManual],
-  managers: investors1,
+  managers: [],
   isEditable: true,
   isRequired: true
 }

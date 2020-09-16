@@ -88,10 +88,21 @@ export const GroupForm = () => {
     managers.splice(index, 1)
     setManagersField({ ...managersField, managers })
   }
+  const addManagerField = () => {
+    const managers = [...managersField.managers, {
+      name: managersField.options[0].name,
+      id: managersField.options[0].id,
+      payMethodName: managersField.payOptions[0].fields[0].value,
+      payValue: managersField.payOptions[0].fields[1].value
+    }]
+    setManagersField({
+      ...managersField, managers
+    })
+  }
   const onManagerValueChange = (e, index) => {
     const managers = [...managersField.managers]
     managers[index] = { ...managers[index], [e.target.name]: e.target.value }
-    
+    console.log(managers)
     if (e.target.name === 'id') {
       const currentOption = managersField.options.filter(option => option.id == e.target.value)
       managers[index] = { ...managers[index], name: currentOption[0].name }
@@ -100,7 +111,7 @@ export const GroupForm = () => {
       ...managersField,
       managers
     }
-    console.log(newObj.managers)
+    // console.log(newObj.managers)
     setManagersField(newObj)
   }
 
@@ -174,6 +185,9 @@ export const GroupForm = () => {
               />
             )
           }) : null}
+          <button type="button" onClick={addManagerField}
+            className={managersField.options <= managersField.managers ? "ui button green disabled" : "ui button green"}
+          >Добавить</button>
 
         </div>
 
