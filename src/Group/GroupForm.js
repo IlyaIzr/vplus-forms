@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import CreateProject from './Draft';
 // Fake data
-import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta, investorsOptions } from './fakeData';
+import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta,
+   playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta } from './fakeData';
 import { InvestorField } from './InvestorField';
 import { ManagerField } from './ManagerField';
 const stringFieldDefaultState = {
   value: '',
   isEditable: true,
   isRequired: true
+}
+const numberFieldDefaultState = {
+  value: '',
+  isEditable: true,
+  isRequired: true,
+  min: '',
+  max: ''
 }
 
 const onSubmit = e => {
@@ -120,12 +128,28 @@ export const GroupForm = () => {
     // console.log(contractField) //works
   }
 
+  const [tournamentsField, setTournamentsField] = useState(numberFieldDefaultState)
+  const onTournamentsFieldChange = e => setTournamentsField({
+    ...tournamentsField, value: e.target.value
+  })
+  const [playerSumField, setPlayerSumField] = useState(numberFieldDefaultState)
+  const onPlayerSumFieldChange = e => setPlayerSumField({
+    ...playerSumField, value: e.target.value
+  })  
+  const [buyInsField, setBuyInsField] = useState(numberFieldDefaultState)
+  const onBuyInsFieldChange = e => setBuyInsField({
+    ...buyInsField, value: e.target.value
+  })
+
   useEffect(() => {
     setTimeout(() => {
       setGroupNameField(groupFieldMeta)
       setDisciplineField(disciplineFieldMeta)
       setInvestorsField(investorsMeta)
       setManagersField(managersMeta)
+      setTournamentsField(tournamentsNumberMeta)
+      setPlayerSumField(playerSumNumberMeta)
+      setBuyInsField(playerBuyInsMeta)
     }, timeout);
   }, [])
 
@@ -194,13 +218,46 @@ export const GroupForm = () => {
 
         </div>
 
+        <div className="ui segment">
+          <CreateProject createProject={onChangeContract} />
+        </div>
+
+        <div className="ui segment">
+          <h3 className="title">Шаблон пакета</h3>
+          <div className="three fields">
+
+            <div className={`field ${tournamentsField.isRequired && 'required'}`} >
+              <label htmlFor="tournamentsField">Количество турниров</label>
+              <input type="number" value={tournamentsField.value} required={tournamentsField.isRequired}
+                disabled={!tournamentsField.isEditable} min={tournamentsField.min} max={tournamentsField.max}
+                onChange={onTournamentsFieldChange}
+              />
+            </div>
+
+            <div className={`field ${playerSumField.isRequired && 'required'}`} >
+              <label htmlFor="playerSumField">Сумма игрока в свой БР</label>
+              <input type="number" value={playerSumField.value} required={playerSumField.isRequired}
+                disabled={!playerSumField.isEditable} min={playerSumField.min} max={playerSumField.max}
+                onChange={onPlayerSumFieldChange}
+              />
+            </div>
+            
+            <div className={`field ${buyInsField.isRequired && 'required'}`} >
+              <label htmlFor="buyInsField">Кол-во байинов на счету</label>
+              <input type="number" value={buyInsField.value} required={buyInsField.isRequired}
+                disabled={!buyInsField.isEditable} min={buyInsField.min} max={buyInsField.max}
+                onChange={onBuyInsFieldChange}
+              />
+            </div>
+
+          </div>
+
+          
+        </div>
 
         <button type="submit" className="ui red button">Sub</button>
       </form>
 
-      <div className="ui segment">
-        <CreateProject createProject={onChangeContract} />
-      </div>
     </div>
   )
 }

@@ -89,3 +89,24 @@ export const managersMeta = {
   isEditable: true,
   isRequired: true
 }
+
+export const tournamentsNumberMeta = {  
+  value: 5000,
+  isEditable: true,
+  isRequired: true,
+  min: 0
+}
+export const playerSumNumberMeta = {  
+  value: 5000,
+  isEditable: true,
+  isRequired: true,
+  min: 0
+}
+
+
+export const playerBuyInsMeta = {  
+  value: 70,
+  isEditable: true,
+  isRequired: true,
+  min: 0
+}
