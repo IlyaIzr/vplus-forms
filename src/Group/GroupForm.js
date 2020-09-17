@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import CreateProject from './Draft';
 // Fake data
 import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta, investorsOptions } from './fakeData';
 import { InvestorField } from './InvestorField';
@@ -102,7 +103,6 @@ export const GroupForm = () => {
   const onManagerValueChange = (e, index) => {
     const managers = [...managersField.managers]
     managers[index] = { ...managers[index], [e.target.name]: e.target.value }
-    console.log(managers)
     if (e.target.name === 'id') {
       const currentOption = managersField.options.filter(option => option.id == e.target.value)
       managers[index] = { ...managers[index], name: currentOption[0].name }
@@ -111,11 +111,14 @@ export const GroupForm = () => {
       ...managersField,
       managers
     }
-    // console.log(newObj.managers)
     setManagersField(newObj)
   }
 
-
+  const [contractField, setContractField] = useState(null)
+  const onChangeContract = (value) => {
+    setContractField(value);
+    // console.log(contractField) //works
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -179,7 +182,7 @@ export const GroupForm = () => {
           {managersField.managers && managersField.managers.length ? managersField.managers.map((field, index) => {
             const isDeletable = managersField.managers.length > 1
             return (
-              <ManagerField key={field.id+index}
+              <ManagerField key={field.id + index}
                 changeFunc={onManagerValueChange} index={index} field={field} payOptions={managersField.payOptions}
                 options={managersField.options} removeFunc={removeManagerField} isDeletable={isDeletable}
               />
@@ -194,6 +197,10 @@ export const GroupForm = () => {
 
         <button type="submit" className="ui red button">Sub</button>
       </form>
+
+      <div className="ui segment">
+        <CreateProject createProject={onChangeContract} />
+      </div>
     </div>
   )
 }

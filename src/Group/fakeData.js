@@ -34,7 +34,7 @@ const investors1 = [
 
 export const investorsMeta = {
   options: investorsOptions,  // list of possible investors
-  investors: investors1, //list of included investors
+  investors: [], //list of included investors
   isEditable: true,
   isRequired: true
 }
