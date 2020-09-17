@@ -102,11 +102,24 @@ export const playerSumNumberMeta = {
   isRequired: true,
   min: 0
 }
-
-
 export const playerBuyInsMeta = {  
   value: 70,
   isEditable: true,
   isRequired: true,
   min: 0
+}
+
+export const playerRiskMeta = {  
+  value: 40,
+  isEditable: true,
+  isRequired: true,
+  min: 0,
+  max: 100
+}
+export const fundRiskMeta = {  
+  value: 60,
+  isEditable: true,
+  isRequired: true,
+  min: 0,
+  max: 100
 }

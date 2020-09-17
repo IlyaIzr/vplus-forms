@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import CreateProject from './Draft';
 // Fake data
-import { groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta,
-   playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta } from './fakeData';
+import {
+  groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta,
+  playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta, playerRiskMeta, fundRiskMeta
+} from './fakeData';
 import { InvestorField } from './InvestorField';
 import { ManagerField } from './ManagerField';
 const stringFieldDefaultState = {
@@ -135,11 +137,27 @@ export const GroupForm = () => {
   const [playerSumField, setPlayerSumField] = useState(numberFieldDefaultState)
   const onPlayerSumFieldChange = e => setPlayerSumField({
     ...playerSumField, value: e.target.value
-  })  
+  })
   const [buyInsField, setBuyInsField] = useState(numberFieldDefaultState)
   const onBuyInsFieldChange = e => setBuyInsField({
     ...buyInsField, value: e.target.value
   })
+
+  //two-sides slider
+  const [playerRisk, setPlayerRisk] = useState(50)
+  const [playerRiskField, setPlayerRiskField] = useState({ ...numberFieldDefaultState, max: 100, min: 0 })
+  const [fundRiskField, setFundRiskField] = useState({ ...numberFieldDefaultState, max: 100, min: 0 })
+  const onRiskChange = e => {
+    if (e.target.name === 'playerRiskField' || e.target.name === 'playerRisk') {
+      setPlayerRisk(e.target.value)
+      setPlayerRiskField({...playerRiskField, value: e.target.value})
+      setFundRiskField({...fundRiskField, value: 100-e.target.value})
+    } else if (e.target.name === 'fundRiskField'){
+      setPlayerRisk(100-e.target.value)
+      setPlayerRiskField({...playerRiskField, value: 100-e.target.value})
+      setFundRiskField({...fundRiskField, value: e.target.value})
+    }
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -150,6 +168,10 @@ export const GroupForm = () => {
       setTournamentsField(tournamentsNumberMeta)
       setPlayerSumField(playerSumNumberMeta)
       setBuyInsField(playerBuyInsMeta)
+      // slider sets
+      setPlayerRiskField(playerRiskMeta)
+      setFundRiskField(fundRiskMeta)
+      setPlayerRisk(playerRiskMeta.value)
     }, timeout);
   }, [])
 
@@ -241,7 +263,7 @@ export const GroupForm = () => {
                 onChange={onPlayerSumFieldChange}
               />
             </div>
-            
+
             <div className={`field ${buyInsField.isRequired && 'required'}`} >
               <label htmlFor="buyInsField">Кол-во байинов на счету</label>
               <input type="number" value={buyInsField.value} required={buyInsField.isRequired}
@@ -252,7 +274,31 @@ export const GroupForm = () => {
 
           </div>
 
-          
+          <div className="three fields">
+            <h4 className="title">Заявленные доли рисков</h4>
+
+            <div className={`field ${playerRiskField.isRequired && 'required'}`} >
+              <label htmlFor="playerRiskField">Игрок</label>
+              <input type="number" value={playerRisk} required={playerRiskField.isRequired}
+                disabled={!playerRiskField.isEditable} min={playerRiskField.min} max={playerRiskField.max}
+                onChange={onRiskChange} name='playerRiskField'
+              />
+            </div>
+
+            <div className="field">
+              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange}/>
+            </div>
+            
+            <div className={`field ${fundRiskField.isRequired && 'required'}`} >
+              <label htmlFor="fundRiskField">Фонд</label>
+              <input type="number" value={100-playerRisk} required={fundRiskField.isRequired}
+                disabled={!fundRiskField.isEditable} min={fundRiskField.min} max={fundRiskField.max}
+                onChange={onRiskChange} name='fundRiskField'
+              />
+            </div>
+
+          </div>
+
         </div>
 
         <button type="submit" className="ui red button">Sub</button>
