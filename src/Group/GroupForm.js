@@ -3,7 +3,7 @@ import CreateProject from './Draft';
 // Fake data
 import {
   groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta,
-  playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta, playerRiskMeta, fundRiskMeta
+  playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta, playerRiskMeta, fundRiskMeta, rollbackMeta
 } from './fakeData';
 import { InvestorField } from './InvestorField';
 import { ManagerField } from './ManagerField';
@@ -150,14 +150,20 @@ export const GroupForm = () => {
   const onRiskChange = e => {
     if (e.target.name === 'playerRiskField' || e.target.name === 'playerRisk') {
       setPlayerRisk(e.target.value)
-      setPlayerRiskField({...playerRiskField, value: e.target.value})
-      setFundRiskField({...fundRiskField, value: 100-e.target.value})
-    } else if (e.target.name === 'fundRiskField'){
-      setPlayerRisk(100-e.target.value)
-      setPlayerRiskField({...playerRiskField, value: 100-e.target.value})
-      setFundRiskField({...fundRiskField, value: e.target.value})
+      setPlayerRiskField({ ...playerRiskField, value: e.target.value })
+      setFundRiskField({ ...fundRiskField, value: 100 - e.target.value })
+    } else if (e.target.name === 'fundRiskField') {
+      setPlayerRisk(100 - e.target.value)
+      setPlayerRiskField({ ...playerRiskField, value: 100 - e.target.value })
+      setFundRiskField({ ...fundRiskField, value: e.target.value })
     }
   }
+
+  const [rollbackField, setRollbackField] = useState({ ...numberFieldDefaultState, max: 100, min: 0 })
+  const onRollbackChange = e => {
+    setRollbackField({ ...rollbackField, value: e.target.value })
+  }
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -172,6 +178,8 @@ export const GroupForm = () => {
       setPlayerRiskField(playerRiskMeta)
       setFundRiskField(fundRiskMeta)
       setPlayerRisk(playerRiskMeta.value)
+      // end of slider sets
+      setRollbackField(rollbackMeta)
     }, timeout);
   }, [])
 
@@ -276,6 +284,7 @@ export const GroupForm = () => {
 
           <div className="three fields">
             <h4 className="title">Заявленные доли рисков</h4>
+            <br/>
 
             <div className={`field ${playerRiskField.isRequired && 'required'}`} >
               <label htmlFor="playerRiskField">Игрок</label>
@@ -286,15 +295,31 @@ export const GroupForm = () => {
             </div>
 
             <div className="field">
-              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange}/>
+              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} />
             </div>
-            
+
             <div className={`field ${fundRiskField.isRequired && 'required'}`} >
               <label htmlFor="fundRiskField">Фонд</label>
-              <input type="number" value={100-playerRisk} required={fundRiskField.isRequired}
+              <input type="number" value={100 - playerRisk} required={fundRiskField.isRequired}
                 disabled={!fundRiskField.isEditable} min={fundRiskField.min} max={fundRiskField.max}
                 onChange={onRiskChange} name='fundRiskField'
               />
+            </div>
+
+          </div>
+
+          <div className="two fields">
+
+            <div className={`field ${rollbackField.isRequired && 'required'}`} >
+              <label htmlFor="rollbackField">Игрок</label>
+              <input type="number" value={rollbackField.value} required={rollbackField.isRequired}
+                disabled={!rollbackField.isEditable} min={rollbackField.min} max={rollbackField.max}
+                onChange={onRollbackChange} name='rollbackField'
+              />
+            </div>
+            
+            <div className="field">
+              <input type="range" name="rollbackRange" value={rollbackField.value} onChange={onRollbackChange} />
             </div>
 
           </div>

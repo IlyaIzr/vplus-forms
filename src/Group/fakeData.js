@@ -123,3 +123,9 @@ export const fundRiskMeta = {
   min: 0,
   max: 100
 }
+
+export const rollbackMeta = {  
+  value: 0,
+  isEditable: true,
+  isRequired: true
+}
