@@ -20,10 +20,6 @@ const numberFieldDefaultState = {
   max: ''
 }
 
-const onSubmit = e => {
-  e.preventDefault(); console.log(e)
-};
-
 
 
 export const GroupForm = () => {
@@ -164,6 +160,24 @@ export const GroupForm = () => {
     setRollbackField({ ...rollbackField, value: e.target.value })
   }
 
+  const onSubmit = e => {
+    e.preventDefault(); 
+    const formData = {
+      groupNameField,
+      disciplineField,
+      investorsField,
+      managersField,
+      contractField,
+      tournamentsField,
+      playerSumField,
+      buyInsField,
+      playerRiskField,
+      fundRiskField,
+      rollbackField
+    }
+    console.log(formData)
+  };
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -284,7 +298,7 @@ export const GroupForm = () => {
 
           <div className="three fields">
             <h4 className="title">Заявленные доли рисков</h4>
-            <br/>
+            <br />
 
             <div className={`field ${playerRiskField.isRequired && 'required'}`} >
               <label htmlFor="playerRiskField">Игрок</label>
@@ -317,7 +331,7 @@ export const GroupForm = () => {
                 onChange={onRollbackChange} name='rollbackField'
               />
             </div>
-            
+
             <div className="field">
               <input type="range" name="rollbackRange" value={rollbackField.value} onChange={onRollbackChange} />
             </div>
@@ -326,7 +340,9 @@ export const GroupForm = () => {
 
         </div>
 
-        <button type="submit" className="ui red button">Sub</button>
+        <button type="submit" className={`ui red button ${(total != 100 || !managersField.managers.length) && 'disabled'}`}>
+          Отправить
+        </button>
       </form>
 
     </div>
