@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import Select, { components } from 'react-select';
 //Fakes
 import {
   groupsFieldMetaData, senderAccsMeta, recipientListMeta, senderListMeta,
@@ -35,14 +36,17 @@ export const FormTransactions = () => {
   //Group
   useEffect(() => {
     setTimeout(() => {
-      setGroupField(groupsFieldMetaData)
+      const selectFormatOptions = groupsFieldMetaData.options && groupsFieldMetaData.options.map((option) => {
+        return ({ label: option.name, value: option.id, subtitle: option.subtitle })
+      })
+      setGroupField({ ...groupsFieldMetaData, options: selectFormatOptions })
       if (groupsFieldMetaData.defOption) {
         setValue('group', groupsFieldMetaData.defOption.id)
         setTimeout(() => {  //call with default option
           setSenderField(senderListMeta)
           if (senderListMeta.defOption) {
             setValue('sender', senderListMeta.defOption.id, { shouldDirty: true, shouldValidate: true })
-            console.log(getValues('sender')) 
+            console.log(getValues('sender'))
             senderAccsRequest(senderListMeta.defOption.id)
           }
           setRecipients(recipientListMeta)
@@ -55,7 +59,8 @@ export const FormTransactions = () => {
     }, timeOut)
   }, []);
 
-  const onChangeGroup = (e) => {
+  const onChangeGroup = (option) => {
+    setGroupField({ ...groupField, defOption: option })
     setTimeout(() => {
       setTimeout(() => {  //call with selected option e.target.value
         setSenderField(senderListMeta)
@@ -85,8 +90,8 @@ export const FormTransactions = () => {
   }
 
   const resetSomeFields = (e) => {
-    setValue('sender', (senderListMeta.defOption && senderListMeta.defOption.id) || '' )
-    setValue('senderAccout', (senderAccsMeta.defOption && senderAccsMeta.defOption.id) || '' )
+    setValue('sender', (senderListMeta.defOption && senderListMeta.defOption.id) || '')
+    setValue('senderAccout', (senderAccsMeta.defOption && senderAccsMeta.defOption.id) || '')
     setValue('recipientId', (recipientListMeta.defOption && recipientListMeta.defOption.id) || '')
     setValue('recipientAccout', (senderAccsMeta.defOption && senderAccsMeta.defOption.id) || '')
     setValue('payment', '')
@@ -94,22 +99,32 @@ export const FormTransactions = () => {
     setValue('comment', '')
   }
 
+  const { Option } = components
+  const ExaOption = (props) => {
+    return (<Option {...props}>
+      {props.data.label}
+      <br/>
+      {props.data.subtitle}
+    </Option>
+    )
+  };
+
+
   return (
     <div className="ui container">
       <form onSubmit={handleSubmit(onSubmit)} className="ui form">
+
         <div className={groupField.isRequired ? "required field" : "field"}>
-          <label htmlFor="group">Группа</label>
-          <select name="group" ref={register} onChange={onChangeGroup} className="ui dropdown"
-            required={groupField.isRequired} disabled={!groupField.isEditable}
-          >
-            {!dirtyFields.group && <option value=''>{checkMessage}</option>}
-            {groupField.options.length && groupField.options.map((group) => {
-              return (
-                <option value={group.id} key={group.id}>{group.name}</option>
-              )
-            })}
-          </select>
+          <div className="field">
+            <label htmlFor="group">Группа</label>
+            <Select options={groupField.options} components={{ Option: ExaOption }} name="group"
+              onChange={onChangeGroup} required={groupField.isRequired} disabled={!groupField.isEditable}
+              value={groupField.defOption}
+            />
+          </div>
+
         </div>
+
 
         {/* USERS AND ACCOUNTS */}
         {(getValues('group') || groupsFieldMetaData.defOption.id) && <><div className="two fields">

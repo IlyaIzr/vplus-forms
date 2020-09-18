@@ -1,11 +1,11 @@
 const groupsData = [
-  { name: 'Alpha', id: '114aZ' },
-  { name: 'Beta', id: '2aaaZ' },
-  { name: 'Gamma', id: '31414aZ' }
+  { name: 'Alpha', id: '114aZ', subtitle: 'subs' },
+  { name: 'Beta', id: '2aaaZ', subtitle: 'subs2' },
+  { name: 'Gamma', id: '31414aZ', subtitle: 'subs3' } // subtitle can be html
 ]
 export const groupsFieldMetaData = {
   options: groupsData,
-  defOption: { name: 'Beta', id: '2aaaZ' }, //or false
+  defOption: { name: 'Beta', id: '2aaaZ', subtitle: 'subs3' }, //or false
   isEditable: true,
   isRequired: true
 }
