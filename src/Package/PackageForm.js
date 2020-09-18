@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
+import './Package.css'
 //Fake data
 import {
   timeout, roomsFieldMeta, tournamentsNumberMeta,
@@ -106,8 +107,9 @@ export const PackageForm = () => {
             />
           </div>
 
-          <div className="field">
-            <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} />
+          <div className="field positionRelative">
+            <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} 
+            className="inputRange"/>
           </div>
 
           <div className={`field ${fundRiskField.isRequired && 'required'}`} >
