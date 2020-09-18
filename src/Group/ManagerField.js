@@ -42,7 +42,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
 
 
   return (
-    <div className="ui three fields">
+    <div className="ui fields">
       <div className="required field">
         <label htmlFor="id">Пользователь</label>
         <select name="id" className="ui dropdown"

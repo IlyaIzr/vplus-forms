@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw, convertFromRaw } from 'draft-js';
 import InlineStyleControls from './draftjs/InlineStyleControls';
+// import 'draft-js/dist/Draft.css'
 
 const CreateProject = ({ createProject }) => {
   const content = window.localStorage.getItem('content');
@@ -18,8 +19,8 @@ const CreateProject = ({ createProject }) => {
   });
 
   const editorRef = useRef(null);
-  
-  useEffect(() => {editorRef.current.focus()}, [])
+
+  useEffect(() => { editorRef.current.focus() }, [])
 
   const saveContent = content => {
     window.localStorage.setItem('content', JSON.stringify(convertToRaw(content)));
@@ -76,37 +77,32 @@ const CreateProject = ({ createProject }) => {
 
   return (
     <div className="ui container">
-      <div className="row">
-        <div className="col-0 col-lg-2"></div>
-        <div className="col-12 col-lg-8">
-          <div className="">
-            <fieldset>
-              <h3 className="title">Шаблон договора</h3>
-              <div className="field">
-                <div className={className} id="toInvis">
-                  <Editor
-                    editorState={editorState}
-                    handleKeyCommand={handleKeyCommand}
-                    keyBindingFn={mapKeyToEditorCommand}
-                    onChange={onChange}
-                    spellCheck={true} 
-                    ref={editorRef}
-                    className="form-control "
-                    id="content"
-                    //placeholder="напишите что-то ниже"
-                  />
-                  <div className="RichEditor-root rounded mb-3 ">
-                    <InlineStyleControls
-                      editorState={editorState}
-                      onToggle={toggleInlineStyle}
-                    />                                     
-                  </div>
-
-                </div>
+      <div className="">
+        <fieldset style={{border: 0}}>
+          <h3 className="title">Шаблон договора</h3>
+          <div className="field">
+            <div className={className} id="toInvis">
+              <Editor
+                editorState={editorState}
+                handleKeyCommand={handleKeyCommand}
+                keyBindingFn={mapKeyToEditorCommand}
+                onChange={onChange}
+                spellCheck={true}
+                ref={editorRef}
+                className="form-control "
+                id="content"
+              //placeholder="напишите что-то ниже"
+              />
+              <div className="RichEditor-root rounded mb-3 ">
+                <InlineStyleControls
+                  editorState={editorState}
+                  onToggle={toggleInlineStyle}
+                />
               </div>
-            </fieldset>
+
+            </div>
           </div>
-        </div>
+        </fieldset>
       </div>
     </div>
   );

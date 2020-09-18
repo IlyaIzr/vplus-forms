@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import CreateProject from './Draft';
+import CreateProject from './Draft'
+import './Group.css'
 // Fake data
 import {
   groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta,
   playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta, playerRiskMeta, fundRiskMeta, rollbackMeta
-} from './fakeData';
-import { InvestorField } from './InvestorField';
-import { ManagerField } from './ManagerField';
+} from './fakeData'
+import { InvestorField } from './InvestorField'
+import { ManagerField } from './ManagerField'
 const stringFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -67,11 +68,14 @@ export const GroupForm = () => {
     const investors = [...investorsField.investors, {
       name: investorsField.options[0].name,
       id: investorsField.options[0].id,
-      share: 1
+      share: 100
     }]
-    investors[0].share -= 1
+    if (investorsField.investors.length) {
+      investors[0].share -= 1
+      investors[investors.length - 1].share = 1
+    }
     setInvestorsField({
-      ...investorsField, investors //TODO a way to generate id
+      ...investorsField, investors
     })
   }
   const removeField = index => {
@@ -161,7 +165,7 @@ export const GroupForm = () => {
   }
 
   const onSubmit = e => {
-    e.preventDefault(); 
+    e.preventDefault();
     const formData = {
       groupNameField,
       disciplineField,
@@ -223,8 +227,7 @@ export const GroupForm = () => {
           </select>
         </div>
 
-        <h3 className="ui title">Руководящий состав</h3>
-        <hr />
+        <div className="ui horizontal divider">Руководящий состав</div>
 
         <div className="ui segment">
           <h4 className="ui title">Назначьте одного или нескольких инвесторов</h4>
@@ -240,9 +243,12 @@ export const GroupForm = () => {
           <button type="button" onClick={addField}
             className={investorsField.options <= investorsField.investors ? "ui button green disabled" : "ui button green"}
           >Добавить</button>
-          <span className={total == 100 ? "ui green text" : "ui red text"}>
+          <span className={total == 100 ? "ui green text" : "ui red text"} htmlFor="total">
             {'Суммарно процентов: ' + total}
           </span>
+          <div className="ui checkbox">
+            <input type="checkbox" name="total" checked={total == 100} required/>
+          </div>
         </div>
 
         <div className="ui segment">
@@ -296,9 +302,8 @@ export const GroupForm = () => {
 
           </div>
 
+          <h4 className="title">Заявленные доли рисков</h4>
           <div className="three fields">
-            <h4 className="title">Заявленные доли рисков</h4>
-            <br />
 
             <div className={`field ${playerRiskField.isRequired && 'required'}`} >
               <label htmlFor="playerRiskField">Игрок</label>
@@ -308,8 +313,8 @@ export const GroupForm = () => {
               />
             </div>
 
-            <div className="field">
-              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} />
+            <div className="field positionRelative">
+              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} className="inputRange"/>
             </div>
 
             <div className={`field ${fundRiskField.isRequired && 'required'}`} >
@@ -332,15 +337,16 @@ export const GroupForm = () => {
               />
             </div>
 
-            <div className="field">
-              <input type="range" name="rollbackRange" value={rollbackField.value} onChange={onRollbackChange} />
+            <div className="field positionRelative">
+              <input type="range" name="rollbackRange" value={rollbackField.value} onChange={onRollbackChange} 
+              className="inputRange"/>
             </div>
 
           </div>
 
         </div>
 
-        <button type="submit" className={`ui red button ${(total != 100 || !managersField.managers.length) && 'disabled'}`}>
+        <button type="submit" className={`ui red button ${(!managersField.managers.length) && 'disabled'}`}>
           Отправить
         </button>
       </form>

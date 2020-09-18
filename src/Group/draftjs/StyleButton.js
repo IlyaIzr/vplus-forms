@@ -9,7 +9,7 @@ import React from 'react';
 
   return (
     <span
-      className={active ? 'RichEditor-styleButton RichEditor-activeButton' : 'RichEditor-styleButton'}
+      className={active ? 'RichEditor-styleButton RichEditor-activeButton ui tiny button' : 'RichEditor-styleButton ui tiny tertiary button'}
       onMouseDown={onMouseDown}
     >
       {label}
