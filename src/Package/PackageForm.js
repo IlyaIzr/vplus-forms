@@ -30,9 +30,7 @@ export const PackageForm = () => {
     isRequired: true,
     value: []
   })
-  const onRoomsChange = options => {
-    setRoomsField({ ...roomsField, value: options })
-  }
+  const onRoomsChange = options => { setRoomsField({ ...roomsField, value: options }) }
 
   const [tournamentsField, setTournamentsField] = useState(numberFieldDefaultState)
   const onTournamentsFieldChange = e => setTournamentsField({
@@ -64,11 +62,12 @@ export const PackageForm = () => {
   const [rollbackField, setRollbackField] = useState({ ...numberFieldDefaultState })
   const onRollbackChange = e => { setRollbackField({ ...rollbackField, value: e.target.value }) }
 
-  const [extraInfoField, setExtraInfoField] = useState({ ...stringFieldDefaultState, isRequired: false })
-  const onExtraInfoChange = e => setExtraInfoField({ ...extraInfoField, value: e.target.value })
-  
   const [buyInsField, setBuyInsField] = useState(numberFieldDefaultState)
   const onBuyInsFieldChange = e => setBuyInsField({ ...buyInsField, value: e.target.value })
+
+  const [extraInfoField, setExtraInfoField] = useState({ ...stringFieldDefaultState, isRequired: false })
+  const onExtraInfoChange = e => setExtraInfoField({ ...extraInfoField, value: e.target.value })
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -95,10 +94,38 @@ export const PackageForm = () => {
     }, timeout);
   }, [])
 
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const formData = {
+      roomsField,
+      tournamentsField,
+      playerRiskField,
+      fundRiskField,
+      aBIField,
+      bRSumField,
+      rollbackField,
+      buyInsField,
+      extraInfoField
+    }
+    console.log(formData)
+  }
+  const onReset = () => {
+    setRoomsField({ options: [], isEditable: false, isRequired: true, value: [] })
+    setTournamentsField(numberFieldDefaultState)
+    setPlayerRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
+    setFundRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
+    setPlayerRisk(50)
+    setABIField(numberFieldDefaultState)
+    setBRSumField(numberFieldDefaultState)
+    setRollbackField(numberFieldDefaultState)
+    setBuyInsField(numberFieldDefaultState)
+    setExtraInfoField({ ...stringFieldDefaultState, isRequired: false })
+  }
+
   return (
     <div className="ui container">
       <br />
-      <form className="ui from">
+      <form className="ui from" onSubmit={onSubmit} onReset={onReset}>
         <h3 className="title">Новый пакет</h3>
 
 
@@ -184,13 +211,15 @@ export const PackageForm = () => {
           />
         </div>
 
-
-
         <div className="field">
           <label htmlFor="extraInfoField">Дополнительные условия пакета</label>
           <textarea name="extraInfoField" cols="100" rows="10" value={extraInfoField.value}
             onChange={onExtraInfoChange} disabled={!extraInfoField.isEditable} />
         </div>
+
+
+        <button type='reset' className='ui button red'>Сбросить поля</button>
+        <button type='submit' className='ui button green'>Отправить</button>
       </form>
     </div>
   )
