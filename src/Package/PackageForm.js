@@ -5,7 +5,7 @@ import './Package.css'
 //Fake data
 import {
   timeout, roomsFieldMeta, tournamentsNumberMeta,
-  playerRiskMeta, fundRiskMeta, extraInfoMeta
+  playerRiskMeta, fundRiskMeta, extraInfoMeta, aBIMeta
 } from './fakeData'
 // Extra stuff
 const animatedComponents = makeAnimated()
@@ -55,8 +55,20 @@ export const PackageForm = () => {
     }
   }
 
-  const [extraInfoField, setExtraInfoField] = useState({...stringFieldDefaultState, isRequired: false})
-  const onExtraInfoChange = e => setExtraInfoField({...extraInfoField, value: e.target.value})
+  const [aBIField, setABIField] = useState(numberFieldDefaultState)
+  const onABIFieldChange = e => setABIField({ ...aBIField, value: e.target.value })
+
+  const [bRSumField, setBRSumField] = useState(numberFieldDefaultState)
+  const onBRSumFieldChange = e => setBRSumField({ ...bRSumField, value: e.target.value })
+
+  const [rollbackField, setRollbackField] = useState({ ...numberFieldDefaultState })
+  const onRollbackChange = e => { setRollbackField({ ...rollbackField, value: e.target.value }) }
+
+  const [extraInfoField, setExtraInfoField] = useState({ ...stringFieldDefaultState, isRequired: false })
+  const onExtraInfoChange = e => setExtraInfoField({ ...extraInfoField, value: e.target.value })
+  
+  const [buyInsField, setBuyInsField] = useState(numberFieldDefaultState)
+  const onBuyInsFieldChange = e => setBuyInsField({ ...buyInsField, value: e.target.value })
 
   useEffect(() => {
     setTimeout(() => {
@@ -75,6 +87,10 @@ export const PackageForm = () => {
       setFundRiskField(fundRiskMeta)
       setPlayerRisk(playerRiskMeta.value)
       // end of slider sets
+      setABIField(aBIMeta)
+      setBRSumField(aBIMeta)
+      setRollbackField(aBIMeta)
+      setBuyInsField(aBIMeta)
       setExtraInfoField(extraInfoMeta)
     }, timeout);
   }, [])
@@ -97,7 +113,6 @@ export const PackageForm = () => {
 
         <h4 className="title">Заявленные доли рисков в пакете</h4>
         <div className="three fields">
-          <br />
 
           <div className={`field ${playerRiskField.isRequired && 'required'}`} >
             <label htmlFor="playerRiskField">Игрок</label>
@@ -108,8 +123,8 @@ export const PackageForm = () => {
           </div>
 
           <div className="field positionRelative">
-            <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} 
-            className="inputRange"/>
+            <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange}
+              className="inputRange" />
           </div>
 
           <div className={`field ${fundRiskField.isRequired && 'required'}`} >
@@ -121,10 +136,45 @@ export const PackageForm = () => {
           </div>
 
         </div>
-        <hr />
 
-        <div className="two">
+        <div className="ui horizontal divider"></div>
 
+        <div className="two fields">
+
+          <div className={`field ${aBIField.isRequired && 'required'}`} >
+            <label htmlFor="buyInsField">Рекомендованное количество АБИ</label>
+            <input type="number" value={aBIField.value} required={aBIField.isRequired}
+              disabled={!aBIField.isEditable} min={aBIField.min} max={aBIField.max}
+              onChange={onABIFieldChange}
+            />
+          </div>
+
+          <div className={`field ${bRSumField.isRequired && 'required'}`} >
+            <label htmlFor="buyInsField">Сумма игрока в своей БР</label>
+            <input type="number" value={bRSumField.value} required={bRSumField.isRequired}
+              disabled={!bRSumField.isEditable} min={bRSumField.min} max={bRSumField.max}
+              onChange={onBRSumFieldChange}
+            />
+          </div>
+        </div>
+
+        <div className="two fields">
+
+          <div className={`field ${rollbackField.isRequired && 'required'}`} >
+            <label htmlFor="rollbackField">Величина отката игроку</label>
+            <input type="number" value={rollbackField.value} required={rollbackField.isRequired}
+              disabled={!rollbackField.isEditable} min={rollbackField.min} max={rollbackField.max}
+              onChange={onRollbackChange} name='rollbackField'
+            />
+          </div>
+
+          <div className={`field ${buyInsField.isRequired && 'required'}`} >
+            <label htmlFor="buyInsField">Кол-во байинов на счету игрока</label>
+            <input type="number" value={buyInsField.value} required={buyInsField.isRequired}
+              disabled={!buyInsField.isEditable} min={buyInsField.min} max={buyInsField.max}
+              onChange={onBuyInsFieldChange}
+            />
+          </div>
         </div>
 
         <div className="field">
@@ -134,10 +184,12 @@ export const PackageForm = () => {
           />
         </div>
 
+
+
         <div className="field">
           <label htmlFor="extraInfoField">Дополнительные условия пакета</label>
           <textarea name="extraInfoField" cols="100" rows="10" value={extraInfoField.value}
-          onChange={onExtraInfoChange} disabled={!extraInfoField.isEditable}/>
+            onChange={onExtraInfoChange} disabled={!extraInfoField.isEditable} />
         </div>
       </form>
     </div>

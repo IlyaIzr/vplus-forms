@@ -135,13 +135,9 @@ export const GroupForm = () => {
     ...tournamentsField, value: e.target.value
   })
   const [playerSumField, setPlayerSumField] = useState(numberFieldDefaultState)
-  const onPlayerSumFieldChange = e => setPlayerSumField({
-    ...playerSumField, value: e.target.value
-  })
+  const onPlayerSumFieldChange = e => setPlayerSumField({ ...playerSumField, value: e.target.value })
   const [buyInsField, setBuyInsField] = useState(numberFieldDefaultState)
-  const onBuyInsFieldChange = e => setBuyInsField({
-    ...buyInsField, value: e.target.value
-  })
+  const onBuyInsFieldChange = e => setBuyInsField({ ...buyInsField, value: e.target.value })
 
   //two-sides slider
   const [playerRisk, setPlayerRisk] = useState(50)
@@ -247,7 +243,7 @@ export const GroupForm = () => {
             {'Суммарно процентов: ' + total}
           </span>
           <div className="ui checkbox">
-            <input type="checkbox" name="total" checked={total == 100} required/>
+            <input type="checkbox" name="total" checked={total == 100} required />
           </div>
         </div>
 
@@ -314,7 +310,7 @@ export const GroupForm = () => {
             </div>
 
             <div className="field positionRelative">
-              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} className="inputRange"/>
+              <input type="range" name="playerRisk" value={playerRisk} onChange={onRiskChange} className="inputRange" />
             </div>
 
             <div className={`field ${fundRiskField.isRequired && 'required'}`} >
@@ -338,8 +334,8 @@ export const GroupForm = () => {
             </div>
 
             <div className="field positionRelative">
-              <input type="range" name="rollbackRange" value={rollbackField.value} onChange={onRollbackChange} 
-              className="inputRange"/>
+              <input type="range" name="rollbackRange" value={rollbackField.value} onChange={onRollbackChange}
+                className="inputRange" />
             </div>
 
           </div>

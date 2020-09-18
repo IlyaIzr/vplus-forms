@@ -39,3 +39,10 @@ export const extraInfoMeta = {
   isEditable: true,
   isRequired: false
 }
+
+export const aBIMeta = {  
+  value: '',
+  isEditable: true,
+  isRequired: true,
+  min: 0
+}
