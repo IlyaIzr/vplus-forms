@@ -16,7 +16,7 @@ export const NumberField = ({
       {label && <label htmlFor={name}>{label}</label>}
       <input type="number" name={name} value={value}
         required={isRequired} disabled={!isEditable} onChange={onChange}
-        min={min} max={max} step={step}
+        min={min ? min : undefined} max={max ? max : undefined} step={step ? step : undefined}
       />
     </div>
   )

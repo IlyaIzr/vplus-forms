@@ -5,7 +5,7 @@ const groupsData = [
 ]
 export const groupsFieldMetaData = {
   options: groupsData,
-  defOption: { name: 'Beta', id: '2aaaZ', subtitle: 'subs3' }, //or false
+  defOption: false, //or false
   isEditable: true,
   isRequired: true
 }

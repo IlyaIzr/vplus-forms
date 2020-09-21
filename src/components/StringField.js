@@ -13,7 +13,7 @@ export const StringField = ({
     <div className={isRequired ? "required field" : "field"}>
       {label && <label htmlFor={name}>{label}</label>}
       <input type="text" name={name} value={value} onChange={onChange}
-        required={isRequired} disabled={!isEditable} minLength={minLength}
+        required={isRequired} disabled={!isEditable} minLength={minLength ? minLength : undefined}
       />
     </div>
   )
