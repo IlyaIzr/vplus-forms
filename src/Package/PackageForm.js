@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Select from 'react-select'
-import makeAnimated from 'react-select/animated'
 import './Package.css'
+import { SelectField } from '../components/SelectField'
 //Fake data
 import {
   timeout, roomsFieldMeta, tournamentsNumberMeta,
   playerRiskMeta, fundRiskMeta, extraInfoMeta, aBIMeta
 } from './fakeData'
 // Extra stuff
-const animatedComponents = makeAnimated()
 const numberFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -204,12 +202,10 @@ export const PackageForm = () => {
           </div>
         </div>
 
-        <div className="field">
-          <label htmlFor="rooms">Выберите один или несколько румов</label>
-          <Select name="rooms" options={roomsField.options} isMulti onChange={onRoomsChange}
-            components={animatedComponents} value={roomsField.value}
-          />
-        </div>
+        <SelectField label='Выберите один или несколько румов' options={roomsField.options}
+          isMulti={true} onChange={onRoomsChange} value={roomsField.value} name="rooms"
+          isRequired={roomsField.isRequired}
+        />
 
         <div className="field">
           <label htmlFor="extraInfoField">Дополнительные условия пакета</label>

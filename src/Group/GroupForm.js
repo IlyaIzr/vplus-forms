@@ -8,6 +8,8 @@ import {
 } from './fakeData'
 import { InvestorField } from './InvestorField'
 import { ManagerField } from './ManagerField'
+import { StringField } from '../components/StringField'
+import { NumberField } from '../components/NumberField'
 const stringFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -182,6 +184,7 @@ export const GroupForm = () => {
   useEffect(() => {
     setTimeout(() => {
       setGroupNameField(groupFieldMeta)
+      console.log(groupFieldMeta)
       setDisciplineField(disciplineFieldMeta)
       setInvestorsField(investorsMeta)
       setManagersField(managersMeta)
@@ -202,12 +205,10 @@ export const GroupForm = () => {
     <div className="ui conainer" style={{ padding: '20px' }}>
       <form onSubmit={onSubmit} className="ui form">
 
-        <div className={groupNameField.isRequired ? "required field" : "field"}>
-          <label htmlFor="group">Группа</label>
-          <input type="text" name="group" value={groupNameField.value} onChange={onGroupNameChange}
-            required={groupNameField.isRequired} disabled={!groupNameField.isEditable}
-          />
-        </div>
+        <StringField isRequired={groupNameField.isRequired} value={groupNameField.value}
+          onChange={onGroupNameChange} isEditable={groupNameField.isEditable} label="Группа"
+          name="group"
+        />
 
         <div className={disciplineField.isRequired ? "required field" : "field"}>
           <label htmlFor="discipline">Дисциплина</label>
@@ -272,13 +273,10 @@ export const GroupForm = () => {
           <h3 className="title">Шаблон пакета</h3>
           <div className="three fields">
 
-            <div className={`field ${tournamentsField.isRequired && 'required'}`} >
-              <label htmlFor="tournamentsField">Количество турниров</label>
-              <input type="number" value={tournamentsField.value} required={tournamentsField.isRequired}
-                disabled={!tournamentsField.isEditable} min={tournamentsField.min} max={tournamentsField.max}
-                onChange={onTournamentsFieldChange}
-              />
-            </div>
+            <NumberField isRequired={tournamentsField.isRequired} isEditable={tournamentsField.isEditable}
+              label="Количество турниров" value={tournamentsField.value} onChange={onTournamentsFieldChange}
+              min={tournamentsField.min} max={tournamentsField.max}
+            />
 
             <div className={`field ${playerSumField.isRequired && 'required'}`} >
               <label htmlFor="playerSumField">Сумма игрока в свой БР</label>
