@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { components } from 'react-select';
 import { SelectField } from '../components/SelectField';
 import { NumberField } from '../components/NumberField'
@@ -15,7 +14,6 @@ const fieldSettings = {
   isEditable: true,
   isRequired: true
 }
-const checkMessage = 'Укажите группу'
 
 const optionFormatter = options => {
   const formatedOptions = options && options.map((option) => {

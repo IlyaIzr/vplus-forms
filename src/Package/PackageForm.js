@@ -122,8 +122,7 @@ export const PackageForm = () => {
 
   return (
     <div className="ui container">
-      <br />
-      <form className="ui from" onSubmit={onSubmit} onReset={onReset}>
+      <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
         <h3 className="title">Новый пакет</h3>
 
 
