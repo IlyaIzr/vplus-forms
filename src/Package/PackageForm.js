@@ -110,7 +110,7 @@ export const PackageForm = () => {
     console.log(formData)
   }
   const onReset = () => {
-    setRoomsField({ options: [], isEditable: false, isRequired: true, value: [] })
+    setRoomsField({ ...roomsField, value: [] })
     setTournamentsField(numberFieldDefaultState)
     setPlayerRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
     setFundRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
@@ -129,11 +129,11 @@ export const PackageForm = () => {
         <h3 className="title">Новый пакет</h3>
 
 
-        <div className={`ui field ${tournamentsField.isRequired && 'required'}`} >
-          <label htmlFor="tournamentsField">Количество турниров в пакете</label>
+        <div className={`field ${tournamentsField.isRequired && 'required'}`} >
+          <label htmlFor="tournamentsField">Количество турниров в пакете </label>
           <input type="number" value={tournamentsField.value} required={tournamentsField.isRequired}
             disabled={!tournamentsField.isEditable} min={tournamentsField.min} max={tournamentsField.max}
-            onChange={onTournamentsFieldChange}
+            onChange={onTournamentsFieldChange} name="tournamentsField"
           />
         </div>
 
