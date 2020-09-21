@@ -91,7 +91,8 @@ export const RegForm = () => {
           </div>
           <div className="field required">
             <label htmlFor="password">Пароль</label>
-            <input type="password" value={passwordField} onChange={onPasswordFieldChange} required />
+            <input type="password" value={passwordField} onChange={onPasswordFieldChange} required 
+            minLength="6"/>
           </div>
           <div className="field required">
             <label htmlFor="password">Повторите пароль</label>
