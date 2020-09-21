@@ -159,7 +159,7 @@ export const FormTransactions = () => {
 
   return (
     <div className="ui container">
-      <form onSubmit={onSubmit} className="ui form">
+      <form onSubmit={onSubmit} onReset={resetSomeFields} className="ui form">
 
         <SelectField isRequired={groupField.isRequired} isEditable={groupField.isEditable}
           label="Группа" name="group"
@@ -221,8 +221,8 @@ export const FormTransactions = () => {
           <textarea name="comment" value={comment} onChange={onCommentChange} />
         </div>
 
-        <button type="button" className="ui button red" onClick={resetSomeFields}>Сбросить</button>
-        <button type="submit" className="ui button">Подтвердить</button>
+        <button type="reset" className="ui button red">Сбросить</button>
+        <button type="submit" className="ui button teal">Подтвердить</button>
       </form>
     </div>
   )
