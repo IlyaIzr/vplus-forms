@@ -49,8 +49,8 @@ export const FormTransactions = () => {
   const senderRequest = (id) => {
     const options = optionFormatter(senderListMeta.options)
     const defOption = oneOptionFormatter(senderListMeta.defOption)
-    console.log(defOption)
     setSenderField({ ...senderListMeta, options, defOption })
+    if (defOption && defOption.value) senderAccsRequest()
   }
   const senderAccsRequest = (id) => {
     const options = optionFormatter(senderAccsMeta.options)
@@ -61,6 +61,7 @@ export const FormTransactions = () => {
     const options = optionFormatter(recipientListMeta.options)
     const defOption = oneOptionFormatter(recipientListMeta.defOption)
     setRecipientsField({ ...recipientListMeta, options, defOption })
+    if (defOption && defOption.value) recipientAccsRequest()
   }
   const recipientAccsRequest = (id) => {
     const options = optionFormatter(senderAccsMeta.options)
@@ -72,16 +73,15 @@ export const FormTransactions = () => {
   useEffect(() => {
     setTimeout(() => {
       groupRequest()
-      if (groupsFieldMetaData.defOption) {
-        groupRequest(groupsFieldMetaData.defOption.value)   //value is equivalent of id
-        setTimeout(() => {
-          senderRequest(groupsFieldMetaData.defOption.value)
-          if (senderListMeta.defOption) {
-            senderAccsRequest(senderListMeta.defOption.value)
+      if (groupsFieldMetaData.defOption && groupsFieldMetaData.defOption.id) {
+        setTimeout(() => {   //value is equivalent of id
+          senderRequest()
+          if (senderListMeta.defOption && senderListMeta.defOption.id) {
+            senderAccsRequest()
           }
-          recipientRequest(groupsFieldMetaData.defOption.value)
-          if (recipientListMeta.defOption) {
-            recipientAccsRequest(recipientListMeta.defOption.id)
+          recipientRequest()
+          if (recipientListMeta.defOption && recipientListMeta.defOption.id) {
+            recipientAccsRequest()
           }
         }, timeOut)
       }

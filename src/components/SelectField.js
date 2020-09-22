@@ -27,12 +27,12 @@ export const SelectField = ({
       {label && <label htmlFor={name}>{label}</label>}
       <Select options={options}
         components={optionWrapper ? { Option: optionWrapper } : animatedComponents}
-        name={name} onChange={onChange} disabled={!isEditable}
+        name={name} onChange={onChange} isDisabled={!isEditable}
         value={value} isMulti={isMulti}
       />
-      <input type="text" value={isFilled} required={isRequired}
+      {isRequired && <input type="text" value={isFilled} required={isRequired}
         style={{ opacity: 0, height: 0, padding: 0 }} tabIndex={-1} autoComplete="off"
-      />
+      />}
     </div>
   )
 }
