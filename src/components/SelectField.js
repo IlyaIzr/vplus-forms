@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 const animatedComponents = makeAnimated()
@@ -14,16 +14,25 @@ export const SelectField = ({
   options,
   optionWrapper = false
 }) => {
+  const isFilledF = () => {
+    if (Array.isArray(value)) {
+      if (value.length) { return 'a' } else { return '' }
+    } else {
+      if (value && value.value) { return 'a' } else { return '' }
+    }
+  }
+  let isFilled = isFilledF()
   return (
     <div className={isRequired ? "required field" : "field"}>
-      <div className="field">
-        {label && <label htmlFor={name}>{label}</label>}
-        <Select options={options}
-          components={optionWrapper ? { Option: optionWrapper } : animatedComponents}
-          name={name} onChange={onChange} required={isRequired} disabled={!isEditable}
-          value={value} isMulti={isMulti}
-        />
-      </div>
+      {label && <label htmlFor={name}>{label}</label>}
+      <Select options={options}
+        components={optionWrapper ? { Option: optionWrapper } : animatedComponents}
+        name={name} onChange={onChange} disabled={!isEditable}
+        value={value} isMulti={isMulti}
+      />
+      <input type="text" value={isFilled} required={isRequired}
+        style={{ opacity: 0, height: 0, padding: 0 }} tabIndex={-1} autoComplete="off"
+      />
     </div>
   )
 }
