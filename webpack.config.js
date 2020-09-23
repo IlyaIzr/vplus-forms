@@ -8,7 +8,8 @@ module.exports = {
     transactions: path.join(__dirname, './src/Transactions/index.js'),
     groupForm: path.join(__dirname, './src/Group/index.js'),
     packageForm: path.join(__dirname, './src/Package/index.js'),
-    regForm: path.join(__dirname, './src/Reg/index.js')
+    regForm: path.join(__dirname, './src/Reg/index.js'),
+    accountsForm: path.join(__dirname, './src/Accs/index.js')
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -58,6 +59,11 @@ module.exports = {
       filename: 'regForm.html',
       template: './public/regForm.html',
       chunks: ['regForm']
+    }),
+    new HtmlWebPackPlugin({
+      filename: 'accountsForm.html',
+      template: './public/accountsForm.html',
+      chunks: ['accountsForm']
     }),
     new HtmlWebPackPlugin({
       template: "./public/index.html",

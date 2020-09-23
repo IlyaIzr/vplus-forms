@@ -47,7 +47,7 @@ const paymentFormHourRate = {
     isEditable: false,
     isRequired: true,
     name: 'payMethodName',
-    label: 'Способ оплаты'
+    label: '@(Способ оплаты)'
   }, {
     type: 'nubmer',
     value: '20',
