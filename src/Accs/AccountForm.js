@@ -66,8 +66,23 @@ export const AccountForm = () => {
   return (
     <div className="ui container"><br />
       <h2>@(Аккаунты и счета)</h2>
-      <form className="ui form">
+      <form className="ui form">        
 
+        <div className="ui segment">
+          <h4>@(Счета)</h4>
+          {accountsMeta.accounts.length ? accountsMeta.accounts.map((account, index) => {
+            return (
+              <AccountSubForm account={account} options={accountsMeta.options}
+                isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
+                onAccountTypeChange={onAccountTypeChange} index={index}
+                onCustomAccChange={onCustomAccChange}
+                key={index}
+              />
+            )
+          }) : null}
+
+        </div>
+        
         <div className="ui segment">
           <h4>@(Соцсети)</h4>
           <SelectField label="@(Выберите соцсеть)" name="social"
@@ -95,21 +110,6 @@ export const AccountForm = () => {
               />
             </div>
           </div>}
-        </div>
-
-        <div className="ui segment">
-          <h4>@(Счета)</h4>
-          {accountsMeta.accounts.length ? accountsMeta.accounts.map((account, index) => {
-            return (
-              <AccountSubForm account={account} options={accountsMeta.options}
-                isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
-                onAccountTypeChange={onAccountTypeChange} index={index}
-                onCustomAccChange={onCustomAccChange}
-                key={index}
-              />
-            )
-          }) : null}
-
         </div>
 
       </form>

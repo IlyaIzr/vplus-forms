@@ -166,7 +166,7 @@ export const PackageForm = () => {
         <div className="two fields">
 
           <div className={`field ${aBIField.isRequired && 'required'}`} >
-            <label htmlFor="buyInsField">Рекомендованное количество АБИ</label>
+            <label htmlFor="buyInsField">Рекомендованное количество БИ</label>
             <input type="number" value={aBIField.value} required={aBIField.isRequired}
               disabled={!aBIField.isEditable} min={aBIField.min} max={aBIField.max}
               onChange={onABIFieldChange}
