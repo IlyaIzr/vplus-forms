@@ -42,10 +42,15 @@ export const AccountForm = () => {
       { type: '', value: '' }  //and may be some userNames from higher component. TBD
     ]
   })
-
   const onAccountTypeChange = (option, index) => {
     const accounts = [...accountsMeta.accounts];
     accounts[index] = option
+    setAccounts({ ...accountsMeta, accounts: accounts })
+  }
+  const onCustomAccChange = (name, value, index) => {
+    const accounts = [...accountsMeta.accounts];
+    accounts[index][name] = value
+    console.log(accounts)
     setAccounts({ ...accountsMeta, accounts: accounts })
   }
 
@@ -99,6 +104,7 @@ export const AccountForm = () => {
               <AccountSubForm account={account} options={accountsMeta.options}
                 isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
                 onAccountTypeChange={onAccountTypeChange} index={index}
+                onCustomAccChange={onCustomAccChange}
                 key={index}
               />
             )

@@ -4,30 +4,28 @@ const sberAccountForm = {
     value: '',
     isEditable: true,
     isRequired: true,
-    name: 'sberLogin',
+    name: 'login',  //names will be key names in response object
     label: '@(Логин Сбербанк)'
   }, {
     type: 'text',
     value: '',
     isEditable: true,
     isRequired: true,
-    name: 'sberName',
+    name: 'name',
     label: '@(ФИО)'
   }, {
     type: 'number',
     value: '',
     isEditable: true,
     isRequired: true,
-    name: 'sberAccount',
+    name: 'account',
     label: '@(Номер счёта)'
   }, {
-    type: 'select',
-    options: ['usd'],
-    isMulti: false,
-    value: ['usd'],
-    isEditable: true,
+    type: 'text',
+    value: 'usd',
+    isEditable: false,
     isRequired: true,
-    name: 'sberCurrency',
+    name: 'currency',
     label: '@(Валюта)'
   }],
   type: "sberbank",
@@ -35,32 +33,30 @@ const sberAccountForm = {
 }
 const customAccForm = {
   fields: [{
-    type: 'text',
+    type: 'text', // 'text' or 'number' or 'select'
     value: '',
     isEditable: true,
     isRequired: true,
-    name: 'customLogin',
+    name: 'login',
     label: '@(Логин Системы)'
   }, {
     type: 'text',
     value: '',
     isEditable: true,
     isRequired: true,
-    name: 'customName',
+    name: 'name',
     label: '@(ФИО)'
   }, {
     type: 'text',
     value: '',
     isEditable: true,
     isRequired: true,
-    name: 'customNick',
+    name: 'nickname',
     label: '@(Никнейм)'
   }, {
-    type: 'select',
-    options: ['usd', 'eur'],
-    isMulti: true,
-    value: [],
-    isEditable: true,
+    type: 'text',
+    value: 'usd',
+    isEditable: false,
     isRequired: true,
     name: 'customCurrency',
     label: '@(Валюта)'
@@ -80,7 +76,7 @@ const accounts = [
 ]
 export const accountsMetaData = {
   options: [sberAccountForm, customAccForm],
-  accounts: [accounts[1]],
+  accounts: [accounts[0]],
   isEditable: true,
   isRequired: true,
   // not required
