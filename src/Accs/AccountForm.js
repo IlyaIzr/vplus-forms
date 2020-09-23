@@ -1,7 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SelectField } from '../components/SelectField'
 import { StringField } from '../components/StringField'
-import { stringFieldDefaultState } from '../reusable'
+import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../reusable'
+import { AccountSubForm } from './AccountSubForm'
+// Fake data
+import { accountsMetaData } from './fakeData'
+//Other
+const accountsSpreader = options => {
+  const res = options.length && options.map(option => {
+    return ({ value: option.type, ...option })
+  })
+  return res
+}
 
 export const AccountForm = () => {
   const [socialField, setSocialField] = useState({
@@ -16,6 +26,7 @@ export const AccountForm = () => {
   })
   const onSocialChange = option => setSocialField({ ...socialField, value: option })
 
+  // Social fields
   const [socialLoginField, setSocialLogin] = useState(stringFieldDefaultState)
   const onSocialLoginChange = e => setSocialLogin({ ...socialLoginField, value: e.target.value })
   const [socialNameField, setSocialName] = useState(stringFieldDefaultState)
@@ -25,6 +36,27 @@ export const AccountForm = () => {
   const [socialThirdNameField, setSocialThirdName] = useState({ ...stringFieldDefaultState, isRequired: false })
   const onSocialThirddName = e => setSocialThirdName({ ...socialThirdNameField, value: e.target.value })
 
+
+  const [accountsMeta, setAccounts] = useState({
+    ...selectDefaultState, accounts: [
+      { type: '', value: '' }  //and may be some userNames from higher component. TBD
+    ]
+  })
+
+  const onAccountTypeChange = (option, index) => {
+    const accounts = [...accountsMeta.accounts];
+    accounts[index] = option
+    setAccounts({ ...accountsMeta, accounts: accounts })
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      // and format options
+      const options = optionSpreader(accountsMetaData.options)
+      const accounts = accountsSpreader(accountsMetaData.accounts)
+      setAccounts({ ...accountsMetaData, options, accounts })
+    }, 500);
+  }, [])
 
   return (
     <div className="ui container"><br />
@@ -58,6 +90,20 @@ export const AccountForm = () => {
               />
             </div>
           </div>}
+        </div>
+
+        <div className="ui segment">
+          <h4>@(Счета)</h4>
+          {accountsMeta.accounts.length ? accountsMeta.accounts.map((account, index) => {
+            return (
+              <AccountSubForm account={account} options={accountsMeta.options}
+                isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
+                onAccountTypeChange={onAccountTypeChange} index={index}
+                key={index}
+              />
+            )
+          }) : null}
+
         </div>
 
       </form>
