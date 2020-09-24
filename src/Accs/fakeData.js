@@ -22,7 +22,7 @@ const sberAccountForm = {
     label: '@(Номер счёта)'
   }, {
     type: 'text',
-    value: 'usd',
+    value: 'rub',
     isEditable: false,
     isRequired: true,
     name: 'currency',
@@ -67,7 +67,7 @@ const customAccForm = {
 const accounts = [
   {
     login: 'PyotrB', firstName: "Pyotr", lastName: "Bobroff", thirdName: "Pavlovitch",
-    id: 'py22py', currency: "eur", type: "sberbank", label: "@(Сбербанк)"
+    id: 'py22py', currency: "rub", type: "sberbank", label: "@(Сбербанк)"
   },
   {
     login: 'Sommer', firstName: "Anton", lastName: "Petroff", thirdName: "",

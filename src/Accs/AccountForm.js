@@ -44,13 +44,20 @@ export const AccountForm = () => {
   })
   const onAccountTypeChange = (option, index) => {
     const accounts = [...accountsMeta.accounts];
-    accounts[index] = option
+    const account = {
+      label: option.label,
+      value: option.value,
+      type: option.type
+    }
+    option.fields.forEach((field) => {
+      account[field.name] = field.value
+    })
+    accounts[index] = account
     setAccounts({ ...accountsMeta, accounts })
   }
   const onCustomAccChange = (name, value, index) => {
     const accounts = [...accountsMeta.accounts];
     accounts[index][name] = value
-    console.log(accounts)
     setAccounts({ ...accountsMeta, accounts })
   }
   const addAccField = () => {
