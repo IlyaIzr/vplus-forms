@@ -21,7 +21,7 @@ export const CustomForm = ({
         value={type} onChange={onChange}
       />
       <button className="ui button red small" type="button" onClick={onDeleteForm}>
-        @(Удалить поле)
+        @(Удалить)
       </button>
     </div>
   )

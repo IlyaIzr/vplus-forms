@@ -164,6 +164,7 @@ export const AccountForm = () => {
           <button type="button" onClick={addExtraField} className="ui button teal">
             @(Добавить поле)
           </button>
+        <div className="ui warning message" style={{display: 'block'}}>@(Здесь вы можете указать телефон, текст подсказки далее...)</div>
         </div>
 
       </form>
