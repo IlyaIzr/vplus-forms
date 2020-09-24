@@ -45,13 +45,24 @@ export const AccountForm = () => {
   const onAccountTypeChange = (option, index) => {
     const accounts = [...accountsMeta.accounts];
     accounts[index] = option
-    setAccounts({ ...accountsMeta, accounts: accounts })
+    setAccounts({ ...accountsMeta, accounts })
   }
   const onCustomAccChange = (name, value, index) => {
     const accounts = [...accountsMeta.accounts];
     accounts[index][name] = value
     console.log(accounts)
-    setAccounts({ ...accountsMeta, accounts: accounts })
+    setAccounts({ ...accountsMeta, accounts })
+  }
+  const addAccField = () => {
+    const accounts = [...accountsMeta.accounts];
+    accounts.push({ type: '', value: '' })
+    setAccounts({ ...accountsMeta, accounts })
+  }
+  const deleteField = (index) => {
+    const accounts = [...accountsMeta.accounts];
+    accounts.splice(index, 1)
+    console.log(accounts)
+    setAccounts({ ...accountsMeta, accounts })
   }
 
   useEffect(() => {
@@ -66,23 +77,24 @@ export const AccountForm = () => {
   return (
     <div className="ui container"><br />
       <h2>@(Аккаунты и счета)</h2>
-      <form className="ui form">        
+      <form className="ui form">
 
         <div className="ui segment">
           <h4>@(Счета)</h4>
-          {accountsMeta.accounts.length ? accountsMeta.accounts.map((account, index) => {
-            return (
+          {Boolean(accountsMeta.accounts.length) && accountsMeta.accounts.map((account, index) => {
+            const canDelete = accountsMeta.accounts.length > 1
+            return (<div className="ui clearing  segment" key={index}>
+
               <AccountSubForm account={account} options={accountsMeta.options}
                 isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
                 onAccountTypeChange={onAccountTypeChange} index={index}
-                onCustomAccChange={onCustomAccChange}
-                key={index}
+                onCustomAccChange={onCustomAccChange} deleteField={deleteField} canDelete={canDelete}              
               />
-            )
-          }) : null}
-
+            </div>)
+          })}
+          <button className="ui button green" type="button" onClick={addAccField}>@(Добавить)</button>
         </div>
-        
+
         <div className="ui segment">
           <h4>@(Соцсети)</h4>
           <SelectField label="@(Выберите соцсеть)" name="social"
