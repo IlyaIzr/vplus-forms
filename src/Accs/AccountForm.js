@@ -3,6 +3,7 @@ import { SelectField } from '../components/SelectField'
 import { StringField } from '../components/StringField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../reusable'
 import { AccountSubForm } from './AccountSubForm'
+import { CustomForm } from './CustomForm'
 // Fake data
 import { accountsMetaData } from './fakeData'
 //Other
@@ -68,8 +69,26 @@ export const AccountForm = () => {
   const deleteField = (index) => {
     const accounts = [...accountsMeta.accounts];
     accounts.splice(index, 1)
-    console.log(accounts)
     setAccounts({ ...accountsMeta, accounts })
+  }
+
+  const [extraContacts, setExtraContacts] = useState([{
+    typeOfContact: '', valueOfContact: ''
+  }])
+  const addContactInfo = (type, value, index) => {
+    const mutableContacts = [...extraContacts];
+    mutableContacts[index][type] = value;
+    setExtraContacts(mutableContacts)
+  }
+  const addExtraField = () => {
+    const mutableContacts = [...extraContacts];
+    mutableContacts.push({ typeOfContact: '', valueOfContact: '' })
+    setExtraContacts(mutableContacts)
+  }
+  const deleteExtraField = index => {
+    const mutableContacts = [...extraContacts];
+    mutableContacts.splice(index, 1)
+    setExtraContacts(mutableContacts)
   }
 
   useEffect(() => {
@@ -95,7 +114,7 @@ export const AccountForm = () => {
               <AccountSubForm account={account} options={accountsMeta.options}
                 isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
                 onAccountTypeChange={onAccountTypeChange} index={index}
-                onCustomAccChange={onCustomAccChange} deleteField={deleteField} canDelete={canDelete}              
+                onCustomAccChange={onCustomAccChange} deleteField={deleteField} canDelete={canDelete}
               />
             </div>)
           })}
@@ -129,6 +148,22 @@ export const AccountForm = () => {
               />
             </div>
           </div>}
+        </div>
+
+        <div className="ui segment">
+          <h4>@(Дополнительные контакты)</h4>
+          {Boolean(extraContacts.length) && extraContacts.map((formItem, index) => {
+            return (
+              <CustomForm type={formItem.typeOfContact} value={formItem.valueOfContact}
+                index={index}
+                addContactInfo={addContactInfo} deleteField={deleteExtraField}
+                key={index}
+              />
+            )
+          })}
+          <button type="button" onClick={addExtraField} className="ui button teal">
+            @(Добавить поле)
+          </button>
         </div>
 
       </form>
