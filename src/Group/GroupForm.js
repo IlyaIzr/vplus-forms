@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react'
 import CreateProject from './Draft'
 import './Group.css'
 // Fake data
-import {
-  groupFieldMeta, timeout, disciplineFieldMeta, investorsMeta, managersMeta,
-  playerSumNumberMeta, tournamentsNumberMeta, playerBuyInsMeta, playerRiskMeta, fundRiskMeta, rollbackMeta
-} from './fakeData'
 import { InvestorField } from './InvestorField'
 import { ManagerField } from './ManagerField'
 import { StringField } from '../components/StringField'
@@ -22,7 +18,7 @@ const numberFieldDefaultState = {
   min: '',
   max: ''
 }
-
+let WS
 
 
 export const GroupForm = () => {
@@ -162,7 +158,7 @@ export const GroupForm = () => {
     setRollbackField({ ...rollbackField, value: e.target.value })
   }
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault();
     const formData = {
       groupNameField,
@@ -178,16 +174,32 @@ export const GroupForm = () => {
       rollbackField
     }
     console.log(formData)
+    const response = await WS.send('group', 'groupFormData', formData)
   };
 
 
   useEffect(() => {
-    setTimeout(() => {
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const response = await WS.send('group', 'groupFormData', {})
+      const {
+        groupFieldMeta,
+        disciplineFieldMeta,
+        investorsFieldMeta,
+        managersFieldMeta,
+        tournamentsNumberMeta,
+        playerSumNumberMeta,
+        playerBuyInsMeta,
+        playerRiskMeta,
+        fundRiskMeta,
+        rollbackMeta } = response
       setGroupNameField(groupFieldMeta)
-      console.log(groupFieldMeta)
       setDisciplineField(disciplineFieldMeta)
-      setInvestorsField(investorsMeta)
-      setManagersField(managersMeta)
+      setInvestorsField(investorsFieldMeta)
+      setManagersField(managersFieldMeta)
       setTournamentsField(tournamentsNumberMeta)
       setPlayerSumField(playerSumNumberMeta)
       setBuyInsField(playerBuyInsMeta)
@@ -197,7 +209,9 @@ export const GroupForm = () => {
       setPlayerRisk(playerRiskMeta.value)
       // end of slider sets
       setRollbackField(rollbackMeta)
-    }, timeout);
+      // WS.close()
+    }
+    fetcher()
   }, [])
 
 
