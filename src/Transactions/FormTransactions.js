@@ -69,10 +69,19 @@ export const FormTransactions = () => {
     setRecipientsAcc({ ...senderAccsMeta, options, defOption })
   }
 
-
+let answer
   useEffect(() => {
     async function fetcher() {
-      console.log('any')
+      const WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      answer = await WS.send('transactions', 'group_data', {})
+      console.log(answer)
+
+      // next actions ...
+
+      // WS.close()
     }
     fetcher()
     setTimeout(() => {
