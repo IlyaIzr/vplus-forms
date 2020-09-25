@@ -8,6 +8,7 @@ import {
   recipientsList, recipientAccounts, timeOut
 } from './fakeData'
 //Other
+let WS
 const fieldSettings = {
   options: [],
   defOption: false,
@@ -39,99 +40,91 @@ export const FormTransactions = () => {
   const onComissionChange = e => setComission(e.target.value)
   const [comment, setComment] = useState('')
   const onCommentChange = e => setComment(e.target.value)
+
   // Requests
-  const groupRequest = (id) => {
-    const formatedOptions = optionFormatter(groupsFieldMetaData.options)
-    const formatedDefOption = oneOptionFormatter(groupsFieldMetaData.defOption)
-    setGroupField({ ...groupsFieldMetaData, options: formatedOptions, defOption: formatedDefOption })
+  const groupRequest = async (id) => {
+    const data = await WS.send('transactions', 'groupData', {})
+    const formatedOptions = optionFormatter(data.options)
+    const formatedDefOption = oneOptionFormatter(data.defOption)
+    setGroupField({ ...data, options: formatedOptions, defOption: formatedDefOption })
   }
 
-  const senderRequest = (id) => {
-    const options = optionFormatter(senderListMeta.options)
-    const defOption = oneOptionFormatter(senderListMeta.defOption)
-    setSenderField({ ...senderListMeta, options, defOption })
+  const senderRequest = async (id) => {
+    const data = await WS.send('transactions', 'usersData', {})
+    console.log(data)
+    const options = optionFormatter(data.options)
+    const defOption = oneOptionFormatter(data.defOption)
+    setSenderField({ ...data, options, defOption })
     if (defOption && defOption.value) senderAccsRequest()
   }
-  const senderAccsRequest = (id) => {
-    const options = optionFormatter(senderAccsMeta.options)
-    const defOption = oneOptionFormatter(senderAccsMeta.defOption)
-    setSenderAccs({ ...senderAccsMeta, options, defOption })
+  const senderAccsRequest = async (id) => {
+    const data = await WS.send('transactions', 'accountsData', {})
+    const options = optionFormatter(data.options)
+    const defOption = oneOptionFormatter(data.defOption)
+    setSenderAccs({ ...data, options, defOption })
   }
-  const recipientRequest = (id) => {
-    const options = optionFormatter(recipientListMeta.options)
-    const defOption = oneOptionFormatter(recipientListMeta.defOption)
-    setRecipientsField({ ...recipientListMeta, options, defOption })
+  const recipientRequest = async (id) => {
+    const data = await WS.send('transactions', 'usersData', {})
+    const options = optionFormatter(data.options)
+    const defOption = oneOptionFormatter(data.defOption)
+    setRecipientsField({ ...data, options, defOption })
     if (defOption && defOption.value) recipientAccsRequest()
   }
-  const recipientAccsRequest = (id) => {
-    const options = optionFormatter(senderAccsMeta.options)
-    const defOption = oneOptionFormatter(senderAccsMeta.defOption)
-    setRecipientsAcc({ ...senderAccsMeta, options, defOption })
+  const recipientAccsRequest = async (id) => {
+    const data = await WS.send('transactions', 'accountsData', {})
+    const options = optionFormatter(data.options)
+    const defOption = oneOptionFormatter(data.defOption)
+    setRecipientsAcc({ ...data, options, defOption })
+  }
+  const postFormRequest = async data => {
+    const response = await WS.send('transactions', 'accountsData', data)
   }
 
-let answer
   useEffect(() => {
     async function fetcher() {
-      const WS = new WebsocketPromiseLiteClient({
+      WS = new WebsocketPromiseLiteClient({
         url: 'ws://localhost:5555'
-      })
+      })      
       await WS.connectionEstablished()
-      answer = await WS.send('transactions', 'group_data', {})
-      console.log(answer)
-
-      // next actions ...
-
+      await groupRequest()
+      if (groupsFieldMetaData.defOption && groupsFieldMetaData.defOption.id) {
+        await senderRequest()
+        if (senderListMeta.defOption && senderListMeta.defOption.id) {
+          await senderAccsRequest()
+        }
+        await recipientRequest()
+        if (recipientListMeta.defOption && recipientListMeta.defOption.id) {
+          await recipientAccsRequest()
+        }
+      }
       // WS.close()
     }
     fetcher()
-    setTimeout(() => {
-      groupRequest()
-      if (groupsFieldMetaData.defOption && groupsFieldMetaData.defOption.id) {
-        setTimeout(() => {   //value is equivalent of id
-          senderRequest()
-          if (senderListMeta.defOption && senderListMeta.defOption.id) {
-            senderAccsRequest()
-          }
-          recipientRequest()
-          if (recipientListMeta.defOption && recipientListMeta.defOption.id) {
-            recipientAccsRequest()
-          }
-        }, timeOut)
-      }
-    }, timeOut)
   }, []);
 
   // const testo = async () => {
   // } 
 
   // Change listeners
-  const onChangeGroup = (option) => {
+  const onChangeGroup = async (option) => {
     setGroupField({ ...groupField, defOption: option })
-    setTimeout(() => {
-      setTimeout(() => {  //call with selected option e.target.value
-        senderRequest(option.value)
-        recipientRequest(option.value)
-      }, timeOut);
-    }, timeOut);
+    await senderRequest(option.value)
+    await recipientRequest(option.value) //TODO
   }
 
-  const onChangeSender = option => {
+  const onChangeSender = async option => {
     setSenderField({ ...senderField, defOption: option })
-    setTimeout(() => {
-      senderAccsRequest()
-    }, timeOut);
+    await senderAccsRequest()
   }
-  const onChangeSenderAcc = option => {
-    setSenderAccs({ ...senderAccsField, defOption: option })
+  const onChangeSenderAcc = async option => {
+    await setSenderAccs({ ...senderAccsField, defOption: option })
   }
-  const onChangeRecipient = option => {
+  const onChangeRecipient = async option => {
     setRecipientsField({ ...senderField, defOption: option })
-    setTimeout(() => {
-      recipientAccsRequest()
-    }, timeOut);
+    await recipientAccsRequest()
   }
-  const onChangeRecipientAcc = option => {
-    setRecipientsAcc({ ...senderAccsField, defOption: option })
+  const onChangeRecipientAcc = async option => {
+    await setRecipientsAcc({ ...senderAccsField, defOption: option })
   }
 
   const resetSomeFields = (e) => {
@@ -158,6 +151,7 @@ let answer
       comment
     }
     console.log(result)
+    postFormRequest(result)
   };
 
   const { Option } = components
