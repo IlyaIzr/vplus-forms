@@ -4,9 +4,8 @@ import { StringField } from '../components/StringField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../reusable'
 import { AccountSubForm } from './AccountSubForm'
 import { CustomForm } from './CustomForm'
-// Fake data
-import { accountsMetaData } from './fakeData'
 //Other
+let WS
 const accountsSpreader = options => {
   const res = options.length && options.map(option => {
     return ({ value: option.type, ...option })
@@ -92,18 +91,42 @@ export const AccountForm = () => {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      // and format options
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const response = await WS.send('accounts', 'accountsFormData', {})
+      const { accountsMetaData } = response
       const options = optionSpreader(accountsMetaData.options)
       const accounts = accountsSpreader(accountsMetaData.accounts)
       setAccounts({ ...accountsMetaData, options, accounts })
-    }, 500);
+
+    }
+    fetcher()
   }, [])
+
+  const onSubmit = async e => {
+    e.preventDefault()
+    const formData = {
+      socials: {  // TODO think how to send this in better format
+        socialField,
+        socialLoginField,
+        socialNameField,
+        socialSecondNameField,
+        socialThirdNameField
+      },
+      accountsMeta,
+      extraContacts
+    }
+    console.log(formData)
+    const response = await WS.send('accounts', 'accountsFormData', formData)
+  }
 
   return (
     <div className="ui container"><br />
       <h2>@(Аккаунты и счета)</h2>
-      <form className="ui form">
+      <form className="ui form" onSubmit={onSubmit}>
 
         <div className="ui segment">
           <h4>@(Счета)</h4>
@@ -164,8 +187,10 @@ export const AccountForm = () => {
           <button type="button" onClick={addExtraField} className="ui button teal">
             @(Добавить поле)
           </button>
-        <div className="ui warning message" style={{display: 'block'}}>@(Здесь вы можете указать телефон, текст подсказки далее...)</div>
+          <div className="ui warning message" style={{ display: 'block' }}>@(Здесь вы можете указать телефон, текст подсказки далее...)</div>
         </div>
+
+        <button className="ui button green" type="submit">@(Отправить)</button>
 
       </form>
     </div>
