@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { components } from 'react-select';
 import { SelectField } from '../components/SelectField';
 import { NumberField } from '../components/NumberField'
-//Fakes
-import {
-  groupsFieldMetaData, senderAccsMeta, recipientListMeta, senderListMeta,
-  recipientsList, recipientAccounts, timeOut
-} from './fakeData'
 //Other
 let WS
 const fieldSettings = {
@@ -46,7 +41,9 @@ export const FormTransactions = () => {
     const data = await WS.send('transactions', 'groupData', {})
     const formatedOptions = optionFormatter(data.options)
     const formatedDefOption = oneOptionFormatter(data.defOption)
-    setGroupField({ ...data, options: formatedOptions, defOption: formatedDefOption })
+    const result = { ...data, options: formatedOptions, defOption: formatedDefOption }
+    setGroupField(result)
+    return result
   }
 
   const senderRequest = async (id) => {
@@ -54,8 +51,10 @@ export const FormTransactions = () => {
     console.log(data)
     const options = optionFormatter(data.options)
     const defOption = oneOptionFormatter(data.defOption)
-    setSenderField({ ...data, options, defOption })
-    if (defOption && defOption.value) senderAccsRequest()
+    const result = { ...data, options, defOption }
+    setSenderField(result)
+    if (defOption && defOption.value) { senderAccsRequest() }
+    return result
   }
   const senderAccsRequest = async (id) => {
     const data = await WS.send('transactions', 'accountsData', {})
@@ -67,8 +66,10 @@ export const FormTransactions = () => {
     const data = await WS.send('transactions', 'usersData', {})
     const options = optionFormatter(data.options)
     const defOption = oneOptionFormatter(data.defOption)
-    setRecipientsField({ ...data, options, defOption })
-    if (defOption && defOption.value) recipientAccsRequest()
+    const result = { ...data, options, defOption }
+    setRecipientsField(result)
+    if (defOption && defOption.value) { recipientAccsRequest() }
+    return result
   }
   const recipientAccsRequest = async (id) => {
     const data = await WS.send('transactions', 'accountsData', {})
@@ -84,16 +85,16 @@ export const FormTransactions = () => {
     async function fetcher() {
       WS = new WebsocketPromiseLiteClient({
         url: 'ws://localhost:5555'
-      })      
+      })
       await WS.connectionEstablished()
-      await groupRequest()
-      if (groupsFieldMetaData.defOption && groupsFieldMetaData.defOption.id) {
-        await senderRequest()
-        if (senderListMeta.defOption && senderListMeta.defOption.id) {
+      const groupField = await groupRequest()
+      if (groupField.defOption && groupField.defOption.id) {
+        const senderField = await senderRequest()
+        if (senderField.defOption && senderField.defOption.id) {
           await senderAccsRequest()
         }
-        await recipientRequest()
-        if (recipientListMeta.defOption && recipientListMeta.defOption.id) {
+        const recipField = await recipientRequest()
+        if (recipField.defOption && recipField.defOption.id) {
           await recipientAccsRequest()
         }
       }
