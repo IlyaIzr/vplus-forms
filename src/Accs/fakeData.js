@@ -76,7 +76,7 @@ const accounts = [
 ]
 export const accountsMetaData = {
   options: [sberAccountForm, customAccForm],
-  accounts: [accounts[0]],
+  accounts: accounts,
   isEditable: true,
   isRequired: true,
   // not required

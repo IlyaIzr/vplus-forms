@@ -71,6 +71,10 @@ export const FormTransactions = () => {
 
 
   useEffect(() => {
+    async function fetcher() {
+      console.log('any')
+    }
+    fetcher()
     setTimeout(() => {
       groupRequest()
       if (groupsFieldMetaData.defOption && groupsFieldMetaData.defOption.id) {
@@ -87,6 +91,9 @@ export const FormTransactions = () => {
       }
     }, timeOut)
   }, []);
+
+  // const testo = async () => {
+  // } 
 
   // Change listeners
   const onChangeGroup = (option) => {
