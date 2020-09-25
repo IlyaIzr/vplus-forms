@@ -7,6 +7,8 @@ import {
   playerRiskMeta, fundRiskMeta, extraInfoMeta, aBIMeta
 } from './fakeData'
 // Extra stuff
+
+let WS
 const numberFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -68,15 +70,33 @@ export const PackageForm = () => {
 
 
   useEffect(() => {
-    setTimeout(() => {
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const response = await WS.send('package', 'packageFormData', {})
+      const {
+        roomsFieldMeta,
+        tournamentsNumberMeta,
+        playerRiskMeta,
+        fundRiskMeta,
+        BIMeta,
+        BRSumField,
+        RollbackField,
+        BuyInsField,
+        ExtraInfoField
+      } = response
+
       const options = []
-      roomsFieldMeta.options.forEach((serverOption) => {
+      await roomsFieldMeta.options.forEach((serverOption) => {
         options.push({ value: serverOption.id, label: serverOption.name })
       })
       const value = []
-      roomsFieldMeta.value.forEach((serverValue) => {
+      await roomsFieldMeta.value.forEach((serverValue) => {
         value.push({ value: serverValue.id, label: serverValue.name })
       })
+      
       setRoomsField({ ...roomsFieldMeta, options, value })
       setTournamentsField(tournamentsNumberMeta)
       // slider sets
@@ -84,15 +104,18 @@ export const PackageForm = () => {
       setFundRiskField(fundRiskMeta)
       setPlayerRisk(playerRiskMeta.value)
       // end of slider sets
-      setABIField(aBIMeta)
-      setBRSumField(aBIMeta)
-      setRollbackField(aBIMeta)
-      setBuyInsField(aBIMeta)
-      setExtraInfoField(extraInfoMeta)
-    }, timeout);
+      setABIField(BIMeta)
+      setBRSumField(BRSumField)
+      setRollbackField(RollbackField)
+      setBuyInsField(BuyInsField)
+      setExtraInfoField(ExtraInfoField)
+
+      // WS.close()
+    }
+    fetcher()
   }, [])
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     const formData = {
       roomsField,
@@ -105,7 +128,8 @@ export const PackageForm = () => {
       buyInsField,
       extraInfoField
     }
-    console.log(formData)
+    console.log(formData)    
+    const response = await WS.send('package', 'packageFormData', formData)
   }
   const onReset = () => {
     setRoomsField({ ...roomsField, value: [] })
