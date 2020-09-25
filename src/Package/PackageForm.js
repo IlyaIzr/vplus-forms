@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './Package.css'
 import { SelectField } from '../components/SelectField'
-//Fake data
-import {
-  timeout, roomsFieldMeta, tournamentsNumberMeta,
-  playerRiskMeta, fundRiskMeta, extraInfoMeta, aBIMeta
-} from './fakeData'
 // Extra stuff
 
 let WS
