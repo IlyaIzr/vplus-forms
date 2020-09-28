@@ -90,3 +90,10 @@
 .inputRange:active::-ms-thumb {
   border: none;
 }
+
+@media (max-width: 960px) {
+  .inputRange{
+    position: relative;
+  }
+  
+ }
