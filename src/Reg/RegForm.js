@@ -1,11 +1,19 @@
-import React, { useState } from 'react'
-const stringFieldDefaultState = {
-  value: '',
-  isEditable: true,
-  isRequired: true
+import React, { useState, useEffect } from 'react'
+import { SelectField } from '../components/SelectField'
+import { StringField } from '../components/StringField'
+import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../reusable'
+import { AccountSubForm } from '../Accs/AccountSubForm'
+//Other
+let WS
+const accountsSpreader = options => {
+  const res = options.length && options.map(option => {
+    return ({ value: option.type, ...option })
+  })
+  return res
 }
 
 export const RegForm = () => {
+  // Tabs
   const [tabIndex, setTabIndex] = useState(0)
   const onTabClick = e => setTabIndex(Number(e.target.name))
   const [validationPopup, setValidationPopup] = useState(false)
@@ -43,9 +51,83 @@ export const RegForm = () => {
   const [bDateField, setBDateField] = useState('')
   const onBDateChange = e => setBDateField(e.target.value)
 
+  // Tab 3 fields
+  const [socialField, setSocialField] = useState({
+    options: [
+      { label: '@(Отменить выбор)', value: '' },
+      { label: 'VK', value: 'vk' },
+      { label: 'Facebook', value: 'facebook' }
+    ],
+    value: '',
+    isEditable: true,
+    isRequired: false,
+  })
+  const onSocialChange = option => setSocialField({ ...socialField, value: option })
 
-  const onSubmit = e => {
+  // _subTab3 Social fields
+  const [socialLoginField, setSocialLogin] = useState(stringFieldDefaultState)
+  const onSocialLoginChange = e => setSocialLogin({ ...socialLoginField, value: e.target.value })
+  const [socialNameField, setSocialName] = useState(stringFieldDefaultState)
+  const onSocialNameChange = e => setSocialName({ ...socialNameField, value: e.target.value })
+  const [socialSecondNameField, setSocialSecondName] = useState(stringFieldDefaultState)
+  const onSocialSecondName = e => setSocialSecondName({ ...socialSecondNameField, value: e.target.value })
+  const [socialThirdNameField, setSocialThirdName] = useState({ ...stringFieldDefaultState, isRequired: false })
+  const onSocialThirddName = e => setSocialThirdName({ ...socialThirdNameField, value: e.target.value })
+
+  // _subTab3 Accounts fields
+  const [accountsMeta, setAccounts] = useState({
+    ...selectDefaultState, accounts: [
+      { type: '', value: '' }  //and may be some userNames from higher component. TBD
+    ]
+  })
+  const onAccountTypeChange = (option, index) => {
+    const accounts = [...accountsMeta.accounts];
+    const account = {
+      label: option.label,
+      value: option.value,
+      type: option.type
+    }
+    option.fields.forEach((field) => {
+      account[field.name] = field.value
+    })
+    accounts[index] = account
+    setAccounts({ ...accountsMeta, accounts })
+  }
+  const onCustomAccChange = (name, value, index) => {
+    const accounts = [...accountsMeta.accounts];
+    accounts[index][name] = value
+    setAccounts({ ...accountsMeta, accounts })
+  }
+  const addAccField = () => {
+    const accounts = [...accountsMeta.accounts];
+    accounts.push({ type: '', value: '' })
+    setAccounts({ ...accountsMeta, accounts })
+  }
+  const deleteField = (index) => {
+    const accounts = [...accountsMeta.accounts];
+    accounts.splice(index, 1)
+    setAccounts({ ...accountsMeta, accounts })
+  }
+  // _subTab3 extra info field
+
+
+  const onSubmit = async e => {
     e.preventDefault()
+    const formData = {
+      main: {
+        login: loginField, "e-mail": eMailField, "password": passwordField
+      },
+      personal: {
+        firstName: firstNameField, 
+        secondName: secondNameField, 
+        thirdName: thirdNameField, 
+        country: countryField, 
+        adress: adressField, 
+        phone: phoneField, 
+        birthday: bDateField
+      },
+      accounts: accountsMeta
+    }
 
     // Tab 1 validation failed case
     if (!loginField || !eMailField || !passwordField || passwordField !== passwordField2) {
@@ -57,9 +139,30 @@ export const RegForm = () => {
       setTabIndex(1)
     } else {
       setValidationPopup(false)
-      console.log({ loginField, eMailField, passwordField })
+      console.log(formData)
+      const response = await WS.send('accounts', 'accountsFormData', formData)
     }
   }
+
+  useEffect(() => {
+
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const response = await WS.send('accounts', 'accountsFormData', {})
+      const { accountsMetaData } = response
+      const options = optionSpreader(accountsMetaData.options)
+      const accounts = accountsSpreader(accountsMetaData.accounts)
+      setAccounts({ ...accountsMetaData, options, accounts })
+
+    }
+    fetcher()
+    // return () => {
+    //   cleanup
+    // }
+  }, [])
 
 
   return (
@@ -91,8 +194,8 @@ export const RegForm = () => {
           </div>
           <div className="field required">
             <label htmlFor="password">Пароль</label>
-            <input type="password" value={passwordField} onChange={onPasswordFieldChange} required 
-            minLength="6"/>
+            <input type="password" value={passwordField} onChange={onPasswordFieldChange} required
+              minLength="6" />
           </div>
           <div className="field required">
             <label htmlFor="password">Повторите пароль</label>
@@ -146,6 +249,55 @@ export const RegForm = () => {
               <label htmlFor="birtdate">Дата рождения</label>
               <input name="birtdate" type="date" value={bDateField} onChange={onBDateChange} />
             </div>
+          </div>
+
+        </>}
+
+
+        {tabIndex === 2 && <>
+          <div className="ui segment">
+            <h4>@(Счета)</h4>
+            {Boolean(accountsMeta.accounts.length) && accountsMeta.accounts.map((account, index) => {
+              const canDelete = accountsMeta.accounts.length > 1
+              return (<div className="ui clearing  segment" key={index}>
+
+                <AccountSubForm account={account} options={accountsMeta.options}
+                  isEditable={accountsMeta.isEditable} isRequired={accountsMeta.isRequired}
+                  onAccountTypeChange={onAccountTypeChange} index={index}
+                  onCustomAccChange={onCustomAccChange} deleteField={deleteField} canDelete={canDelete}
+                />
+              </div>)
+            })}
+            <button className="ui button green" type="button" onClick={addAccField}>@(Добавить)</button>
+          </div>
+
+          <div className="ui segment">
+            <h4>@(Соцсети)</h4>
+            <SelectField label="@(Выберите соцсеть)" name="social"
+              isRequired={socialField.isRequired} isEditable={socialField.isEditable}
+              options={socialField.options} value={socialField.value} onChange={onSocialChange}
+            />
+
+            {socialField.value && socialField.value.value && <div>
+              <StringField label="@(Логин или почта)" name="socialLogin"
+                isRequired={socialLoginField.isRequired} isEditable={socialLoginField.isEditable}
+                value={socialLoginField.value} onChange={onSocialLoginChange}
+              />
+              <div className="three fields">
+                <StringField label="@(Имя)" name="socialName"
+                  isRequired={socialNameField.isRequired} isEditable={socialNameField.isEditable}
+                  value={socialNameField.value} onChange={onSocialNameChange}
+                />
+                <StringField label="@(Фамилия)" name="socialSecondName"
+                  isRequired={socialSecondNameField.isRequired} isEditable={socialSecondNameField.isEditable}
+                  value={socialSecondNameField.value} onChange={onSocialSecondName}
+                />
+                <StringField label="@(Отчество)" name="socialThirdName"
+                  isRequired={socialThirdNameField.isRequired} isEditable={socialThirdNameField.isEditable}
+                  value={socialThirdNameField.value} onChange={onSocialThirddName}
+                />
+              </div>
+            </div>}
           </div>
 
         </>}
