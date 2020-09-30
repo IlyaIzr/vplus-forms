@@ -1,5 +1,5 @@
 import React from 'react'
-import Select from 'react-select'
+import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated'
 const animatedComponents = makeAnimated()
 
@@ -25,10 +25,10 @@ export const SelectField = ({
   return (
     <div className={isRequired ? "required field" : "field"}>
       {label && <label htmlFor={name}>{label}</label>}
-      <Select options={options}
+      <CreatableSelect options={options}
         components={optionWrapper ? { Option: optionWrapper } : animatedComponents}
         name={name} onChange={onChange} isDisabled={!isEditable}
-        value={value} isMulti={isMulti}
+        value={value} isMulti={isMulti} isClearable
       />
       {isRequired && <input type="text" value={isFilled} required={isRequired}
         style={{ opacity: 0, height: 0, padding: 0 }} tabIndex={-1} autoComplete="off"
