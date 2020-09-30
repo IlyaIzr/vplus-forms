@@ -118,12 +118,12 @@ export const RegForm = () => {
         login: loginField, "e-mail": eMailField, "password": passwordField
       },
       personal: {
-        firstName: firstNameField, 
-        secondName: secondNameField, 
-        thirdName: thirdNameField, 
-        country: countryField, 
-        adress: adressField, 
-        phone: phoneField, 
+        firstName: firstNameField,
+        secondName: secondNameField,
+        thirdName: thirdNameField,
+        country: countryField,
+        adress: adressField,
+        phone: phoneField,
         birthday: bDateField
       },
       accounts: accountsMeta
@@ -169,40 +169,40 @@ export const RegForm = () => {
     <div className="ui container">
       <div className="ui fragment">
         <button onClick={onTabClick} className={`ui button ${tabIndex === 0 && 'secondary'}`} name="0">
-          Основная информация
+          @(Основная информация)
         </button>
         <button onClick={onTabClick} className={`ui button ${tabIndex === 1 && 'secondary'}`} name="1">
-          Личная информация
+          @(Личная информация)
         </button>
         <button onClick={onTabClick} className={`ui button ${tabIndex === 2 && 'secondary'}`} name="2">
-          Аккаунты и счета
+          @(Аккаунты и счета)
         </button>
         {validationPopup && <div className="ui warning message">
-          <h5 className="text red">Заполните все обязательные поля</h5>
+          <h5 className="text red">@(Заполните все обязательные поля)</h5>
         </div>}
       </div>
 
       <form className="ui form" onSubmit={onSubmit}>
         {tabIndex === 0 && <>
           <div className="field required">
-            <label htmlFor="name">Логин</label>
+            <label htmlFor="name">@(Логин)</label>
             <input name="name" type="text" value={loginField} onChange={onLoginFieldChange} required />
           </div>
           <div className="field required">
-            <label htmlFor="email">E-mail</label>
+            <label htmlFor="email">@(E-mail)</label>
             <input name="email" type="email" value={eMailField} onChange={onEMailFieldChange} required />
           </div>
           <div className="field required">
-            <label htmlFor="password">Пароль</label>
+            <label htmlFor="password">@(Пароль)</label>
             <input type="password" value={passwordField} onChange={onPasswordFieldChange} required
               minLength="6" />
           </div>
           <div className="field required">
-            <label htmlFor="password">Повторите пароль</label>
+            <label htmlFor="password">@(Повторите пароль)</label>
             <input type="password" value={passwordField2} onChange={onPasswordFieldChange2} required />
           </div>
           <div className="field inline">
-            <label htmlFor="pwordCheck">Пароли совпадают</label>
+            <label htmlFor="pwordCheck">@(Пароли совпадают)</label>
             <input type="checkbox" required name="pwordCheck"
               checked={passwordField === passwordField2 && passwordField} />
           </div>
@@ -213,40 +213,40 @@ export const RegForm = () => {
           <div className="three fields">
 
             <div className="field required">
-              <label htmlFor="firstName">Имя</label>
+              <label htmlFor="firstName">@(Имя)</label>
               <input name="firstName" type="text" value={firstNameField} onChange={onFirstNameChange} required />
             </div>
 
             <div className="field required">
-              <label htmlFor="secondName">Фамилия</label>
+              <label htmlFor="secondName">@(Фамилия)</label>
               <input name="secondName" type="text" value={secondNameField} onChange={onSecondNameChange} required />
             </div>
 
             <div className="field">
-              <label htmlFor="thirdName">Отчество</label>
+              <label htmlFor="thirdName">@(Отчество)</label>
               <input name="thirdName" type="text" value={thirdNameField} onChange={onThirdNameChange} />
             </div>
           </div>
 
           <div className="field">
-            <label htmlFor="country">Страна</label>
+            <label htmlFor="country">@(Страна)</label>
             <input name="country" type="text" value={countryField} onChange={onCountryChange} />
           </div>
 
           <div className="field">
-            <label htmlFor="adress">Адрес</label>
+            <label htmlFor="adress">@(Адрес)</label>
             <input name="adress" type="text" value={adressField} onChange={onAdressChange} />
           </div>
 
           <div className="two fields">
 
             <div className="field">
-              <label htmlFor="phone">Телефон</label>
+              <label htmlFor="phone">@(Телефон)</label>
               <input name="phone" type="text" value={phoneField} onChange={onPhoneChange} />
             </div>
 
             <div className="field">
-              <label htmlFor="birtdate">Дата рождения</label>
+              <label htmlFor="birtdate">@(Дата рождения)</label>
               <input name="birtdate" type="date" value={bDateField} onChange={onBDateChange} />
             </div>
           </div>
@@ -302,7 +302,7 @@ export const RegForm = () => {
 
         </>}
 
-        <button type='submit' className="ui button teal">Submit</button>
+        <button type='submit' className="ui button teal">@(Отправить)</button>
       </form>
     </div>
   )

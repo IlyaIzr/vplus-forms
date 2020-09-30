@@ -220,12 +220,12 @@ export const GroupForm = () => {
       <form onSubmit={onSubmit} className="ui form">
 
         <StringField isRequired={groupNameField.isRequired} value={groupNameField.value}
-          onChange={onGroupNameChange} isEditable={groupNameField.isEditable} label="Группа"
+          onChange={onGroupNameChange} isEditable={groupNameField.isEditable} label="@(Группа)"
           name="group"
         />
 
         <div className={disciplineField.isRequired ? "required field" : "field"}>
-          <label htmlFor="discipline">Дисциплина</label>
+          <label htmlFor="discipline">@(Дисциплина)</label>
           <select name="discipline" onChange={onDisciplineChange} className="ui dropdown"
             required={disciplineField.isRequired} disabled={!disciplineField.isEditable}
             value={disciplineField.defOption.id}
@@ -238,10 +238,10 @@ export const GroupForm = () => {
           </select>
         </div>
 
-        <div className="ui horizontal divider">Руководящий состав</div>
+        <div className="ui horizontal divider">@(Руководящий состав)</div>
 
         <div className="ui segment">
-          <h4 className="ui title">Назначьте одного или нескольких инвесторов</h4>
+          <h4 className="ui title">@(Назначьте одного или нескольких инвесторов)</h4>
           {investorsField.investors.length ? investorsField.investors.map((field, index) => {
             const isDeletable = investorsField.investors.length > 1
             return (
@@ -253,9 +253,9 @@ export const GroupForm = () => {
           }) : null}
           <button type="button" onClick={addField}
             className={investorsField.options <= investorsField.investors ? "ui button green disabled" : "ui button green"}
-          >Добавить</button>
+          >@(Добавить)</button>
           <span className={total == 100 ? "ui green text" : "ui red text"} htmlFor="total">
-            {'Суммарно процентов: ' + total}
+            {'@(Суммарно процентов): ' + total}
           </span>
           <div className="ui checkbox">
             <input type="checkbox" name="total" checked={total == 100} required />
@@ -263,7 +263,7 @@ export const GroupForm = () => {
         </div>
 
         <div className="ui segment">
-          <h4 className="ui title">Назначьте одного или нескольких управляющих</h4>
+          <h4 className="ui title">@(Назначьте одного или нескольких управляющих)</h4>
           {managersField.managers && managersField.managers.length ? managersField.managers.map((field, index) => {
             const isDeletable = managersField.managers.length > 1
             return (
@@ -275,7 +275,7 @@ export const GroupForm = () => {
           }) : null}
           <button type="button" onClick={addManagerField}
             className={managersField.options <= managersField.managers ? "ui button green disabled" : "ui button green"}
-          >Добавить</button>
+          >@(Добавить)</button>
 
         </div>
 
@@ -284,16 +284,16 @@ export const GroupForm = () => {
         </div>
 
         <div className="ui segment">
-          <h3 className="title">Шаблон пакета</h3>
+          <h3 className="title">@(Шаблон пакета)</h3>
           <div className="three fields">
 
             <NumberField isRequired={tournamentsField.isRequired} isEditable={tournamentsField.isEditable}
-              label="Количество турниров" value={tournamentsField.value} onChange={onTournamentsFieldChange}
+              label="@(Количество турниров)" value={tournamentsField.value} onChange={onTournamentsFieldChange}
               min={tournamentsField.min} max={tournamentsField.max}
             />
 
             <div className={`field ${playerSumField.isRequired && 'required'}`} >
-              <label htmlFor="playerSumField">Сумма игрока в свой БР</label>
+              <label htmlFor="playerSumField">@(Сумма игрока в свой БР)</label>
               <input type="number" value={playerSumField.value} required={playerSumField.isRequired}
                 disabled={!playerSumField.isEditable} min={playerSumField.min} max={playerSumField.max}
                 onChange={onPlayerSumFieldChange}
@@ -301,7 +301,7 @@ export const GroupForm = () => {
             </div>
 
             <div className={`field ${buyInsField.isRequired && 'required'}`} >
-              <label htmlFor="buyInsField">Кол-во байинов на счету</label>
+              <label htmlFor="buyInsField">@(Кол-во байинов на счету)</label>
               <input type="number" value={buyInsField.value} required={buyInsField.isRequired}
                 disabled={!buyInsField.isEditable} min={buyInsField.min} max={buyInsField.max}
                 onChange={onBuyInsFieldChange}
@@ -310,11 +310,11 @@ export const GroupForm = () => {
 
           </div>
 
-          <h4 className="title">Заявленные доли рисков</h4>
+          <h4 className="title">@(Заявленные доли рисков)</h4>
           <div className="three fields">
 
             <div className={`field ${playerRiskField.isRequired && 'required'}`} >
-              <label htmlFor="playerRiskField">Игрок</label>
+              <label htmlFor="playerRiskField">@(Игрок)</label>
               <input type="number" value={playerRisk} required={playerRiskField.isRequired}
                 disabled={!playerRiskField.isEditable} min={playerRiskField.min} max={playerRiskField.max}
                 onChange={onRiskChange} name='playerRiskField'
@@ -326,7 +326,7 @@ export const GroupForm = () => {
             </div>
 
             <div className={`field ${fundRiskField.isRequired && 'required'}`} >
-              <label htmlFor="fundRiskField">Фонд</label>
+              <label htmlFor="fundRiskField">@(Фонд)</label>
               <input type="number" value={100 - playerRisk} required={fundRiskField.isRequired}
                 disabled={!fundRiskField.isEditable} min={fundRiskField.min} max={fundRiskField.max}
                 onChange={onRiskChange} name='fundRiskField'
@@ -338,7 +338,7 @@ export const GroupForm = () => {
           <div className="two fields">
 
             <div className={`field ${rollbackField.isRequired && 'required'}`} >
-              <label htmlFor="rollbackField">Игрок</label>
+              <label htmlFor="rollbackField">@(Игрок)</label>
               <input type="number" value={rollbackField.value} required={rollbackField.isRequired}
                 disabled={!rollbackField.isEditable} min={rollbackField.min} max={rollbackField.max}
                 onChange={onRollbackChange} name='rollbackField'
@@ -355,7 +355,7 @@ export const GroupForm = () => {
         </div>
 
         <button type="submit" className={`ui red button ${(!managersField.managers.length) && 'disabled'}`}>
-          Отправить
+          @(Отправить)
         </button>
       </form>
 

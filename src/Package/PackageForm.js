@@ -142,11 +142,11 @@ export const PackageForm = () => {
   return (
     <div className="ui container">
       <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
-        <h3 className="title">Новый пакет</h3>
+        <h3 className="title">@(Новый пакет)</h3>
 
 
         <div className={`field ${tournamentsField.isRequired && 'required'}`} >
-          <label htmlFor="tournamentsField">Количество турниров в пакете </label>
+          <label htmlFor="tournamentsField">@(Количество турниров в пакете) </label>
           <input type="number" value={tournamentsField.value} required={tournamentsField.isRequired}
             disabled={!tournamentsField.isEditable} min={tournamentsField.min} max={tournamentsField.max}
             onChange={onTournamentsFieldChange} name="tournamentsField"
@@ -154,7 +154,7 @@ export const PackageForm = () => {
         </div>
 
 
-        <h4 className="title">Заявленные доли рисков в пакете</h4>
+        <h4 className="title">@(Заявленные доли рисков в пакете)</h4>
         <div className="three fields">
 
           <div className={`field ${playerRiskField.isRequired && 'required'}`} >
@@ -185,7 +185,7 @@ export const PackageForm = () => {
         <div className="two fields">
 
           <div className={`field ${aBIField.isRequired && 'required'}`} >
-            <label htmlFor="buyInsField">Рекомендованное количество БИ</label>
+            <label htmlFor="buyInsField">@(Рекомендованное количество БИ)</label>
             <input type="number" value={aBIField.value} required={aBIField.isRequired}
               disabled={!aBIField.isEditable} min={aBIField.min} max={aBIField.max}
               onChange={onABIFieldChange}
@@ -193,7 +193,7 @@ export const PackageForm = () => {
           </div>
 
           <div className={`field ${bRSumField.isRequired && 'required'}`} >
-            <label htmlFor="buyInsField">Сумма игрока в своей БР</label>
+            <label htmlFor="buyInsField">@(Сумма игрока в своей БР)</label>
             <input type="number" value={bRSumField.value} required={bRSumField.isRequired}
               disabled={!bRSumField.isEditable} min={bRSumField.min} max={bRSumField.max}
               onChange={onBRSumFieldChange}
@@ -204,7 +204,7 @@ export const PackageForm = () => {
         <div className="two fields">
 
           <div className={`field ${rollbackField.isRequired && 'required'}`} >
-            <label htmlFor="rollbackField">Величина отката игроку</label>
+            <label htmlFor="rollbackField">@(Величина отката игроку)</label>
             <input type="number" value={rollbackField.value} required={rollbackField.isRequired}
               disabled={!rollbackField.isEditable} min={rollbackField.min} max={rollbackField.max}
               onChange={onRollbackChange} name='rollbackField'
@@ -212,7 +212,7 @@ export const PackageForm = () => {
           </div>
 
           <div className={`field ${buyInsField.isRequired && 'required'}`} >
-            <label htmlFor="buyInsField">Кол-во байинов на счету игрока</label>
+            <label htmlFor="buyInsField">@(Кол-во байинов на счету игрока)</label>
             <input type="number" value={buyInsField.value} required={buyInsField.isRequired}
               disabled={!buyInsField.isEditable} min={buyInsField.min} max={buyInsField.max}
               onChange={onBuyInsFieldChange}
@@ -226,14 +226,14 @@ export const PackageForm = () => {
         />
 
         <div className="field">
-          <label htmlFor="extraInfoField">Дополнительные условия пакета</label>
+          <label htmlFor="extraInfoField">@(Дополнительные условия пакета)</label>
           <textarea name="extraInfoField" cols="100" rows="10" value={extraInfoField.value}
             onChange={onExtraInfoChange} disabled={!extraInfoField.isEditable} />
         </div>
 
 
-        <button type='reset' className='ui button red'>Сбросить поля</button>
-        <button type='submit' className='ui button green'>Отправить</button>
+        <button type='reset' className='ui button red'>@(Сбросить поля)</button>
+        <button type='submit' className='ui button green'>@(Отправить)</button>
       </form>
     </div>
   )

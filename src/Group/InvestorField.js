@@ -7,7 +7,7 @@ export const InvestorField = ({ field, options, changeFunc, index, removeFunc, i
   return (
     <div className="ui fields">
       <div className="required field four wide">
-        <label htmlFor="id">Пользователь</label>
+        <label htmlFor="id">@(Пользователь)</label>
         <select name="id" className="ui dropdown"
           required onChange={onChange}
           value={field.id}
@@ -21,7 +21,7 @@ export const InvestorField = ({ field, options, changeFunc, index, removeFunc, i
       </div>
 
       <div className="field seven wide positionRelative">
-        <label htmlFor="share">Доля</label>
+        <label htmlFor="share">@(Доля)</label>
         <input type="range" name="share" className="inputRange"
           value={field.share} onChange={onChange}
         />
@@ -32,7 +32,7 @@ export const InvestorField = ({ field, options, changeFunc, index, removeFunc, i
       <div className="field three wide">
         <button className={isDeletable ? "ui button red" : "ui button red disabled"}
           onClick={onClick} type="button"
-        >Удалить
+        >@(Удалить)
         </button>
       </div>
     </div>

@@ -58,7 +58,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
 
 
       <div className="required field">
-        <label htmlFor="payMethodName">Способ оплаты</label>
+        <label htmlFor="payMethodName">@(Способ оплаты)</label>
         <select name="payMethodName" className="ui dropdown"
           required onChange={payPick} value={field.payMethodName}
         >
@@ -89,7 +89,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
       <div className="field">
         <button className={isDeletable ? "ui button red" : "ui button red disabled"}
           onClick={onClick} type="button"
-        >Удалить
+        >@(Удалить)
         </button>
       </div>
     </div>

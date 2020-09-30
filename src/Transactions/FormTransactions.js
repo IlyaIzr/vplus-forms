@@ -171,7 +171,7 @@ export const FormTransactions = () => {
       <form onSubmit={onSubmit} onReset={resetSomeFields} className="ui form">
 
         <SelectField isRequired={groupField.isRequired} isEditable={groupField.isEditable}
-          label="Группа" name="group"
+          label="@(Группа)" name="group"
           onChange={onChangeGroup} value={groupField.defOption} options={groupField.options}
           optionWrapper={ExaOption}
         />
@@ -179,13 +179,13 @@ export const FormTransactions = () => {
         {/* USERS AND ACCOUNTS */}
         {(groupField.defOption) && <><div className="two fields">
 
-          <SelectField label="Отправитель" name="sender"
+          <SelectField label="@(Отправитель)" name="sender"
             isRequired={senderField.isRequired} isEditable={senderField.isEditable}
             onChange={onChangeSender} options={senderField.options}
             value={senderField.defOption}
           />
 
-          <SelectField label="Счёт отправителя" name="senderAccout"
+          <SelectField label="@(Счёт отправителя)" name="senderAccout"
             isRequired={senderAccsField.isRequired} isEditable={senderAccsField.isEditable}
             onChange={onChangeSenderAcc} options={senderAccsField.options}
             value={senderAccsField.defOption}
@@ -195,13 +195,13 @@ export const FormTransactions = () => {
 
           <div className="two fields">
 
-            <SelectField label="Получатель" name="recipientId"
+            <SelectField label="@(Получатель)" name="recipientId"
               isRequired={recipientField.isRequired} isEditable={recipientField.isEditable}
               onChange={onChangeRecipient} options={recipientField.options}
               value={recipientField.defOption}
             />
 
-            <SelectField label="Счёт отправителя" name="recipientAccout"
+            <SelectField label="@(Счёт отправителя)" name="recipientAccout"
               isRequired={recipientsAcc.isRequired} isEditable={recipientsAcc.isEditable}
               onChange={onChangeRecipientAcc} options={recipientsAcc.options}
               value={recipientsAcc.defOption}
@@ -212,13 +212,13 @@ export const FormTransactions = () => {
 
         <div className="two fields">
 
-          <NumberField label="Сумма" name="payment"
+          <NumberField label="@(Сумма)" name="payment"
             isRequired={true} isEditable={true}
             onChange={onSumChange} value={sum}
             min={1}
           />
 
-          <NumberField label="Комиссия" name="payment"
+          <NumberField label="@(Комиссия)" name="comission"
             isRequired={false} isEditable={true}
             onChange={onComissionChange} value={comission}
             min={1} step={0.01}
@@ -226,12 +226,12 @@ export const FormTransactions = () => {
         </div>
 
         <div>
-          <label htmlFor="comment">Комментарий</label>
+          <label htmlFor="comment">@(Комментарий)</label>
           <textarea name="comment" value={comment} onChange={onCommentChange} />
         </div>
 
-        <button type="reset" className="ui button red">Сбросить</button>
-        <button type="submit" className="ui button teal">Подтвердить</button>
+        <button type="reset" className="ui button red">@(Сбросить)</button>
+        <button type="submit" className="ui button teal">@(Подтвердить)</button>
       </form>
     </div>
   )
