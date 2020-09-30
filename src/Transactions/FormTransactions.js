@@ -47,7 +47,7 @@ export const FormTransactions = () => {
   }
 
   const senderRequest = async (id) => {
-    const data = await WS.send('transactions', 'usersData', {})
+    const data = await WS.send('transactions', 'usersDataSenders', {})
     console.log(data)
     const options = optionFormatter(data.options)
     const defOption = oneOptionFormatter(data.defOption)
@@ -63,7 +63,7 @@ export const FormTransactions = () => {
     setSenderAccs({ ...data, options, defOption })
   }
   const recipientRequest = async (id) => {
-    const data = await WS.send('transactions', 'usersData', {})
+    const data = await WS.send('transactions', 'usersDataRecipients', {})
     const options = optionFormatter(data.options)
     const defOption = oneOptionFormatter(data.defOption)
     const result = { ...data, options, defOption }
@@ -88,13 +88,14 @@ export const FormTransactions = () => {
       })
       await WS.connectionEstablished()
       const groupField = await groupRequest()
-      if (groupField.defOption && groupField.defOption.id) {
+      console.log(groupField)
+      if (groupField.defOption && groupField.defOption.value) {
         const senderField = await senderRequest()
-        if (senderField.defOption && senderField.defOption.id) {
+        if (senderField.defOption && senderField.defOption.value) {
           await senderAccsRequest()
         }
         const recipField = await recipientRequest()
-        if (recipField.defOption && recipField.defOption.id) {
+        if (recipField.defOption && recipField.defOption.value) {
           await recipientAccsRequest()
         }
       }
@@ -177,6 +178,7 @@ export const FormTransactions = () => {
         />
 
         {/* USERS AND ACCOUNTS */}
+        {/* TODO enable fields, but make disable by def */}
         {(groupField.defOption) && <><div className="two fields">
 
           <SelectField label="@(Отправитель)" name="sender"
