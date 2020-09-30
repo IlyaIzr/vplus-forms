@@ -3,7 +3,7 @@ import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated'
 const animatedComponents = makeAnimated()
 
-export const SelectField = ({
+export const SelectCreatableField = ({
   isRequired = false,
   isEditable = true,
   name = '',
@@ -11,7 +11,7 @@ export const SelectField = ({
   onChange,
   value,
   label,
-  options,
+  options=false,
   optionWrapper = false
 }) => {
   const isFilledF = () => {

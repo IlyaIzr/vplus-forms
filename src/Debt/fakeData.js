@@ -1,6 +1,12 @@
-export const formTitle = 'Форма мошенников' 
-export const groupFieldMeta = {
-  value: 'Test group 1', //or '' , or false?
+export const formTitle = 'Форма мошенников'
+export const arbitrageFieldMeta = {
+  value: 'Арбитраж из сервера',
+  isEditable: true,
+  isRequired: true
+}
+
+export const skypeFieldMeta = {
+  value: [{ label: "skype1", value: "skype1" }, { label: "skype33", value: "skype2" }],
   isEditable: true,
   isRequired: true
 }
