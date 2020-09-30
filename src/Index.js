@@ -10,6 +10,7 @@ const App = () => {
       <h3><a href="./packageForm.html">Пакет</a></h3>
       <h3><a href="./regForm.html">Регистрация</a></h3>
       <h3><a href="./accountsForm.html">Аккаунты</a></h3>
+      <h3><a href="./debtForm.html">Должники</a></h3>      
     </div>
   );
 };

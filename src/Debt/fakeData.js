@@ -1,3 +1,4 @@
+export const formTitle = 'Форма мошенников' 
 export const groupFieldMeta = {
   value: 'Test group 1', //or '' , or false?
   isEditable: true,
