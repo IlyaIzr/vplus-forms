@@ -5,7 +5,7 @@ module.exports = {
 
   entry: {
     index: path.join(__dirname, './src/index.js'),
-    transactions: path.join(__dirname, './src/Transactions/index.js'),
+    transactionsForm: path.join(__dirname, './src/Transactions/index.js'),
     groupForm: path.join(__dirname, './src/Group/index.js'),
     packageForm: path.join(__dirname, './src/Package/index.js'),
     regForm: path.join(__dirname, './src/Reg/index.js'),
@@ -15,11 +15,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
-    chunkFilename: '[name].common.js',
+    chunkFilename: '[name].components.js',
   },
 
   optimization: {
-    runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
     },
@@ -67,9 +66,9 @@ module.exports = {
 
   plugins: [
     new HtmlWebPackPlugin({
-      filename: 'transactions.html',
-      template: './public/transactions.html',
-      chunks: ['transactions']
+      filename: 'transactionsForm.html',
+      template: './public/transactionsForm.html',
+      chunks: ['transactionsForm']
     }),
     new HtmlWebPackPlugin({
       filename: 'groupForm.html',
