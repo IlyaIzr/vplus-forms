@@ -19,9 +19,34 @@ module.exports = {
   },
 
   optimization: {
+    runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
     },
+    // runtimeChunk: 'single',  //chunk per lib and runtime
+    // splitChunks: {
+    //   chunks: 'all',
+    //   maxInitialRequests: Infinity,
+    //   minSize: 0,
+    //   cacheGroups: {
+    //     reactVendor: {
+    //       test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+    //       name: "reactvendor"
+    //     },
+    //     utilityVendor: {
+    //       test: /[\\/]node_modules[\\/](react-select)[\\/]/,
+    //       name: "utilityVendor"
+    //     },
+    //     bootstrapVendor: {
+    //       test: /[\\/]node_modules[\\/](draft-js)[\\/]/,
+    //       name: "bootstrapVendor"
+    //     },
+    //     vendor: {
+    //       test: /[\\/]node_modules[\\/](!react-select)(!draft-js)[\\/]/,
+    //       name: "vendor"
+    //     },
+    //   },
+    // },
   },
 
   module: {

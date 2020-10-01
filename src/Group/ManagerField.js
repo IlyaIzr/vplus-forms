@@ -33,7 +33,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
     }
   }, [])
   useEffect(() => {
-    if (payForm.fields.length) {
+    if (payForm && payForm.fields && payForm.fields.length) {
       const e = { target: { value: payForm.fields[0].value, name: 'payMethodName' } }
       const e2 = { target: { value: payForm.fields[1].value, name: 'payValue' } }
       changeFunc(e2, index)
@@ -63,7 +63,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
           required onChange={payPick} value={field.payMethodName}
         >
           <option value='' key='emptyOpt'></option>
-          {payOptions.length && payOptions.map((payOption, index) => {  // TODO index of 0 can cause problems
+          {payOptions && Boolean(payOptions.length) && payOptions.map((payOption, index) => {  // TODO index of 0 can cause problems
             return (
               <option value={payOption.fields[0].value} key={payOption.name + index}>{payOption.name}</option>
             )
@@ -73,7 +73,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
       </div>
 
       {isExpanded && <div className="ui fragment">
-        {payForm.fields.length && payForm.fields.map((field) => {
+        {payForm && payForm.fields && Boolean(payForm.fields.length) && payForm.fields.map((field) => {
           return (
             <div className={`field ${field.isRequired && 'required'}`} key={field.name}>
               {field.label && <label htmlFor={field.name}>{field.label}</label>}

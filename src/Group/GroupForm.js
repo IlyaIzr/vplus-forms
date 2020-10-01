@@ -31,12 +31,12 @@ export const GroupForm = () => {
 
   const [disciplineField, setDisciplineField] = useState({
     options: [],
-    defOption: false, // mutable 
+    value: false, // mutable 
     isEditable: true,
     isRequired: true
   })
   const onDisciplineChange = e => {
-    const newObj = { ...disciplineField, defOption: e.target.value }
+    const newObj = { ...disciplineField, value: e.target.value }
     setDisciplineField(newObj)
   }
 
@@ -174,7 +174,7 @@ export const GroupForm = () => {
       rollbackField
     }
     console.log(formData)
-    const response = await WS.send('group', 'groupFormData', formData)
+    const response = await WS.send('groups', 'groupFormData', formData)
   };
 
 
@@ -184,7 +184,7 @@ export const GroupForm = () => {
         url: 'ws://localhost:5555'
       })
       await WS.connectionEstablished()
-      const response = await WS.send('group', 'groupFormData', {})
+      const response = await WS.send('groups', 'groupFormData', {})
       const {
         groupFieldMeta,
         disciplineFieldMeta,
@@ -196,19 +196,19 @@ export const GroupForm = () => {
         playerRiskMeta,
         fundRiskMeta,
         rollbackMeta } = response
-      setGroupNameField(groupFieldMeta)
-      setDisciplineField(disciplineFieldMeta)
-      setInvestorsField(investorsFieldMeta)
-      setManagersField(managersFieldMeta)
-      setTournamentsField(tournamentsNumberMeta)
-      setPlayerSumField(playerSumNumberMeta)
-      setBuyInsField(playerBuyInsMeta)
+      groupFieldMeta && setGroupNameField(groupFieldMeta)
+      disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
+      investorsFieldMeta && setInvestorsField(investorsFieldMeta)
+      managersFieldMeta && setManagersField(managersFieldMeta)
+      tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
+      playerSumNumberMeta && setPlayerSumField(playerSumNumberMeta)
+      playerBuyInsMeta && setBuyInsField(playerBuyInsMeta)
       // slider sets
-      setPlayerRiskField(playerRiskMeta)
-      setFundRiskField(fundRiskMeta)
-      setPlayerRisk(playerRiskMeta.value)
+      playerRiskMeta && setPlayerRiskField(playerRiskMeta)
+      fundRiskMeta && setFundRiskField(fundRiskMeta)
+      playerRiskMeta && setPlayerRisk(playerRiskMeta.value)
       // end of slider sets
-      setRollbackField(rollbackMeta)
+      rollbackMeta && setRollbackField(rollbackMeta)
       // WS.close()
     }
     fetcher()
@@ -216,7 +216,7 @@ export const GroupForm = () => {
 
 
   return (
-    <div className="ui conainer" style={{ padding: '20px' }}>
+    <div>
       <form onSubmit={onSubmit} className="ui form">
 
         <StringField isRequired={groupNameField.isRequired} value={groupNameField.value}
@@ -228,7 +228,7 @@ export const GroupForm = () => {
           <label htmlFor="discipline">@(Дисциплина)</label>
           <select name="discipline" onChange={onDisciplineChange} className="ui dropdown"
             required={disciplineField.isRequired} disabled={!disciplineField.isEditable}
-            value={disciplineField.defOption.id}
+            value={disciplineField.value.id}
           >
             {disciplineField.options.length && disciplineField.options.map((discipline) => {
               return (

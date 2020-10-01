@@ -153,9 +153,11 @@ export const RegForm = () => {
       await WS.connectionEstablished()
       const response = await WS.send('accounts', 'accountsFormData', {})
       const { accountsMetaData } = response
-      const options = optionSpreader(accountsMetaData.options)
-      const accounts = accountsSpreader(accountsMetaData.accounts)
-      setAccounts({ ...accountsMetaData, options, accounts })
+      if (accountsMetaData) {
+        const options = optionSpreader(accountsMetaData.options)
+        const accounts = accountsSpreader(accountsMetaData.accounts)
+        setAccounts({ ...accountsMetaData, options, accounts })
+      }
 
     }
     fetcher()
@@ -166,7 +168,7 @@ export const RegForm = () => {
 
 
   return (
-    <div className="ui container">
+    <div>
       <div className="ui fragment">
         <button onClick={onTabClick} className={`ui button ${tabIndex === 0 && 'secondary'}`} name="0">
           @(Основная информация)

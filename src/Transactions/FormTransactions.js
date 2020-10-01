@@ -6,7 +6,7 @@ import { NumberField } from '../components/NumberField'
 let WS
 const fieldSettings = {
   options: [],
-  defOption: false,
+  value: false,
   isEditable: true,
   isRequired: true
 }
@@ -40,42 +40,50 @@ export const FormTransactions = () => {
   const groupRequest = async (id) => {
     const data = await WS.send('transactions', 'groupData', {})
     const formatedOptions = optionFormatter(data.options)
-    const formatedDefOption = oneOptionFormatter(data.defOption)
-    const result = { ...data, options: formatedOptions, defOption: formatedDefOption }
+    const formatedvalue = oneOptionFormatter(data.value)
+    const result = { ...data, options: formatedOptions, value: formatedvalue }
     setGroupField(result)
     return result
   }
 
   const senderRequest = async (id) => {
-    const data = await WS.send('transactions', 'usersDataSenders', {})
-    console.log(data)
-    const options = optionFormatter(data.options)
-    const defOption = oneOptionFormatter(data.defOption)
-    const result = { ...data, options, defOption }
-    setSenderField(result)
-    if (defOption && defOption.value) { senderAccsRequest() }
-    return result
+    console.log('sender req')
+    const data = await WS.send('transactions', 'usersData', {})
+    if (data) {
+      const options = optionFormatter(data.options)
+      const value = oneOptionFormatter(data.value)
+      const result = { ...data, options, value }
+      setSenderField(result)
+      if (value && value.value) { senderAccsRequest() }
+      return result
+    }
   }
   const senderAccsRequest = async (id) => {
     const data = await WS.send('transactions', 'accountsData', {})
-    const options = optionFormatter(data.options)
-    const defOption = oneOptionFormatter(data.defOption)
-    setSenderAccs({ ...data, options, defOption })
+    if (data) {
+      const options = optionFormatter(data.options)
+      const value = oneOptionFormatter(data.value)
+      setSenderAccs({ ...data, options, value })
+    }
   }
   const recipientRequest = async (id) => {
-    const data = await WS.send('transactions', 'usersDataRecipients', {})
-    const options = optionFormatter(data.options)
-    const defOption = oneOptionFormatter(data.defOption)
-    const result = { ...data, options, defOption }
-    setRecipientsField(result)
-    if (defOption && defOption.value) { recipientAccsRequest() }
-    return result
+    const data = await WS.send('transactions', 'usersData', {})
+    if (data) {
+      const options = optionFormatter(data.options)
+      const value = oneOptionFormatter(data.value)
+      const result = { ...data, options, value }
+      setRecipientsField(result)
+      if (value && value.value) { recipientAccsRequest() }
+      return result
+    }
   }
   const recipientAccsRequest = async (id) => {
     const data = await WS.send('transactions', 'accountsData', {})
-    const options = optionFormatter(data.options)
-    const defOption = oneOptionFormatter(data.defOption)
-    setRecipientsAcc({ ...data, options, defOption })
+    if (data) {
+      const options = optionFormatter(data.options)
+      const value = oneOptionFormatter(data.value)
+      setRecipientsAcc({ ...data, options, value })
+    }
   }
   const postFormRequest = async data => {
     const response = await WS.send('transactions', 'accountsData', data)
@@ -89,13 +97,13 @@ export const FormTransactions = () => {
       await WS.connectionEstablished()
       const groupField = await groupRequest()
       console.log(groupField)
-      if (groupField.defOption && groupField.defOption.value) {
+      if (groupField.value && groupField.value.value) {
         const senderField = await senderRequest()
-        if (senderField.defOption && senderField.defOption.value) {
+        if (senderField.value && senderField.value.value) {
           await senderAccsRequest()
         }
         const recipField = await recipientRequest()
-        if (recipField.defOption && recipField.defOption.value) {
+        if (recipField.value && recipField.value.value) {
           await recipientAccsRequest()
         }
       }
@@ -109,24 +117,24 @@ export const FormTransactions = () => {
 
   // Change listeners
   const onChangeGroup = async (option) => {
-    setGroupField({ ...groupField, defOption: option })
+    setGroupField({ ...groupField, value: option })
     await senderRequest(option.value)
     await recipientRequest(option.value) //TODO
   }
 
   const onChangeSender = async option => {
-    setSenderField({ ...senderField, defOption: option })
+    setSenderField({ ...senderField, value: option })
     await senderAccsRequest()
   }
   const onChangeSenderAcc = async option => {
-    await setSenderAccs({ ...senderAccsField, defOption: option })
+    await setSenderAccs({ ...senderAccsField, value: option })
   }
   const onChangeRecipient = async option => {
-    setRecipientsField({ ...senderField, defOption: option })
+    setRecipientsField({ ...senderField, value: option })
     await recipientAccsRequest()
   }
   const onChangeRecipientAcc = async option => {
-    await setRecipientsAcc({ ...senderAccsField, defOption: option })
+    await setRecipientsAcc({ ...senderAccsField, value: option })
   }
 
   const resetSomeFields = (e) => {
@@ -168,29 +176,29 @@ export const FormTransactions = () => {
 
 
   return (
-    <div className="ui container">
+    <div>
       <form onSubmit={onSubmit} onReset={resetSomeFields} className="ui form">
 
         <SelectField isRequired={groupField.isRequired} isEditable={groupField.isEditable}
           label="@(Группа)" name="group"
-          onChange={onChangeGroup} value={groupField.defOption} options={groupField.options}
+          onChange={onChangeGroup} value={groupField.value} options={groupField.options}
           optionWrapper={ExaOption}
         />
 
         {/* USERS AND ACCOUNTS */}
         {/* TODO enable fields, but make disable by def */}
-        {(groupField.defOption) && <><div className="two fields">
+        {(groupField.value) && <><div className="two fields">
 
           <SelectField label="@(Отправитель)" name="sender"
             isRequired={senderField.isRequired} isEditable={senderField.isEditable}
             onChange={onChangeSender} options={senderField.options}
-            value={senderField.defOption}
+            value={senderField.value}
           />
 
           <SelectField label="@(Счёт отправителя)" name="senderAccout"
             isRequired={senderAccsField.isRequired} isEditable={senderAccsField.isEditable}
             onChange={onChangeSenderAcc} options={senderAccsField.options}
-            value={senderAccsField.defOption}
+            value={senderAccsField.value}
           />
 
         </div>
@@ -200,13 +208,13 @@ export const FormTransactions = () => {
             <SelectField label="@(Получатель)" name="recipientId"
               isRequired={recipientField.isRequired} isEditable={recipientField.isEditable}
               onChange={onChangeRecipient} options={recipientField.options}
-              value={recipientField.defOption}
+              value={recipientField.value}
             />
 
             <SelectField label="@(Счёт отправителя)" name="recipientAccout"
               isRequired={recipientsAcc.isRequired} isEditable={recipientsAcc.isEditable}
               onChange={onChangeRecipientAcc} options={recipientsAcc.options}
-              value={recipientsAcc.defOption}
+              value={recipientsAcc.value}
             />
 
           </div></>}

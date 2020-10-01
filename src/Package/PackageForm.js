@@ -70,7 +70,7 @@ export const PackageForm = () => {
         url: 'ws://localhost:5555'
       })
       await WS.connectionEstablished()
-      const response = await WS.send('package', 'packageFormData', {})
+      const response = await WS.send('packages', 'packageFormData', {})
       const {
         roomsFieldMeta,
         tournamentsNumberMeta,
@@ -83,27 +83,30 @@ export const PackageForm = () => {
         ExtraInfoField
       } = response
 
-      const options = []
-      await roomsFieldMeta.options.forEach((serverOption) => {
-        options.push({ value: serverOption.id, label: serverOption.name })
-      })
-      const value = []
-      await roomsFieldMeta.value.forEach((serverValue) => {
-        value.push({ value: serverValue.id, label: serverValue.name })
-      })
-      
-      setRoomsField({ ...roomsFieldMeta, options, value })
-      setTournamentsField(tournamentsNumberMeta)
+      if (roomsFieldMeta) {
+        const options = []
+        await roomsFieldMeta.options.forEach((serverOption) => {
+          options.push({ value: serverOption.id, label: serverOption.name })
+        })
+
+        const value = []
+        await roomsFieldMeta.value.forEach((serverValue) => {
+          value.push({ value: serverValue.id, label: serverValue.name })
+        })
+        setRoomsField({ ...roomsFieldMeta, options, value })
+      }
+
+      tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
       // slider sets
-      setPlayerRiskField(playerRiskMeta)
-      setFundRiskField(fundRiskMeta)
-      setPlayerRisk(playerRiskMeta.value)
+      playerRiskMeta && setPlayerRiskField(playerRiskMeta)
+      fundRiskMeta && setFundRiskField(fundRiskMeta)
+      playerRiskMeta && setPlayerRisk(playerRiskMeta.value)
       // end of slider sets
-      setABIField(BIMeta)
-      setBRSumField(BRSumField)
-      setRollbackField(RollbackField)
-      setBuyInsField(BuyInsField)
-      setExtraInfoField(ExtraInfoField)
+      BIMeta && setABIField(BIMeta)
+      BRSumField && setBRSumField(BRSumField)
+      RollbackField && setRollbackField(RollbackField)
+      BuyInsField && setBuyInsField(BuyInsField)
+      ExtraInfoField && setExtraInfoField(ExtraInfoField)
 
       // WS.close()
     }
@@ -123,8 +126,8 @@ export const PackageForm = () => {
       buyInsField,
       extraInfoField
     }
-    console.log(formData)    
-    const response = await WS.send('package', 'packageFormData', formData)
+    console.log(formData)
+    const response = await WS.send('packages', 'packageFormData', formData)
   }
   const onReset = () => {
     setRoomsField({ ...roomsField, value: [] })
@@ -140,7 +143,7 @@ export const PackageForm = () => {
   }
 
   return (
-    <div className="ui container">
+    <div>
       <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
         <h3 className="title">@(Новый пакет)</h3>
 

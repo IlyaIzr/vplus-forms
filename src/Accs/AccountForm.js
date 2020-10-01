@@ -98,9 +98,11 @@ export const AccountForm = () => {
       await WS.connectionEstablished()
       const response = await WS.send('accounts', 'accountsFormData', {})
       const { accountsMetaData } = response
-      const options = optionSpreader(accountsMetaData.options)
-      const accounts = accountsSpreader(accountsMetaData.accounts)
-      setAccounts({ ...accountsMetaData, options, accounts })
+      if (accountsMetaData) {
+        const options = optionSpreader(accountsMetaData.options)
+        const accounts = accountsSpreader(accountsMetaData.accounts)
+        setAccounts({ ...accountsMetaData, options, accounts })
+      }
 
     }
     fetcher()
@@ -124,7 +126,7 @@ export const AccountForm = () => {
   }
 
   return (
-    <div className="ui container"><br />
+    <div>
       <h2>@(Аккаунты и счета)</h2>
       <form className="ui form" onSubmit={onSubmit}>
 
