@@ -37,7 +37,7 @@ export const FormTransactions = () => {
   const onCommentChange = e => setComment(e.target.value)
 
   // Requests
-  const groupRequest = async (id) => {
+  const groupRequest = async (msg) => {
     const data = await WS.send('transactions', 'groupData', {})
     const formatedOptions = optionFormatter(data.options)
     const formatedvalue = oneOptionFormatter(data.value)
@@ -46,9 +46,9 @@ export const FormTransactions = () => {
     return result
   }
 
-  const senderRequest = async (id) => {
+  const senderRequest = async (msg = {}) => {
     console.log('sender req')
-    const data = await WS.send('transactions', 'usersData', {})
+    const data = await WS.send('transactions', 'usersData', msg)
     if (data) {
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
@@ -58,16 +58,16 @@ export const FormTransactions = () => {
       return result
     }
   }
-  const senderAccsRequest = async (id) => {
-    const data = await WS.send('transactions', 'accountsData', {})
+  const senderAccsRequest = async (msg = {}) => {
+    const data = await WS.send('transactions', 'accountsData', msg)
     if (data) {
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
       setSenderAccs({ ...data, options, value })
     }
   }
-  const recipientRequest = async (id) => {
-    const data = await WS.send('transactions', 'usersData', {})
+  const recipientRequest = async (msg = {}) => {
+    const data = await WS.send('transactions', 'usersData', msg)
     if (data) {
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
@@ -77,8 +77,8 @@ export const FormTransactions = () => {
       return result
     }
   }
-  const recipientAccsRequest = async (id) => {
-    const data = await WS.send('transactions', 'accountsData', {})
+  const recipientAccsRequest = async (msg = {}) => {
+    const data = await WS.send('transactions', 'accountsData', msg)
     if (data) {
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
@@ -118,23 +118,23 @@ export const FormTransactions = () => {
   // Change listeners
   const onChangeGroup = async (option) => {
     setGroupField({ ...groupField, value: option })
-    await senderRequest(option.value)
-    await recipientRequest(option.value) //TODO
+    await senderRequest(groupField)
+    await recipientRequest(groupField) //TODO
   }
 
   const onChangeSender = async option => {
     setSenderField({ ...senderField, value: option })
-    await senderAccsRequest()
+    await senderAccsRequest(senderField)
   }
-  const onChangeSenderAcc = async option => {
-    await setSenderAccs({ ...senderAccsField, value: option })
+  const onChangeSenderAcc = option => {
+    setSenderAccs({ ...senderAccsField, value: option })
   }
   const onChangeRecipient = async option => {
-    setRecipientsField({ ...senderField, value: option })
-    await recipientAccsRequest()
+    setRecipientsField({ ...recipientField, value: option })
+    await recipientAccsRequest(recipientField)
   }
-  const onChangeRecipientAcc = async option => {
-    await setRecipientsAcc({ ...senderAccsField, value: option })
+  const onChangeRecipientAcc = option => {
+    setRecipientsAcc({ ...senderAccsField, value: option })
   }
 
   const resetSomeFields = (e) => {
