@@ -101,7 +101,7 @@ export const GroupForm = () => {
     const managers = [...managersField.managers, {
       name: managersField.options[0].name,
       id: managersField.options[0].id,
-      payMethodName: managersField.payOptions[0].fields[0].value,
+      payMethodId: managersField.payOptions[0].payMethodId,
       payValue: managersField.payOptions[0].fields[1].value
     }]
     setManagersField({

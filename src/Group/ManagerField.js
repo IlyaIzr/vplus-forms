@@ -9,12 +9,21 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
     const optionsSearchArray = payOptions.filter((option) => option.payMethodId == e.target.value)
     const payOptionNeeded = optionsSearchArray[0]
     if (field.payValue) { // if manager has payValue seted, then overrite that value to be second fields value
+      console.log('we need to insert this value: ')
+      console.log(field.payValue)
+      console.log('lets see what was there before: ')
+      console.log(payOptionNeeded.fields[1].value)
+      console.log('we did the assignment on the same fucking adress')
       payOptionNeeded.fields[1].value = field.payValue
+      console.log('lets see whats out there on that adress: ')
+      console.log(payOptionNeeded.fields[1].value)
+      console.log('and lets see the whole object: ')
+      console.log(payOptionNeeded)
     }
     if (field.payMethodId === 'custom' && field.payMethodName) {  //set payMethodName if it's custom payMethod
       payOptionNeeded.fields[0].value = field.payMethodName
+      console.log('that didnt run on that test')
     }
-    console.log(payOptionNeeded)
     setPayForm(payOptionNeeded)
   }
   const onPayFormChange = e => {
@@ -44,6 +53,7 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
     if (payForm && payForm.fields && payForm.fields.length) {
       const e = { target: { value: payForm.fields[0].value, name: 'payMethodName' } }
       const e2 = { target: { value: payForm.fields[1].value, name: 'payValue' } }
+      changeFunc(e, index)
       changeFunc(e2, index)
     }
   }, [payForm])
@@ -81,7 +91,6 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
 
       {isExpanded && <div className="ui fragment">
         {payForm && payForm.fields && Boolean(payForm.fields.length) && payForm.fields.map((field) => {
-          console.log(field.value)
           return (
             <div className={`field ${field.isRequired && 'required'}`} key={field.name}>
               {field.label && <label htmlFor={field.name}>{field.label}</label>}
