@@ -11,6 +11,17 @@ export const skypeFieldMeta = {
   isRequired: true
 }
 
+export const credentialsFieldMeta = {
+  value: [{ firstName: 'Anton', secondName: 'Pavlovitch', thirdName: 'Checkov', isEditable: false }],
+  isEditable: true, // can or can not add fields
+  canDeleteFields: false,
+  isRequired: {
+    firstName: true,
+    secondName: true,
+    thirdName: false
+  }
+}
+
 const disciplines = [
   { name: 'discipline1', id: 'discipline1ID' },
   { name: 'discipline2', id: 'discipline2ID' },

@@ -5,7 +5,7 @@ import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader, multifieldsDefaultState } from '../reusable'
 // fake data
-import { formTitle, arbitrageFieldMeta, skypeFieldMeta } from './fakeData'
+import { formTitle, arbitrageFieldMeta, skypeFieldMeta, credentialsFieldMeta } from './fakeData'
 import { ThreeFields } from './ThreeFields'
 
 
@@ -23,8 +23,8 @@ export const DebtForm = () => {
   }
   const addExtraField = () => {
     const mutable = [...credentialsField.value]
-    mutable.push({ firstName: '', secondName: '', thirdName: '' })
-    setCredentialsField(mutable)
+    mutable.push({ firstName: '', secondName: '', thirdName: '', isEditable: true })
+    setCredentialsField({ ...credentialsField, value: mutable })
   }
   const delCredentialsField = index => {
     const mutable = [...credentialsField.value]
@@ -38,6 +38,7 @@ export const DebtForm = () => {
   useEffect(() => {
     setTitle(formTitle)
     setArbitrageField(arbitrageFieldMeta)
+    setCredentialsField(credentialsFieldMeta)
     setSkypeField(skypeFieldMeta)
   }, [])
 
@@ -51,17 +52,23 @@ export const DebtForm = () => {
           isEditable={arbitrageField.isEditable} isRequired={arbitrageField.isRequired}
           value={arbitrageField.value} onChange={onArbitrageChange}
         />
-
-        {credentialsField.value && Boolean(credentialsField.value) && credentialsField.value.map((field, index) => {
-          return (
-            <ThreeFields
-              value={field.value}
-              isEditable={field.isEditable} isRequired={field.isRequired}
-              deleteFunc={delCredentialsField} onChange={onCredentialsChange}
-              index={index}
-            />
-          )
-        })}
+        <div className="field ui segment">
+          <label htmlFor="">@(ФИО)</label>
+          {credentialsField.value && Boolean(credentialsField.value) && credentialsField.value.map((field, index) => {
+            return (
+              <ThreeFields key={index + 'creds'}
+                value={field}
+                isEditable={field.isEditable} isRequired={credentialsField.isRequired}
+                deleteFunc={delCredentialsField} onChange={onCredentialsChange}
+                index={index} canDelete={credentialsField.canDeleteFields}
+              />
+            )
+          })}
+          <button className={`ui button blue small ${!credentialsField.isEditable && 'disabled'}`}
+            onClick={addExtraField} type="button"
+          >@(Добавить поле)
+            </button>
+        </div>
 
         <SelectCreatableField name="skype" label="@(Skype)"
           isEditable={skypeField.isEditable} isRequired={skypeField.isRequired}
