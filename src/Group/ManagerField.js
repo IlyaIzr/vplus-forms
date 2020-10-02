@@ -6,8 +6,16 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
   const payPick = (e) => {
     changeFunc(e, index)
     setIsExpanded(true)
-    const payOptionNeeded = payOptions.filter((option) => option.fields[0].value == e.target.value)
-    setPayForm(payOptionNeeded[0])
+    const optionsSearchArray = payOptions.filter((option) => option.payMethodId == e.target.value)
+    const payOptionNeeded = optionsSearchArray[0]
+    if (field.payValue) { // if manager has payValue seted, then overrite that value to be second fields value
+      payOptionNeeded.fields[1].value = field.payValue
+    }
+    if (field.payMethodId === 'custom' && field.payMethodName) {  //set payMethodName if it's custom payMethod
+      payOptionNeeded.fields[0].value = field.payMethodName
+    }
+    console.log(payOptionNeeded)
+    setPayForm(payOptionNeeded)
   }
   const onPayFormChange = e => {
     changeFunc(e, index)
@@ -27,8 +35,8 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
   })
 
   useEffect(() => {
-    if (field.payMethodName) {
-      const e = { target: { value: field.payMethodName } }
+    if (field.payMethodId) {
+      const e = { target: { value: field.payMethodId } }
       payPick(e)
     }
   }, [])
@@ -58,22 +66,22 @@ export const ManagerField = ({ field, options, isDeletable, changeFunc, removeFu
 
 
       <div className="required field">
-        <label htmlFor="payMethodName">@(Способ оплаты)</label>
-        <select name="payMethodName" className="ui dropdown"
-          required onChange={payPick} value={field.payMethodName}
+        <label htmlFor="payMethodId">@(Способ оплаты)</label>
+        <select name="payMethodId" className="ui dropdown"
+          required onChange={payPick} value={field.payMethodId}
         >
           <option value='' key='emptyOpt'></option>
           {payOptions && Boolean(payOptions.length) && payOptions.map((payOption, index) => {  // TODO index of 0 can cause problems
             return (
-              <option value={payOption.fields[0].value} key={payOption.name + index}>{payOption.name}</option>
+              <option value={payOption.payMethodId} key={payOption.label + index}>{payOption.label}</option>
             )
           })}
-          <option value={field.payMethodName} key='customName'>{field.payMethodName}</option>
         </select>
       </div>
 
       {isExpanded && <div className="ui fragment">
         {payForm && payForm.fields && Boolean(payForm.fields.length) && payForm.fields.map((field) => {
+          console.log(field.value)
           return (
             <div className={`field ${field.isRequired && 'required'}`} key={field.name}>
               {field.label && <label htmlFor={field.name}>{field.label}</label>}
