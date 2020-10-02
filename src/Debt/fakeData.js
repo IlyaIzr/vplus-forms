@@ -22,14 +22,23 @@ export const credentialsFieldMeta = {
   }
 }
 
-const disciplines = [
-  { name: 'discipline1', id: 'discipline1ID' },
-  { name: 'discipline2', id: 'discipline2ID' },
-  { name: 'discipline3', id: 'discipline3ID' }
+const db_data_sites = [
+  { label: "Pokersite1", value: "pokas2314" },
+  { label: "Pokersite2", value: "pokafas2314" },
+  { label: "Pokersite5", value: "p2fas2314" }
 ]
-export const disciplineFieldMeta = {
-  options: disciplines,
-  defOption: { name: 'discipline2', id: 'discipline2ID' }, //or false
-  isEditable: true,
+export const nicknamesFieldMeta = {
+  options: db_data_sites,
+  value: [
+    {
+      nickname: 'Anton',
+      sites: [
+        { label: "PokerNow", value: "po5514" },
+        { label: "Pokersite1", value: "pokas2314" }
+      ]
+    }
+  ],
+  isEditable: true, // can or can not add fields
+  canDeleteFields: false,
   isRequired: true
 }

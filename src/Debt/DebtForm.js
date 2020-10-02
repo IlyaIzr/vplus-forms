@@ -5,8 +5,9 @@ import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader, multifieldsDefaultState } from '../reusable'
 // fake data
-import { formTitle, arbitrageFieldMeta, skypeFieldMeta, credentialsFieldMeta } from './fakeData'
+import { formTitle, arbitrageFieldMeta, skypeFieldMeta, credentialsFieldMeta, nicknamesFieldMeta } from './fakeData'
 import { ThreeFields } from './ThreeFields'
+import { NicknamesSForm } from './NicknamesSForm'
 
 
 export const DebtForm = () => {
@@ -35,16 +36,40 @@ export const DebtForm = () => {
   const [skypeField, setSkypeField] = useState(selectDefaultState)
   const onSkypeChange = options => setSkypeField({ ...skypeField, value: options })
 
+  const [nicknameField, setNicknameField] = useState({ ...multifieldsDefaultState, options: [] })
+  const onSiteChange = (options, index) => {
+    const mutable = [...nicknameField.value]
+    mutable[index].sites = options
+    setNicknameField({ ...nicknameField, value: mutable })
+  }
+  const onNickChange = (name, value, index) => {
+    const mutable = [...nicknameField.value]
+    mutable[index][name] = value
+    setNicknameField({ ...nicknameField, value: mutable })
+  }
+
   useEffect(() => {
     setTitle(formTitle)
     setArbitrageField(arbitrageFieldMeta)
     setCredentialsField(credentialsFieldMeta)
     setSkypeField(skypeFieldMeta)
+    setNicknameField(nicknamesFieldMeta)
   }, [])
+
+  const onSubmit = e => {
+    e.preventDefault()
+    const formData = {
+      arbitrageField,
+      credentialsField, 
+      skypeField,
+      nicknameField
+    }
+    console.log(formData)
+  }
 
   return (
     <div className="ui container">
-      <form className="ui form">
+      <form className="ui form" onSubmit={onSubmit}>
 
         <h1 className="title">{title}</h1>
 
@@ -54,7 +79,7 @@ export const DebtForm = () => {
         />
         <div className="field ui segment">
           <label htmlFor="">@(ФИО)</label>
-          {credentialsField.value && Boolean(credentialsField.value) && credentialsField.value.map((field, index) => {
+          {credentialsField.value && Boolean(credentialsField.value.length) && credentialsField.value.map((field, index) => {
             return (
               <ThreeFields key={index + 'creds'}
                 value={field}
@@ -75,6 +100,19 @@ export const DebtForm = () => {
           value={skypeField.value} onChange={onSkypeChange} isMulti={true}
         />
 
+        <div className="ui field segment">
+          <label htmlFor="">@(Никнеймы)</label>
+          {nicknameField.value && Boolean(nicknameField.value.length) && nicknameField.value.map((field, index) => {
+            return (
+              <NicknamesSForm key={index + 'nicks'}
+                field={field} options={nicknameField.options}
+                onSiteChange={onSiteChange} onNickChange={onNickChange}
+                index={index}
+              />
+            )
+          })}
+        </div>
+        <button className="ui button teal" type="submit">@(Отправить)</button>
       </form>
     </div>
   )
