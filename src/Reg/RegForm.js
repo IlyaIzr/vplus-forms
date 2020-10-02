@@ -18,38 +18,39 @@ export const RegForm = () => {
   const onTabClick = e => setTabIndex(Number(e.target.name))
   const [validationPopup, setValidationPopup] = useState(false)
   const switchValidation = () => setValidationPopup(!validationPopup)
+  const [errorMsg, setErrorMsg] = useState(null)
   // Tab 1 fields
-  const [loginField, setLoginField] = useState('')
-  const onLoginFieldChange = e => setLoginField(e.target.value)
+  const [loginField, setLoginField] = useState(stringFieldDefaultState)
+  const onLoginFieldChange = e => setLoginField({ loginField, value: e.target.value })
 
-  const [eMailField, setEMailField] = useState('test@remove.later')
-  const onEMailFieldChange = e => setEMailField(e.target.value)
+  const [eMailField, setEMailField] = useState(stringFieldDefaultState)
+  const onEMailFieldChange = e => setEMailField({ eMailField, value: e.target.value })
 
-  const [passwordField, setPasswordField] = useState('')
-  const onPasswordFieldChange = e => setPasswordField(e.target.value)
-  const [passwordField2, setPasswordField2] = useState('')
-  const onPasswordFieldChange2 = e => setPasswordField2(e.target.value)
+  const [passwordField, setPasswordField] = useState({ stringFieldDefaultState, minLength: 4 })
+  const onPasswordFieldChange = e => setPasswordField({ passwordField, value: e.target.value })
+  const [passwordField2, setPasswordField2] = useState(stringFieldDefaultState)
+  const onPasswordFieldChange2 = e => setPasswordField2({ passwordField2, value: e.target.value })
   // Tab 2 fiedls
-  const [firstNameField, setFirstNameField] = useState('')
-  const onFirstNameChange = e => setFirstNameField(e.target.value)
+  const [firstNameField, setFirstNameField] = useState(stringFieldDefaultState)
+  const onFirstNameChange = e => setFirstNameField({ firstNameField, value: e.target.value })
 
-  const [secondNameField, setSecondNameField] = useState('')
-  const onSecondNameChange = e => setSecondNameField(e.target.value)
+  const [secondNameField, setSecondNameField] = useState(stringFieldDefaultState)
+  const onSecondNameChange = e => setSecondNameField({ secondNameField, value: e.target.value })
 
-  const [thirdNameField, setThirdNameField] = useState('')
-  const onThirdNameChange = e => setThirdNameField(e.target.value)
+  const [thirdNameField, setThirdNameField] = useState(stringFieldDefaultState)
+  const onThirdNameChange = e => setThirdNameField({ thirdNameField, value: e.target.value })
 
-  const [countryField, setCountryField] = useState('')
-  const onCountryChange = e => setCountryField(e.target.value)
+  const [countryField, setCountryField] = useState(stringFieldDefaultState)
+  const onCountryChange = e => setCountryField({ countryField, value: e.target.value })
 
-  const [adressField, setAdressField] = useState('')
-  const onAdressChange = e => setAdressField(e.target.value)
+  const [adressField, setAdressField] = useState(stringFieldDefaultState)
+  const onAdressChange = e => setAdressField({ adressField, value: e.target.value })
 
-  const [phoneField, setPhoneField] = useState('')
-  const onPhoneChange = e => setPhoneField(e.target.value)
+  const [phoneField, setPhoneField] = useState(stringFieldDefaultState)
+  const onPhoneChange = e => setPhoneField({ phoneField, value: e.target.value })
 
-  const [bDateField, setBDateField] = useState('')
-  const onBDateChange = e => setBDateField(e.target.value)
+  const [bDateField, setBDateField] = useState(stringFieldDefaultState)
+  const onBDateChange = e => setBDateField({ bDateField, value: e.target.value })
 
   // Tab 3 fields
   const [socialField, setSocialField] = useState({
@@ -115,7 +116,8 @@ export const RegForm = () => {
     e.preventDefault()
     const formData = {
       main: {
-        login: loginField, "e-mail": eMailField, "password": passwordField
+        // login: loginField, "e-mail": eMailField, "password": passwordField
+        loginField, eMailField, passwordField
       },
       personal: {
         firstName: firstNameField,
@@ -130,17 +132,19 @@ export const RegForm = () => {
     }
 
     // Tab 1 validation failed case
-    if (!loginField || !eMailField || !passwordField || passwordField !== passwordField2) {
+    if (!loginField.value || !eMailField.value || !passwordField.value ||
+      passwordField.value !== passwordField2.value) {
       setTabIndex(0)
       setValidationPopup(true)
       //Tab 2 validation failed case
-    } else if (!firstNameField || !secondNameField) {
+    } else if (!firstNameField.value || !secondNameField.value) {
       setValidationPopup(true)
       setTabIndex(1)
     } else {
       setValidationPopup(false)
       console.log(formData)
-      const response = await WS.send('accounts', 'accountsFormData', formData)
+      await WS.send('registrations', 'registrationFormData', formData)
+      await WS.send('accounts', 'accountsFormData', { accountsMeta })
     }
   }
 
@@ -151,13 +155,41 @@ export const RegForm = () => {
         url: 'ws://localhost:5555'
       })
       await WS.connectionEstablished()
-      const response = await WS.send('accounts', 'accountsFormData', {})
-      const { accountsMetaData } = response
+      const regResponse = await WS.send('registrations', 'registrationFormData', {})
+      if (regResponse.loginFieldMeta) {
+        const {
+          loginFieldMeta,
+          eMailFieldMeta,
+          passwordFieldMeta,
+          firstNameFieldMeta,
+          secondNameFieldMeta,
+          thirdNameFieldMeta,
+          countryFieldMeta,
+          adressFieldMeta,
+          phoneFieldMeta,
+          bDateFieldMeta
+        } = regResponse
+        setLoginField(loginFieldMeta)
+        setEMailField(eMailFieldMeta)
+        setPasswordField(passwordFieldMeta)
+        setPasswordField2(passwordFieldMeta)
+        setFirstNameField(firstNameFieldMeta)
+        setSecondNameField(secondNameFieldMeta)
+        setThirdNameField(thirdNameFieldMeta)
+        setCountryField(countryFieldMeta)
+        setAdressField(adressFieldMeta)
+        setPhoneField(phoneFieldMeta)
+        setBDateField(bDateFieldMeta)
+      } else {
+        setErrorMsg(true)
+      }
+      const accsResponse = await WS.send('accounts', 'accountsFormData', { loginField, passwordField })
+      const { accountsMetaData } = accsResponse
       if (accountsMetaData) {
         const options = optionSpreader(accountsMetaData.options)
         const accounts = accountsSpreader(accountsMetaData.accounts)
         setAccounts({ ...accountsMetaData, options, accounts })
-      }
+      } else { setErrorMsg(true) }
 
     }
     fetcher()
@@ -182,31 +214,36 @@ export const RegForm = () => {
         {validationPopup && <div className="ui warning message">
           <h5 className="text red">@(Заполните все обязательные поля)</h5>
         </div>}
+        {errorMsg && <div className="ui warning message">
+          <h5 className="text red">@(Ошибка соединения с сервером)</h5>
+        </div>}
       </div>
 
       <form className="ui form" onSubmit={onSubmit}>
         {tabIndex === 0 && <>
-          <div className="field required">
-            <label htmlFor="name">@(Логин)</label>
-            <input name="name" type="text" value={loginField} onChange={onLoginFieldChange} required />
-          </div>
-          <div className="field required">
-            <label htmlFor="email">@(E-mail)</label>
-            <input name="email" type="email" value={eMailField} onChange={onEMailFieldChange} required />
-          </div>
-          <div className="field required">
-            <label htmlFor="password">@(Пароль)</label>
-            <input type="password" value={passwordField} onChange={onPasswordFieldChange} required
-              minLength="6" />
-          </div>
-          <div className="field required">
-            <label htmlFor="password">@(Повторите пароль)</label>
-            <input type="password" value={passwordField2} onChange={onPasswordFieldChange2} required />
-          </div>
-          <div className="field inline">
+          <StringField name="name" label="@(Логин)"
+            isEditable={loginField.isEditable} isRequired={loginField.isRequired}
+            value={loginField.value} onChange={onLoginFieldChange}
+          />
+          <StringField name="email" label="@(E-mail)" type="email"
+            isEditable={eMailField.isEditable} isRequired={eMailField.isRequired}
+            value={eMailField.value} onChange={onEMailFieldChange}
+          />
+          <StringField name="password" label="@(Пароль)" type="password"
+            isEditable={passwordField.isEditable} isRequired={passwordField.isRequired}
+            value={passwordField.value} onChange={onPasswordFieldChange}
+            minLength={passwordField.minLength || 6}
+          />
+          <StringField name="password" label="@(Повторите пароль)" type="password"
+            isEditable={passwordField2.isEditable} isRequired={passwordField2.isRequired}
+            value={passwordField2.value} onChange={onPasswordFieldChange2}
+            minLength={passwordField.minLength || 6}
+          />
+
+          <div className="field inline disabled">
             <label htmlFor="pwordCheck">@(Пароли совпадают)</label>
-            <input type="checkbox" required name="pwordCheck"
-              checked={passwordField === passwordField2 && passwordField} />
+            <input type="checkbox" required name="pwordCheck" className=""
+              checked={passwordField.value === passwordField2.value && passwordField.value} />
           </div>
         </>}
 
@@ -214,43 +251,45 @@ export const RegForm = () => {
         {tabIndex === 1 && <>
           <div className="three fields">
 
-            <div className="field required">
-              <label htmlFor="firstName">@(Имя)</label>
-              <input name="firstName" type="text" value={firstNameField} onChange={onFirstNameChange} required />
-            </div>
+            <StringField name="firstName" label="@(Имя)"
+              isEditable={firstNameField.isEditable} isRequired={firstNameField.isRequired}
+              value={firstNameField.value} onChange={onFirstNameChange}
+            />
 
-            <div className="field required">
-              <label htmlFor="secondName">@(Фамилия)</label>
-              <input name="secondName" type="text" value={secondNameField} onChange={onSecondNameChange} required />
-            </div>
+            <StringField name="secondName" label="@(Фамилия)"
+              isEditable={secondNameField.isEditable} isRequired={secondNameField.isRequired}
+              value={secondNameField.value} onChange={onSecondNameChange}
+            />
 
-            <div className="field">
-              <label htmlFor="thirdName">@(Отчество)</label>
-              <input name="thirdName" type="text" value={thirdNameField} onChange={onThirdNameChange} />
-            </div>
+            <StringField name="thirdName" label="@(Отчество)"
+              isEditable={thirdNameField.isEditable} isRequired={thirdNameField.isRequired}
+              value={thirdNameField.value} onChange={onThirdNameChange}
+            />
           </div>
 
-          <div className="field">
-            <label htmlFor="country">@(Страна)</label>
-            <input name="country" type="text" value={countryField} onChange={onCountryChange} />
-          </div>
 
-          <div className="field">
-            <label htmlFor="adress">@(Адрес)</label>
-            <input name="adress" type="text" value={adressField} onChange={onAdressChange} />
-          </div>
+          <StringField name="country" label="@(Страна)"
+            isEditable={countryField.isEditable} isRequired={countryField.isRequired}
+            value={countryField.value} onChange={onCountryChange}
+          />
+
+          <StringField name="adress" label="@(Адрес)"
+            isEditable={adressField.isEditable} isRequired={adressField.isRequired}
+            value={adressField.value} onChange={onAdressChange}
+          />
+
 
           <div className="two fields">
 
-            <div className="field">
-              <label htmlFor="phone">@(Телефон)</label>
-              <input name="phone" type="text" value={phoneField} onChange={onPhoneChange} />
-            </div>
+            <StringField name="phone" label="@(Телефон)"
+              isEditable={phoneField.isEditable} isRequired={phoneField.isRequired}
+              value={phoneField.value} onChange={onPhoneChange}
+            />
 
-            <div className="field">
-              <label htmlFor="birtdate">@(Дата рождения)</label>
-              <input name="birtdate" type="date" value={bDateField} onChange={onBDateChange} />
-            </div>
+            <StringField name="birtdate" label="@(Дата рождения)" type="date"
+              isEditable={bDateField.isEditable} isRequired={bDateField.isRequired}
+              value={bDateField.value} onChange={onBDateChange}
+            />
           </div>
 
         </>}
