@@ -42,3 +42,15 @@ export const nicknamesFieldMeta = {
   canDeleteFields: false,
   isRequired: true
 }
+
+export const gipsyTeamFieldMeta = {
+  value: ['gipsyTeam1', 'gipsyTeam2'],  
+  isEditable: true,
+  isRequired: true
+}
+
+export const pokerStrategyFieldMeta = {
+  value: [],  
+  isEditable: true,
+  isRequired: true
+}

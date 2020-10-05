@@ -5,9 +5,13 @@ import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader, multifieldsDefaultState } from '../reusable'
 // fake data
-import { formTitle, arbitrageFieldMeta, skypeFieldMeta, credentialsFieldMeta, nicknamesFieldMeta } from './fakeData'
+import { formTitle, arbitrageFieldMeta, skypeFieldMeta, 
+  credentialsFieldMeta, nicknamesFieldMeta, gipsyTeamFieldMeta,
+  pokerStrategyFieldMeta } from './fakeData'
+//
 import { ThreeFields } from './ThreeFields'
 import { NicknamesSForm } from './NicknamesSForm'
+import { InputsMapper, InputsMapperDefaultState } from './InputsMapper'
 
 
 export const DebtForm = () => {
@@ -48,9 +52,7 @@ export const DebtForm = () => {
     setNicknameField({ ...nicknameField, value: mutable })
   }
   const addNickField = () => {
-    const mutable = [...nicknameField.value, {
-      nickname: '', sites: []
-    }]
+    const mutable = [...nicknameField.value, { nickname: '', sites: [] }]
     setNicknameField({ ...nicknameField, value: mutable })
   }
   const deleteNickField = index => {
@@ -59,12 +61,17 @@ export const DebtForm = () => {
     setNicknameField({ ...nicknameField, value: mutable })
   }
 
+  const [gipsyTeamField, setGipsyTeamField] = useState(InputsMapperDefaultState)
+  const [pokerStrategy, setPokerStrategy] = useState(InputsMapperDefaultState)
+
   useEffect(() => {
     setTitle(formTitle)
     setArbitrageField(arbitrageFieldMeta)
     setCredentialsField(credentialsFieldMeta)
     setSkypeField(skypeFieldMeta)
     setNicknameField(nicknamesFieldMeta)
+    setGipsyTeamField(gipsyTeamFieldMeta)
+    setPokerStrategy(pokerStrategyFieldMeta)
   }, [])
 
   const onSubmit = e => {
@@ -73,7 +80,9 @@ export const DebtForm = () => {
       arbitrageField,
       credentialsField,
       skypeField,
-      nicknameField
+      nicknameField,
+      gipsyTeamField,
+      pokerStrategy
     }
     console.log(formData)
   }
@@ -127,6 +136,15 @@ export const DebtForm = () => {
             @(Добавить)
           </button>
         </div>
+
+        <InputsMapper label="Gipsy Team"
+          fieldMeta={gipsyTeamField} setFieldMeta={setGipsyTeamField}
+        />
+
+        <InputsMapper label="Poker Strategy"
+          fieldMeta={pokerStrategy} setFieldMeta={setPokerStrategy}
+        />
+
         <button className="ui button teal" type="submit">@(Отправить)</button>
       </form>
     </div>
