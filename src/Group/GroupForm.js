@@ -3,9 +3,9 @@ import CreateProject from './Draft'
 import './Group.css'
 // Fake data
 import { InvestorField } from './InvestorField'
-import { ManagerField } from './ManagerField'
 import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
+import { ManagerSubForm } from './ManagerSubForm'
 const stringFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -98,28 +98,26 @@ export const GroupForm = () => {
     setManagersField({ ...managersField, managers })
   }
   const addManagerField = () => {
+    console.log(managersField.payOptions[0])
     const managers = [...managersField.managers, {
-      name: managersField.options[0].name,
-      id: managersField.options[0].id,
-      payMethodId: managersField.payOptions[0].payMethodId,
-      payValue: managersField.payOptions[0].fields[1].value
+      name: managersField.options[0] && managersField.options[0].name,
+      id: managersField.options[0] && managersField.options[0].id,
+      payMethodId: managersField.payOptions[0] && managersField.payOptions[0].payMethodId,
+      payValue: managersField.payOptions[0] && managersField.payOptions[0].payValueField && managersField.payOptions[0].payValueField.value
     }]
     setManagersField({
       ...managersField, managers
     })
   }
-  const onManagerValueChange = (e, index) => {
+  const onManagerChange = (name, id, index) => {
     const managers = [...managersField.managers]
-    managers[index] = { ...managers[index], [e.target.name]: e.target.value }
-    if (e.target.name === 'id') {
-      const currentOption = managersField.options.filter(option => option.id == e.target.value)
-      managers[index] = { ...managers[index], name: currentOption[0].name }
-    }
-    const newObj = {
-      ...managersField,
-      managers
-    }
-    setManagersField(newObj)
+    managers[index] = { ...managers[index], name, id }
+    setManagersField({ ...managersField, managers })
+  }
+  const onManagerValueChange = (name, value, index) => {
+    const managers = [...managersField.managers]
+    managers[index] = { ...managers[index], [name]: value }
+    setManagersField({ ...managersField, managers })
   }
 
   const [contractField, setContractField] = useState(null)
@@ -266,11 +264,12 @@ export const GroupForm = () => {
           <h4 className="ui title">@(Назначьте одного или нескольких управляющих)</h4>
           {managersField.managers && managersField.managers.length ? managersField.managers.map((field, index) => {
             const isDeletable = managersField.managers.length > 1
-            return (
-              <ManagerField key={field.id + index}
-                changeFunc={onManagerValueChange} index={index} field={field} payOptions={managersField.payOptions}
-                options={managersField.options} removeFunc={removeManagerField} isDeletable={isDeletable}
-              />
+            return (<ManagerSubForm key={index + 'manag'}
+              manager={field} options={managersField.options} payOptions={managersField.payOptions}
+              isEditable={managersField.managersField}
+              changeFunc={onManagerValueChange} removeFunc={removeManagerField} onManagerChange={onManagerChange}
+              index={index} isDeletable={isDeletable}
+            />
             )
           }) : null}
           <button type="button" onClick={addManagerField}
