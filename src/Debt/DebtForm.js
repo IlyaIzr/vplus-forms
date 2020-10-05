@@ -47,6 +47,17 @@ export const DebtForm = () => {
     mutable[index][name] = value
     setNicknameField({ ...nicknameField, value: mutable })
   }
+  const addNickField = () => {
+    const mutable = [...nicknameField.value, {
+      nickname: '', sites: []
+    }]
+    setNicknameField({ ...nicknameField, value: mutable })
+  }
+  const deleteNickField = index => {
+    const mutable = [...nicknameField.value]
+    mutable.splice(index, 1)
+    setNicknameField({ ...nicknameField, value: mutable })
+  }
 
   useEffect(() => {
     setTitle(formTitle)
@@ -60,7 +71,7 @@ export const DebtForm = () => {
     e.preventDefault()
     const formData = {
       arbitrageField,
-      credentialsField, 
+      credentialsField,
       skypeField,
       nicknameField
     }
@@ -100,17 +111,21 @@ export const DebtForm = () => {
           value={skypeField.value} onChange={onSkypeChange} isMulti={true}
         />
 
-        <div className="ui field segment">
+        <div className="ui segment">
           <label htmlFor="">@(Никнеймы)</label>
           {nicknameField.value && Boolean(nicknameField.value.length) && nicknameField.value.map((field, index) => {
             return (
               <NicknamesSForm key={index + 'nicks'}
                 field={field} options={nicknameField.options}
-                onSiteChange={onSiteChange} onNickChange={onNickChange}
-                index={index}
+                onSiteChange={onSiteChange} onNickChange={onNickChange} deleteField={deleteNickField}
+                index={index} canDelete={nicknameField.canDeleteFields}
               />
             )
           })}
+          <button className={`ui button blue small ${!nicknameField.isEditable && 'disabled'}`}
+            onClick={addNickField} type="button">
+            @(Добавить)
+          </button>
         </div>
         <button className="ui button teal" type="submit">@(Отправить)</button>
       </form>
