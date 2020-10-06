@@ -44,60 +44,82 @@ export const ReportForm = () => {
     return result
   }
 
+  const onSubmit = e => {
+    e.preventDefault()
+    const mutable = [...formData]
+    mutable.push(newData)
+
+    console.log(mutable)
+  }
+
+  const onReset = e => {
+    listOfUsers && listOfUsers.length && listOfUsers.map((user) => {
+      const mutable = { ...newData.accounts }
+      mutable[user].loadSum = ''
+      mutable[user].tournCount = ''
+      setNewData({ ...newData, accounts: mutable })
+    })
+  }
+
   return (
-    <form className="ui form"> <table className="ui celled table">
+    <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
+      <button className="ui button teal small right floated" type="submit">@(Отправить)</button>
+      <table className="ui celled table">
+        <thead>
+          <tr>
+            <th rowSpan="2">@(Название)</th>
+            <th rowSpan="2">@(Для заполнения)</th>
+            <th colSpan="5">@(Предыдущие заполнения)</th>
+          </tr>
+          <tr>
+            {dateLooperTh(formData)}
+          </tr>
+        </thead>
 
-      <thead>
-        <tr>
-          <th rowSpan="2">@(Название)</th>
-          <th rowSpan="2">@(Для заполнения)</th>
-          <th colSpan="5">@(Предыдущие заполнения)</th>
-        </tr>
-        <tr>
-          {dateLooperTh(formData)}
-        </tr>
-      </thead>
+        <>
+          {Boolean(formData.length) && Boolean(listOfUsers.length) && listOfUsers.map((item, index) => {
+            const onChange = e => {
+              const mutable = { ...newData.accounts }
+              mutable[item] = { ...mutable[item], [e.target.name]: e.target.value }
+              setNewData({ ...newData, accounts: mutable })
+            }
+            return (<tbody key={index + item}>
 
-      <>
-        {Boolean(formData.length) && Boolean(listOfUsers.length) && listOfUsers.map((item, index) => {
-          const onChange = e => {
-            const mutable = { ...newData.accounts }
-            mutable[item] = { ...mutable[item], [e.target.name]: e.target.value }
-            setNewData({ ...newData.date, accounts: mutable })
-          }
-          return (<tbody key={index + item}>
+              <tr><td colSpan="7" className="positive">{item}</td></tr>
+              <tr>
+                <td>@(Количество турниров)</td>
+                <td>
 
-            <tr><td colSpan="7">{item}</td></tr>
-            <tr>
-              <td>@(Количество турниров)</td>
-              <td>
+                  {newData.accounts && newData.accounts[item] &&
+                    <input type="number" name="tournCount"
+                      value={newData.accounts[item].tournCount} onChange={onChange} min="0"
+                    />
+                  }
 
-                {newData.accounts && newData.accounts[item] &&
-                  <input type="number" name="tournCount"
-                    value={newData.accounts[item].tournCount} onChange={onChange} min="0"
-                  />
-                }
+                </td>
+                {dateLooperTd(item, 'tournCount')}
+              </tr>
 
-              </td>
-              {dateLooperTd(item, 'tournCount')}
-            </tr>
-            
-            <tr>
-              <td>@(Сумма загрузки)</td>
-              <td>
+              <tr>
+                <td>@(Сумма загрузки)</td>
+                <td>
 
-                {newData.accounts && newData.accounts[item] &&
-                  <input type="number" name="loadSum"
-                    value={newData.accounts[item].loadSum} onChange={onChange} min="0"
-                  />
-                }
+                  {newData.accounts && newData.accounts[item] &&
+                    <input type="number" name="loadSum"
+                      value={newData.accounts[item].loadSum} onChange={onChange} min="0"
+                    />
+                  }
 
-              </td>
-              {dateLooperTd(item, 'loadSum')}
-            </tr>
-          </tbody>)
-        })}
-      </>
-    </table> </form>
+                </td>
+                {dateLooperTd(item, 'loadSum')}
+              </tr>
+            </tbody>)
+          })}
+        </>
+      </table>
+      <button className="ui button red small" type="reset">@(Сбросить)</button>
+      <button className="ui button teal small right floated" type="submit">@(Отправить)</button>
+
+    </form>
   )
 }
