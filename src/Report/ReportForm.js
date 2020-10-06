@@ -2,79 +2,102 @@ import React, { useEffect, useState } from 'react'
 import { reportForm } from './fakeData'
 
 export const ReportForm = () => {
-  const [formData, setFormData] = useState({
-    value: [], isEditable: true
+  const [formData, setFormData] = useState([])
+  const [listOfUsers, setListOfUsers] = useState([])
+  const [newData, setNewData] = useState({
+    date: 'SET ON SERVER?',
+    accounts: null
   })
-  // const [prevDates, setPrevDates] = useState([])
 
   useEffect(() => {
     setFormData(reportForm)
+    const alisia = Object.keys(reportForm[0].accounts)
+    setListOfUsers(alisia)
+    let testo = { ...newData }
+    alisia.map(user => {
+      const mutable = { ...testo.accounts }
+      mutable[user] = { name: user, loadSum: '', tournCount: '' }
+      testo = { ...testo, accounts: mutable }
+    })
+    setNewData(testo)
   }, [])
 
-  const dateLooperTh = datesArr => {
+  const dateLooperTh = array => {
     const result = []
     for (let i = 0; i < 5; i++) {
-      const dateObject = datesArr[i];
-      if (dateObject) result.push(<th key={dateObject.date + i}>{dateObject.date}</th>)
-      else result.push(<th key={'emptyobj' + i}>0</th>)
+      const reportItem = array[i];
+      if (reportItem) result.push(<th key={reportItem.date + i}>{reportItem.date}</th>)
+      else result.push(<th key={'emptyobj' + i}> 0 </th>)
     }
     return result
   }
 
-  const dateLooperTd = (datesArr, key) => {
+  const dateLooperTd = (name, key) => {
     const result = []
     for (let i = 0; i < 5; i++) {
-      const dateObject = datesArr[i];
-      if (dateObject) result.push(<td key={dateObject[key] + i}>{dateObject[key]}</td>)
+      const dateObject = formData[i];
+      if (dateObject && dateObject.accounts[name]) {
+        result.push(<td key={dateObject.accounts[name][key] + i}>{dateObject.accounts[name][key]}</td>)
+      }
       else result.push(<th key={'emptyobj' + i}>0</th>)
     }
     return result
   }
 
   return (
-    <form className="ui form">
+    <form className="ui form"> <table className="ui celled table">
 
-      {formData.value && Boolean(formData.value.length) && formData.value.map((roomItem, index) => {
-        const onChange = e => {
-          const mutable = [...formData.value]
-          mutable[index][e.target.name] = e.target.value
-          setFormData({ ...formData, value: mutable })
-        }
+      <thead>
+        <tr>
+          <th rowSpan="2">@(Название)</th>
+          <th rowSpan="2">@(Для заполнения)</th>
+          <th colSpan="5">@(Предыдущие заполнения)</th>
+        </tr>
+        <tr>
+          {dateLooperTh(formData)}
+        </tr>
+      </thead>
 
-        return (<table className="ui celled table" key={index + 'table'}>
-          <thead>
-            <tr className="warning"><th colSpan="7">{roomItem.label}</th></tr>
-            <tr>
-              <th rowSpan="2"></th>
-              <th rowSpan="2">@(для заполнения)</th>
-              <th colSpan="5">@(Предыдущие заполнения)</th>
-            </tr>
-            <tr>
-              {roomItem.prevData && Boolean(roomItem.prevData.length) && dateLooperTh(roomItem.prevData)}
-            </tr>
-          </thead>
+      <>
+        {Boolean(formData.length) && Boolean(listOfUsers.length) && listOfUsers.map((item, index) => {
+          const onChange = e => {
+            const mutable = { ...newData.accounts }
+            mutable[item] = { ...mutable[item], [e.target.name]: e.target.value }
+            setNewData({ ...newData.date, accounts: mutable })
+          }
+          return (<tbody key={index + item}>
 
-          <tbody>
+            <tr><td colSpan="7">{item}</td></tr>
             <tr>
-              <td>@(Название рума)</td>
+              <td>@(Количество турниров)</td>
               <td>
-                <input type="text" name="roomName" value={roomItem.roomName} onChange={onChange} />
-              </td>
-              {roomItem.prevData && Boolean(roomItem.prevData.length) && dateLooperTd(roomItem.prevData, 'roomName')}
-            </tr>
 
+                {newData.accounts && newData.accounts[item] &&
+                  <input type="number" name="tournCount"
+                    value={newData.accounts[item].tournCount} onChange={onChange} min="0"
+                  />
+                }
+
+              </td>
+              {dateLooperTd(item, 'tournCount')}
+            </tr>
+            
             <tr>
               <td>@(Сумма загрузки)</td>
               <td>
-                <input type="number" name="loadSum" value={roomItem.loadSum} onChange={onChange} />
+
+                {newData.accounts && newData.accounts[item] &&
+                  <input type="number" name="loadSum"
+                    value={newData.accounts[item].loadSum} onChange={onChange} min="0"
+                  />
+                }
+
               </td>
-              {roomItem.prevData && Boolean(roomItem.prevData.length) && dateLooperTd(roomItem.prevData, 'loadSum')}
+              {dateLooperTd(item, 'loadSum')}
             </tr>
-          </tbody>
-
-        </table>)
-      })}
-
-    </form>
+          </tbody>)
+        })}
+      </>
+    </table> </form>
   )
 }
