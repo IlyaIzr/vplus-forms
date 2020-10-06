@@ -6,8 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --open --mode development --hot",
     "build": "webpack --mode production",
-    "git-add-all": "git add .",
-    "git-push": "git push"
+    "git": "git add . && git commit -m",
+    "postgit": "git push --all"
   },
   "keywords": [],
   "author": "",
