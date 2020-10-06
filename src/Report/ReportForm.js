@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { reportForm } from './fakeData'
+let WS
 
 export const ReportForm = () => {
   const [formData, setFormData] = useState([])
@@ -10,16 +10,30 @@ export const ReportForm = () => {
   })
 
   useEffect(() => {
-    setFormData(reportForm)
-    const alisia = Object.keys(reportForm[0].accounts)
-    setListOfUsers(alisia)
-    let testo = { ...newData }
-    alisia.map(user => {
-      const mutable = { ...testo.accounts }
-      mutable[user] = { name: user, loadSum: '', tournCount: '' }
-      testo = { ...testo, accounts: mutable }
-    })
-    setNewData(testo)
+
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const reportForm = await WS.send('reports', 'reportFormData', {})
+      if (reportForm) {
+
+        setFormData(reportForm)
+        const alisia = Object.keys(reportForm[0].accounts)
+        setListOfUsers(alisia)
+        let testo = { ...newData }
+        alisia.map(user => {
+          const mutable = { ...testo.accounts }
+          mutable[user] = { name: user, loadSum: '', tournCount: '' }
+          testo = { ...testo, accounts: mutable }
+        })
+        setNewData(testo)
+      }
+    }
+
+    fetcher()
+
   }, [])
 
   const dateLooperTh = array => {
