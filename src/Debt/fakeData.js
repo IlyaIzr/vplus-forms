@@ -44,13 +44,34 @@ export const nicknamesFieldMeta = {
 }
 
 export const gipsyTeamFieldMeta = {
-  value: ['gipsyTeam1', 'gipsyTeam2'],  
+  value: ['gipsyTeam1', 'gipsyTeam2'],
   isEditable: true,
   isRequired: true
 }
 
 export const pokerStrategyFieldMeta = {
-  value: [],  
+  value: [],
+  isEditable: true,
+  isRequired: true
+}
+
+
+const db_data_disciplines = [
+  { label: "Mixed", value: "mixed" },
+  { label: "Chicago", value: "chicago1" },
+  { label: "Chinese", value: "trump" }
+]
+export const disciplineFieldMeta = {
+  value: [],
+  options: db_data_disciplines,
+  isEditable: true,
+  isRequired: true
+}
+
+export const descriptionFieldMeta = {
+  value: [
+    { description: 'papa rpaa pa', claimAmount: '300' }
+  ],
   isEditable: true,
   isRequired: true
 }

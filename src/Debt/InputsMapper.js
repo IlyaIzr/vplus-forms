@@ -31,7 +31,7 @@ export const InputsMapper = ({
         const onDelete = () => deleteField(index)
 
         return (
-          <div className="ui fields">
+          <div className="ui fields" key={index+label}>
             <StringField key={index + label}
               value={field} onChange={onChange}
               isRequired={fieldMeta.isRequired} isEditable={fieldMeta.isEditable}

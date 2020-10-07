@@ -5,13 +5,17 @@ import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader, multifieldsDefaultState } from '../reusable'
 // fake data
-import { formTitle, arbitrageFieldMeta, skypeFieldMeta, 
+import {
+  formTitle, arbitrageFieldMeta, skypeFieldMeta,
   credentialsFieldMeta, nicknamesFieldMeta, gipsyTeamFieldMeta,
-  pokerStrategyFieldMeta } from './fakeData'
+  pokerStrategyFieldMeta, disciplineFieldMeta, descriptionFieldMeta
+} from './fakeData'
 //
 import { ThreeFields } from './ThreeFields'
 import { NicknamesSForm } from './NicknamesSForm'
 import { InputsMapper, InputsMapperDefaultState } from './InputsMapper'
+import { SelectWrapper } from './SelectWrapper'
+import { Description } from './Description'
 
 
 export const DebtForm = () => {
@@ -64,6 +68,13 @@ export const DebtForm = () => {
   const [gipsyTeamField, setGipsyTeamField] = useState(InputsMapperDefaultState)
   const [pokerStrategy, setPokerStrategy] = useState(InputsMapperDefaultState)
 
+  const [disciplineField, setDisciplineField] = useState(selectDefaultState)
+  const [descriptionField, setDescriptionField] = useState({
+    value: [],
+    isEditable: true,
+    isRequired: true
+  })
+
   useEffect(() => {
     setTitle(formTitle)
     setArbitrageField(arbitrageFieldMeta)
@@ -72,6 +83,8 @@ export const DebtForm = () => {
     setNicknameField(nicknamesFieldMeta)
     setGipsyTeamField(gipsyTeamFieldMeta)
     setPokerStrategy(pokerStrategyFieldMeta)
+    setDisciplineField(disciplineFieldMeta)
+    setDescriptionField(descriptionFieldMeta)
   }, [])
 
   const onSubmit = e => {
@@ -144,6 +157,12 @@ export const DebtForm = () => {
         <InputsMapper label="Poker Strategy"
           fieldMeta={pokerStrategy} setFieldMeta={setPokerStrategy}
         />
+
+        <SelectWrapper label="Discipline"
+          state={disciplineField} setState={setDisciplineField}
+        />
+
+        <Description state={descriptionField} setState={setDescriptionField}/>
 
         <button className="ui button teal" type="submit">@(Отправить)</button>
       </form>
