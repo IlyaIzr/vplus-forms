@@ -16,7 +16,8 @@ export const ReportForm = () => {
         url: 'ws://localhost:5555'
       })
       await WS.connectionEstablished()
-      const reportForm = await WS.send('reports', 'reportFormData', {})
+      const response = await WS.send('reports', 'reportFormData', {})
+      const reportForm = response && response.data
       if (reportForm) {
 
         setFormData(reportForm)
@@ -58,12 +59,13 @@ export const ReportForm = () => {
     return result
   }
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault()
     const mutable = [...formData]
     mutable.push(newData)
 
     console.log(mutable)
+    const response = await WS.send('reports', 'reportFormData', { data: mutable })
   }
 
   const onReset = e => {
