@@ -16,6 +16,11 @@ export const selectDefaultState = {
   isEditable: true,
   isRequired: false
 }
+export const selectNoOptDefaultState = {
+  value: '',
+  isEditable: true,
+  isRequired: false
+}
 export const multifieldsDefaultState = {
   value: [],
   isEditable: true,

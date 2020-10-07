@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { SelectField } from '../components/SelectField'
 import { SelectCreatableField } from '../components/SelectCreatableField'
 import { StringField } from '../components/StringField'
-import { NumberField } from '../components/NumberField'
-import { stringFieldDefaultState, selectDefaultState, optionSpreader, multifieldsDefaultState } from '../reusable'
+import { stringFieldDefaultState, selectDefaultState, selectNoOptDefaultState, multifieldsDefaultState } from '../reusable'
 // fake data
 import {
   formTitle, arbitrageFieldMeta, skypeFieldMeta,
   credentialsFieldMeta, nicknamesFieldMeta, gipsyTeamFieldMeta,
-  pokerStrategyFieldMeta, disciplineFieldMeta, descriptionFieldMeta
+  pokerStrategyFieldMeta, disciplineFieldMeta, descriptionFieldMeta, phoneFieldMeta,
+  googleAccFieldMeta, mailAccFieldMeta, vkFieldMeta, fbFieldMeta, blogFieldMeta,
+  instaFieldMeta, forum2plus2FieldMeta, adressFieldMeta
 } from './fakeData'
 //
 import { ThreeFields } from './ThreeFields'
@@ -16,6 +16,7 @@ import { NicknamesSForm } from './NicknamesSForm'
 import { InputsMapper, InputsMapperDefaultState } from './InputsMapper'
 import { SelectWrapper } from './SelectWrapper'
 import { Description } from './Description'
+import { AdressThreeFields } from './AdressThreeFields'
 
 
 export const DebtForm = () => {
@@ -69,11 +70,16 @@ export const DebtForm = () => {
   const [pokerStrategy, setPokerStrategy] = useState(InputsMapperDefaultState)
 
   const [disciplineField, setDisciplineField] = useState(selectDefaultState)
-  const [descriptionField, setDescriptionField] = useState({
-    value: [],
-    isEditable: true,
-    isRequired: true
-  })
+  const [descriptionField, setDescriptionField] = useState(selectNoOptDefaultState)
+  const [googleAccField, setGoogleAccField] = useState(selectDefaultState)
+  const [mailAccField, setMailAccField] = useState(selectDefaultState)
+  const [phoneField, setPhoneField] = useState(selectDefaultState)
+  const [vkField, setVkField] = useState(selectNoOptDefaultState)
+  const [fbField, setFbField] = useState(selectNoOptDefaultState)
+  const [blogField, setBlogField] = useState(selectNoOptDefaultState)
+  const [instaField, setInstaField] = useState(selectNoOptDefaultState)
+  const [forum2plus2Field, setForum2plus2Field] = useState(selectNoOptDefaultState)
+  const [adressField, setAdressField] = useState(selectDefaultState)
 
   useEffect(() => {
     setTitle(formTitle)
@@ -85,6 +91,15 @@ export const DebtForm = () => {
     setPokerStrategy(pokerStrategyFieldMeta)
     setDisciplineField(disciplineFieldMeta)
     setDescriptionField(descriptionFieldMeta)
+    setGoogleAccField(googleAccFieldMeta)
+    setMailAccField(mailAccFieldMeta)
+    setPhoneField(phoneFieldMeta)
+    setVkField(vkFieldMeta)
+    setFbField(fbFieldMeta)
+    setBlogField(blogFieldMeta)
+    setInstaField(instaFieldMeta)
+    setForum2plus2Field(forum2plus2FieldMeta)
+    setAdressField(adressFieldMeta)
   }, [])
 
   const onSubmit = e => {
@@ -162,7 +177,41 @@ export const DebtForm = () => {
           state={disciplineField} setState={setDisciplineField}
         />
 
-        <Description state={descriptionField} setState={setDescriptionField}/>
+        <Description state={descriptionField} setState={setDescriptionField} />
+
+        <SelectWrapper label="Google Account"
+          state={googleAccField} setState={setGoogleAccField}
+        />
+
+        <SelectWrapper label="Mail"
+          state={mailAccField} setState={setMailAccField}
+        />
+
+        <SelectWrapper label="Phone"
+          state={phoneField} setState={setPhoneField}
+        />
+
+        <InputsMapper label="Vkontakte"
+          fieldMeta={vkField} setFieldMeta={setVkField}
+        />
+
+        <InputsMapper label="Facebook"
+          fieldMeta={fbField} setFieldMeta={setFbField}
+        />
+
+        <InputsMapper label="Blog"
+          fieldMeta={blogField} setFieldMeta={setBlogField}
+        />
+
+        <InputsMapper label="Instagram"
+          fieldMeta={instaField} setFieldMeta={setInstaField}
+        />
+
+        <InputsMapper label="Forum 2+2"
+          fieldMeta={forum2plus2Field} setFieldMeta={setForum2plus2Field}
+        />
+
+        <AdressThreeFields state={adressField} setState={setAdressField}/>
 
         <button className="ui button teal" type="submit">@(Отправить)</button>
       </form>

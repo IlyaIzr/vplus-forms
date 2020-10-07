@@ -31,11 +31,13 @@ export const Description = ({ state, setState }) => {
             isRequired={true}
             value={item.claimAmount} onChange={onChange}
           />
-          <button className="ui button red tiny" onClick={onDelete} type="button">x</button>
+          <button className={`ui button red tiny ${!state.isEditable && ' disabled'}`}
+            onClick={onDelete} type="button">x</button>
 
         </div>)
       })}
-      <button className="ui button green small" type="button" onClick={addField}>@(Добавить)</button>
+      <button className={`ui button green small ${!state.isEditable && ' disabled'}`}
+        type="button" onClick={addField}>@(Добавить)</button>
     </div>
   )
 }

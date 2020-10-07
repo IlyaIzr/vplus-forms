@@ -31,7 +31,7 @@ export const InputsMapper = ({
         const onDelete = () => deleteField(index)
 
         return (
-          <div className="ui fields" key={index+label}>
+          <div className="ui two fields" key={index+label}>
             <StringField key={index + label}
               value={field} onChange={onChange}
               isRequired={fieldMeta.isRequired} isEditable={fieldMeta.isEditable}
@@ -44,7 +44,7 @@ export const InputsMapper = ({
           </div>
         )
       })}
-      <button className={`ui button blue small ${!fieldMeta.isEditable && 'disabled'}`}
+      <button className={`ui button green small ${!fieldMeta.isEditable && 'disabled'}`}
         onClick={addField} type="button"
       >@(Добавить)
         </button>

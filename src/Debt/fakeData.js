@@ -75,3 +75,57 @@ export const descriptionFieldMeta = {
   isEditable: true,
   isRequired: true
 }
+
+export const googleAccFieldMeta = {
+  value: [],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const mailAccFieldMeta = {
+  value: [],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const phoneFieldMeta = {
+  value: [],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const vkFieldMeta = {
+  value: [],
+  isEditable: true,
+  isRequired: false
+}
+export const fbFieldMeta = {
+  value: [],
+  isEditable: true,
+  isRequired: false
+}
+export const blogFieldMeta = {
+  value: [],
+  isEditable: true,
+  isRequired: false
+}
+export const instaFieldMeta = {
+  value: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const forum2plus2FieldMeta = {
+  value: [''],
+  isEditable: true,
+  isRequired: false
+}
+
+export const adressFieldMeta = {
+  value: [],
+  isEditable: true,
+  isRequired: false
+}
