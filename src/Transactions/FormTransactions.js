@@ -35,58 +35,69 @@ export const FormTransactions = () => {
   const onComissionChange = e => setComission(e.target.value)
   const [comment, setComment] = useState('')
   const onCommentChange = e => setComment(e.target.value)
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
 
   // Requests
   const groupRequest = async (msg) => {
     const data = await WS.send('transactions', 'groupData', {})
-    const formatedOptions = optionFormatter(data.options)
-    const formatedvalue = oneOptionFormatter(data.value)
-    const result = { ...data, options: formatedOptions, value: formatedvalue }
-    setGroupField(result)
-    return result
+    if (data) {
+      setErrorMsg(false)
+      const formatedOptions = optionFormatter(data.options)
+      const formatedvalue = oneOptionFormatter(data.value)
+      const result = { ...data, options: formatedOptions, value: formatedvalue }
+      setGroupField(result)
+      return result
+    } else setErrorMsg(true)
   }
 
   const senderRequest = async (msg = {}) => {
     console.log('sender req')
     const data = await WS.send('transactions', 'usersData', msg)
     if (data) {
+      setErrorMsg(false)
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
       const result = { ...data, options, value }
       setSenderField(result)
       if (value && value.value) { senderAccsRequest() }
       return result
-    }
+    } else setErrorMsg(true)
   }
   const senderAccsRequest = async (msg = {}) => {
     const data = await WS.send('transactions', 'accountsData', msg)
     if (data) {
+      setErrorMsg(false)
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
       setSenderAccs({ ...data, options, value })
-    }
+    } else setErrorMsg(true)
   }
   const recipientRequest = async (msg = {}) => {
     const data = await WS.send('transactions', 'usersData', msg)
     if (data) {
+      setErrorMsg(false)
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
       const result = { ...data, options, value }
       setRecipientsField(result)
       if (value && value.value) { recipientAccsRequest() }
       return result
-    }
+    } else setErrorMsg(true)
   }
   const recipientAccsRequest = async (msg = {}) => {
     const data = await WS.send('transactions', 'accountsData', msg)
     if (data) {
+      setErrorMsg(false)
       const options = optionFormatter(data.options)
       const value = oneOptionFormatter(data.value)
       setRecipientsAcc({ ...data, options, value })
-    }
+    } else setErrorMsg(true)
   }
   const postFormRequest = async data => {
     const response = await WS.send('transactions', 'accountsData', data)
+    if (!response) setErrorMsg(true)
+    else setErrorMsg(false)
   }
 
   useEffect(() => {
@@ -178,6 +189,11 @@ export const FormTransactions = () => {
   return (
     <div>
       <form onSubmit={onSubmit} onReset={resetSomeFields} className="ui form">
+
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">@(Ошибка соединения с сервером)</h5>
+          </div>}
 
         <SelectField isRequired={groupField.isRequired} isEditable={groupField.isEditable}
           label="@(Группа)" name="group"

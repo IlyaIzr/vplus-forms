@@ -62,9 +62,12 @@ export const PackageForm = () => {
 
   const [extraInfoField, setExtraInfoField] = useState({ ...stringFieldDefaultState, isRequired: false })
   const onExtraInfoChange = e => setExtraInfoField({ ...extraInfoField, value: e.target.value })
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
 
 
   useEffect(() => {
+    
     async function fetcher() {
       WS = new WebsocketPromiseLiteClient({
         url: 'ws://localhost:5555'
@@ -84,6 +87,7 @@ export const PackageForm = () => {
       } = response
 
       if (roomsFieldMeta) {
+        setErrorMsg(false)
         const options = []
         await roomsFieldMeta.options.forEach((serverOption) => {
           options.push({ value: serverOption.id, label: serverOption.name })
@@ -94,7 +98,7 @@ export const PackageForm = () => {
           value.push({ value: serverValue.id, label: serverValue.name })
         })
         setRoomsField({ ...roomsFieldMeta, options, value })
-      }
+      } else setErrorMsg('@(Ошибка подключения)')
 
       tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
       // slider sets
@@ -128,6 +132,7 @@ export const PackageForm = () => {
     }
     console.log(formData)
     const response = await WS.send('packages', 'packageFormData', formData)
+    response.roomsFieldMeta ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения при отправлении)')
   }
   const onReset = () => {
     setRoomsField({ ...roomsField, value: [] })
@@ -147,6 +152,11 @@ export const PackageForm = () => {
       <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
         <h3 className="title">@(Новый пакет)</h3>
 
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">{errorMsg ? errorMsg : '@(Ошибка соединения с сервером)'}</h5>
+          </div>
+        }
 
         <div className={`field ${tournamentsField.isRequired && 'required'}`} >
           <label htmlFor="tournamentsField">@(Количество турниров в пакете) </label>

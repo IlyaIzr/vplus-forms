@@ -6,18 +6,7 @@ import { InvestorField } from './InvestorField'
 import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
 import { ManagerSubForm } from './ManagerSubForm'
-const stringFieldDefaultState = {
-  value: '',
-  isEditable: true,
-  isRequired: true
-}
-const numberFieldDefaultState = {
-  value: '',
-  isEditable: true,
-  isRequired: true,
-  min: '',
-  max: ''
-}
+import { numberFieldDefaultState, selectDefaultState, stringFieldDefaultState } from '../reusable'
 let WS
 
 
@@ -29,12 +18,7 @@ export const GroupForm = () => {
     setGroupNameField(newObj)
   }
 
-  const [disciplineField, setDisciplineField] = useState({
-    options: [],
-    value: false, // mutable 
-    isEditable: true,
-    isRequired: true
-  })
+  const [disciplineField, setDisciplineField] = useState(selectDefaultState)
   const onDisciplineChange = e => {
     const newObj = { ...disciplineField, value: e.target.value }
     setDisciplineField(newObj)
@@ -155,6 +139,8 @@ export const GroupForm = () => {
   const onRollbackChange = e => {
     setRollbackField({ ...rollbackField, value: e.target.value })
   }
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
 
   const onSubmit = async e => {
     e.preventDefault();
@@ -173,7 +159,22 @@ export const GroupForm = () => {
     }
     console.log(formData)
     const response = await WS.send('groups', 'groupFormData', formData)
-  };
+    response ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
+  }
+
+  const onReset = () => {
+    setGroupNameField(stringFieldDefaultState)
+    setDisciplineField({...disciplineField, value: []})
+    setInvestorsField({ ...investorsField, investors: [] })
+    setManagersField({...managersField, managers: []})
+    setTournamentsField({...tournamentsField, value: ''})
+    setPlayerSumField({...playerSumField, value: ''})
+    setBuyInsField({...buyInsField, value: ''})
+    setPlayerRiskField({...playerRiskField, value: 50})
+    setFundRiskField({...fundRiskField, value: 50})
+    setPlayerRisk(50)
+    setRollbackField({...rollbackField, value: 0})
+  }
 
 
   useEffect(() => {
@@ -183,6 +184,7 @@ export const GroupForm = () => {
       })
       await WS.connectionEstablished()
       const response = await WS.send('groups', 'groupFormData', {})
+      response ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
       const {
         groupFieldMeta,
         disciplineFieldMeta,
@@ -215,7 +217,13 @@ export const GroupForm = () => {
 
   return (
     <div>
-      <form onSubmit={onSubmit} className="ui form">
+      <form onSubmit={onSubmit} onReset={onReset} className="ui form">
+
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">{errorMsg ? errorMsg : '@(Ошибка соединения с сервером)'}</h5>
+          </div>
+        }
 
         <StringField isRequired={groupNameField.isRequired} value={groupNameField.value}
           onChange={onGroupNameChange} isEditable={groupNameField.isEditable} label="@(Группа)"
@@ -353,7 +361,8 @@ export const GroupForm = () => {
 
         </div>
 
-        <button type="submit" className={`ui red button ${(!managersField.managers.length) && 'disabled'}`}>
+        <button className="ui red button" type="reset">@(Сбросить поля)</button>
+        <button type="submit" className={`ui teal button ${(!managersField.managers.length) && 'disabled'}`}>
           @(Отправить)
         </button>
       </form>

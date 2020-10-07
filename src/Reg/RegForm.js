@@ -17,40 +17,41 @@ export const RegForm = () => {
   const [tabIndex, setTabIndex] = useState(0)
   const onTabClick = e => setTabIndex(Number(e.target.name))
   const [validationPopup, setValidationPopup] = useState(false)
-  const switchValidation = () => setValidationPopup(!validationPopup)
+  //Error msg  
   const [errorMsg, setErrorMsg] = useState(null)
   // Tab 1 fields
   const [loginField, setLoginField] = useState(stringFieldDefaultState)
-  const onLoginFieldChange = e => setLoginField({ loginField, value: e.target.value })
+  const onLoginFieldChange = e => setLoginField({ ...loginField, value: e.target.value })
 
   const [eMailField, setEMailField] = useState(stringFieldDefaultState)
-  const onEMailFieldChange = e => setEMailField({ eMailField, value: e.target.value })
+  const onEMailFieldChange = e => setEMailField({ ...eMailField, value: e.target.value })
 
   const [passwordField, setPasswordField] = useState({ stringFieldDefaultState, minLength: 4 })
-  const onPasswordFieldChange = e => setPasswordField({ passwordField, value: e.target.value })
+  const onPasswordFieldChange = e => setPasswordField({ ...passwordField, value: e.target.value })
   const [passwordField2, setPasswordField2] = useState(stringFieldDefaultState)
-  const onPasswordFieldChange2 = e => setPasswordField2({ passwordField2, value: e.target.value })
+  const onPasswordFieldChange2 = e => setPasswordField2({ ...passwordField2, value: e.target.value })
   // Tab 2 fiedls
   const [firstNameField, setFirstNameField] = useState(stringFieldDefaultState)
-  const onFirstNameChange = e => setFirstNameField({ firstNameField, value: e.target.value })
+  const onFirstNameChange = e => setFirstNameField({ ...firstNameField, value: e.target.value })
+
 
   const [secondNameField, setSecondNameField] = useState(stringFieldDefaultState)
-  const onSecondNameChange = e => setSecondNameField({ secondNameField, value: e.target.value })
+  const onSecondNameChange = e => setSecondNameField({ ...secondNameField, value: e.target.value })
 
   const [thirdNameField, setThirdNameField] = useState(stringFieldDefaultState)
-  const onThirdNameChange = e => setThirdNameField({ thirdNameField, value: e.target.value })
+  const onThirdNameChange = e => setThirdNameField({ ...thirdNameField, value: e.target.value })
 
   const [countryField, setCountryField] = useState(stringFieldDefaultState)
-  const onCountryChange = e => setCountryField({ countryField, value: e.target.value })
+  const onCountryChange = e => setCountryField({ ...countryField, value: e.target.value })
 
   const [adressField, setAdressField] = useState(stringFieldDefaultState)
-  const onAdressChange = e => setAdressField({ adressField, value: e.target.value })
+  const onAdressChange = e => setAdressField({ ...adressField, value: e.target.value })
 
   const [phoneField, setPhoneField] = useState(stringFieldDefaultState)
-  const onPhoneChange = e => setPhoneField({ phoneField, value: e.target.value })
+  const onPhoneChange = e => setPhoneField({ ...phoneField, value: e.target.value })
 
   const [bDateField, setBDateField] = useState(stringFieldDefaultState)
-  const onBDateChange = e => setBDateField({ bDateField, value: e.target.value })
+  const onBDateChange = e => setBDateField({ ...bDateField, value: e.target.value })
 
   // Tab 3 fields
   const [socialField, setSocialField] = useState({
@@ -144,7 +145,10 @@ export const RegForm = () => {
       setValidationPopup(false)
       console.log(formData)
       await WS.send('registrations', 'registrationFormData', formData)
-      await WS.send('accounts', 'accountsFormData', { accountsMeta })
+      if (response.loginFieldMeta) {
+        setErrorMsg(false)
+        onReset()
+      } else setErrorMsg('@(Ошибка подключения при отправлении)')
     }
   }
 
@@ -157,6 +161,7 @@ export const RegForm = () => {
       await WS.connectionEstablished()
       const regResponse = await WS.send('registrations', 'registrationFormData', {})
       if (regResponse.loginFieldMeta) {
+        setErrorMsg(false)
         const {
           loginFieldMeta,
           eMailFieldMeta,
@@ -167,7 +172,8 @@ export const RegForm = () => {
           countryFieldMeta,
           adressFieldMeta,
           phoneFieldMeta,
-          bDateFieldMeta
+          bDateFieldMeta,
+          accountsMetaData
         } = regResponse
         setLoginField(loginFieldMeta)
         setEMailField(eMailFieldMeta)
@@ -180,16 +186,12 @@ export const RegForm = () => {
         setAdressField(adressFieldMeta)
         setPhoneField(phoneFieldMeta)
         setBDateField(bDateFieldMeta)
-      } else {
-        setErrorMsg(true)
-      }
-      const accsResponse = await WS.send('accounts', 'accountsFormData', { loginField, passwordField })
-      const { accountsMetaData } = accsResponse
-      if (accountsMetaData) {
         const options = optionSpreader(accountsMetaData.options)
         const accounts = accountsSpreader(accountsMetaData.accounts)
         setAccounts({ ...accountsMetaData, options, accounts })
-      } else { setErrorMsg(true) }
+      } else {
+        setErrorMsg(true)
+      }
 
     }
     fetcher()
@@ -198,6 +200,27 @@ export const RegForm = () => {
     // }
   }, [])
 
+  const onReset = () => {
+    //Basic info
+    setLoginField({ ...loginField, value: '' })
+    setEMailField({ ...eMailField, value: '' })
+    setPasswordField({ ...passwordField, value: '' })
+    setPasswordField2({ ...passwordField2, value: '' })
+    // Personal info
+    setFirstNameField({ ...firstNameField, value: '' })
+    setSecondNameField({ ...secondNameField, value: '' })
+    setThirdNameField({ ...thirdNameField, value: '' })
+    setCountryField({ ...countryField, value: '' })
+    setAdressField({ ...adressField, value: '' })
+    setPhoneField({ ...phoneField, value: '' })
+    setBDateField({ ...bDateField, value: '' })
+    //accounts tab
+    setAccounts({ ...accountsMeta, accounts: [] })
+    setSocialLogin({ ...socialField, value: '' })
+    setSocialName({ ...socialNameField, value: '' })
+    setSocialSecondName({ ...socialSecondNameField, value: '' })
+    setSocialThirdName({ ...socialThirdNameField, value: '' })
+  }
 
   return (
     <div>
@@ -214,12 +237,14 @@ export const RegForm = () => {
         {validationPopup && <div className="ui warning message">
           <h5 className="text red">@(Заполните все обязательные поля)</h5>
         </div>}
-        {errorMsg && <div className="ui warning message">
-          <h5 className="text red">@(Ошибка соединения с сервером)</h5>
-        </div>}
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">@(Ошибка соединения с сервером)</h5>
+          </div>}
       </div>
+      <br />
 
-      <form className="ui form" onSubmit={onSubmit}>
+      <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
         {tabIndex === 0 && <>
           <StringField name="name" label="@(Логин)"
             isEditable={loginField.isEditable} isRequired={loginField.isRequired}
@@ -343,6 +368,7 @@ export const RegForm = () => {
 
         </>}
 
+        <button className="ui button red" type="reset">@(Сбросить поля)</button>
         <button type='submit' className="ui button teal">@(Отправить)</button>
       </form>
     </div>

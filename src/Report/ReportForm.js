@@ -9,6 +9,9 @@ export const ReportForm = () => {
     accounts: null
   })
 
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
+
   useEffect(() => {
 
     async function fetcher() {
@@ -19,7 +22,7 @@ export const ReportForm = () => {
       const response = await WS.send('reports', 'reportFormData', {})
       const reportForm = response && response.data
       if (reportForm) {
-
+        setErrorMsg(false)
         setFormData(reportForm)
         const alisia = Object.keys(reportForm[0].accounts)
         setListOfUsers(alisia)
@@ -30,7 +33,7 @@ export const ReportForm = () => {
           testo = { ...testo, accounts: mutable }
         })
         setNewData(testo)
-      }
+      } else setErrorMsg('@(Ошибка подключения)')
     }
 
     fetcher()
@@ -66,9 +69,23 @@ export const ReportForm = () => {
 
     console.log(mutable)
     const response = await WS.send('reports', 'reportFormData', { data: mutable })
+    const reportForm = response && response.data
+    if (reportForm) {
+      setErrorMsg(false)
+      setFormData(reportForm)
+      const alisia = Object.keys(reportForm[0].accounts)
+      setListOfUsers(alisia)
+      let testo = { ...newData }
+      alisia.map(user => {
+        const mutable = { ...testo.accounts }
+        mutable[user] = { name: user, loadSum: '', tournCount: '' }
+        testo = { ...testo, accounts: mutable }
+      })
+      setNewData(testo)
+    } else setErrorMsg('@(Ошибка подключения)')
   }
 
-  const onReset = e => {
+  const onReset = () => {
     listOfUsers && listOfUsers.length && listOfUsers.map((user) => {
       const mutable = { ...newData.accounts }
       mutable[user].loadSum = ''
@@ -79,6 +96,11 @@ export const ReportForm = () => {
 
   return (
     <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
+      {//Error message
+        errorMsg && <div className="ui alert message">
+          <h5 className="text red">{errorMsg ? errorMsg : '@(Ошибка соединения с сервером)'}</h5>
+        </div>
+      }
       <button className="ui button teal small right floated" type="submit">@(Отправить)</button>
       <table className="ui celled table">
         <thead>
@@ -107,7 +129,7 @@ export const ReportForm = () => {
                 <td>
 
                   {newData.accounts && newData.accounts[item] &&
-                    <input type="number" name="tournCount"
+                    <input type="number" name="tournCount" required
                       value={newData.accounts[item].tournCount} onChange={onChange} min="0"
                     />
                   }
@@ -121,7 +143,7 @@ export const ReportForm = () => {
                 <td>
 
                   {newData.accounts && newData.accounts[item] &&
-                    <input type="number" name="loadSum"
+                    <input type="number" name="loadSum" required
                       value={newData.accounts[item].loadSum} onChange={onChange} min="0"
                     />
                   }

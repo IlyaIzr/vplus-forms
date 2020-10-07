@@ -89,6 +89,8 @@ export const AccountForm = () => {
     mutableContacts.splice(index, 1)
     setExtraContacts(mutableContacts)
   }
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
     async function fetcher() {
@@ -99,11 +101,11 @@ export const AccountForm = () => {
       const response = await WS.send('accounts', 'accountsFormData', {})
       const { accountsMetaData } = response
       if (accountsMetaData) {
+        setErrorMsg(false)
         const options = optionSpreader(accountsMetaData.options)
         const accounts = accountsSpreader(accountsMetaData.accounts)
         setAccounts({ ...accountsMetaData, options, accounts })
-      }
-
+      } else setErrorMsg('@(Ошибка подключения)')
     }
     fetcher()
   }, [])
@@ -123,12 +125,30 @@ export const AccountForm = () => {
     }
     console.log(formData)
     const response = await WS.send('accounts', 'accountsFormData', formData)
+    response.accountsMetaData ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения при отправлении)')
+  }
+
+  const onReset = () => {
+    setAccounts({ ...accountsMeta, accounts: [] })
+    setSocialLogin({ ...socialField, value: '' })
+    setSocialName({ ...socialNameField, value: '' })
+    setSocialSecondName({ ...socialSecondNameField, value: '' })
+    setSocialThirdName({ ...socialThirdNameField, value: '' })
+    setExtraContacts([{
+      typeOfContact: '', valueOfContact: ''
+    }])
   }
 
   return (
     <div>
       <h2>@(Аккаунты и счета)</h2>
-      <form className="ui form" onSubmit={onSubmit}>
+      <form className="ui form" onSubmit={onSubmit} onReset={onReset}>
+
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">{errorMsg ? errorMsg : '@(Ошибка соединения с сервером)'}</h5>
+          </div>
+        }
 
         <div className="ui segment">
           <h4>@(Счета)</h4>
@@ -186,13 +206,14 @@ export const AccountForm = () => {
               />
             )
           })}
-          <button type="button" onClick={addExtraField} className="ui button teal">
+          <button type="button" onClick={addExtraField} className="ui button green">
             @(Добавить поле)
           </button>
           <div className="ui warning message" style={{ display: 'block' }}>@(Здесь вы можете указать телефон, текст подсказки далее...)</div>
         </div>
 
-        <button className="ui button green" type="submit">@(Отправить)</button>
+        <button className="ui button red" type="reset">@(Сбросить поля)</button>
+        <button className="ui button teal" type="submit">@(Отправить)</button>
 
       </form>
     </div>
