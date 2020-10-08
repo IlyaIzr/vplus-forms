@@ -10,6 +10,7 @@ module.exports = {
     packageForm: path.join(__dirname, './src/Package/index.js'),
     regForm: path.join(__dirname, './src/Reg/index.js'),
     debtForm: path.join(__dirname, './src/Debt/index.js'),
+    settingsForm: path.join(__dirname, './src/Settings/index.js'),
     reportForm: path.join(__dirname, './src/Report/index.js'),
     accountsForm: path.join(__dirname, './src/Accs/index.js')
   },
@@ -100,6 +101,11 @@ module.exports = {
       filename: 'reportForm.html',
       template: './public/reportForm.html',
       chunks: ['reportForm']
+    }),
+    new HtmlWebPackPlugin({
+      filename: 'settingsForm.html',
+      template: './public/settingsForm.html',
+      chunks: ['settingsForm']
     }),
     new HtmlWebPackPlugin({
       template: "./public/index.html",
