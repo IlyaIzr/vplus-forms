@@ -12,6 +12,7 @@ const App = () => {
       <h3><a href="./accountsForm.html">Аккаунты</a></h3>
       <h3><a href="./debtForm.html">Должники</a></h3>      
       <h3><a href="./reportForm.html">Отчёты</a></h3>      
+      <h3><a href="./settingsForm.html">Настройки</a></h3>      
     </div>
   );
 };
