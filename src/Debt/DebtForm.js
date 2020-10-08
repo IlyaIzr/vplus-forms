@@ -3,14 +3,6 @@ import { SelectCreatableField } from '../components/SelectCreatableField'
 import { StringField } from '../components/StringField'
 import { stringFieldDefaultState, selectDefaultState, selectNoOptDefaultState, multifieldsDefaultState } from '../reusable'
 // fake data
-import {
-  formTitle, arbitrageFieldMeta, skypeFieldMeta,
-  credentialsFieldMeta, nicknamesFieldMeta, gipsyTeamFieldMeta,
-  pokerStrategyFieldMeta, disciplineFieldMeta, descriptionFieldMeta, phoneFieldMeta,
-  googleAccFieldMeta, mailAccFieldMeta, vkFieldMeta, fbFieldMeta, blogFieldMeta,
-  instaFieldMeta, forum2plus2FieldMeta, adressFieldMeta, netellerFieldMeta,
-  skrillFieldMeta, ecoPayzFieldMeta, webMoneyFieldMeta
-} from './fakeData'
 //
 import { ThreeFields } from './ThreeFields'
 import { NicknamesSForm } from './NicknamesSForm'
@@ -19,11 +11,12 @@ import { SelectWrapper } from './SelectWrapper'
 import { Description } from './Description'
 import { AdressThreeFields } from './AdressThreeFields'
 import { WMSubForm } from './WMSubForm'
+// Backend
+let WS
 
 
 export const DebtForm = () => {
   //Fields
-  const [title, setTitle] = useState('')
   const [arbitrageField, setArbitrageField] = useState(stringFieldDefaultState)
   const onArbitrageChange = e => setArbitrageField({ ...arbitrageField, value: e.target.value })
   const [credentialsField, setCredentialsField] = useState(multifieldsDefaultState)
@@ -69,7 +62,7 @@ export const DebtForm = () => {
   }
 
   const [gipsyTeamField, setGipsyTeamField] = useState(InputsMapperDefaultState)
-  const [pokerStrategy, setPokerStrategy] = useState(InputsMapperDefaultState)
+  const [pokerStrategyField, setPokerStrategyField] = useState(InputsMapperDefaultState)
 
   const [disciplineField, setDisciplineField] = useState(selectDefaultState)
   const [descriptionField, setDescriptionField] = useState(selectNoOptDefaultState)
@@ -86,50 +79,110 @@ export const DebtForm = () => {
   const [skrillField, setSkrillField] = useState(selectDefaultState)
   const [ecoPayzField, setEcoPayzField] = useState(selectDefaultState)
   const [webMoneyField, setWebMoneyField] = useState(selectNoOptDefaultState)
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
-    setTitle(formTitle)
-    setArbitrageField(arbitrageFieldMeta)
-    setCredentialsField(credentialsFieldMeta)
-    setSkypeField(skypeFieldMeta)
-    setNicknameField(nicknamesFieldMeta)
-    setGipsyTeamField(gipsyTeamFieldMeta)
-    setPokerStrategy(pokerStrategyFieldMeta)
-    setDisciplineField(disciplineFieldMeta)
-    setDescriptionField(descriptionFieldMeta)
-    setGoogleAccField(googleAccFieldMeta)
-    setMailAccField(mailAccFieldMeta)
-    setPhoneField(phoneFieldMeta)
-    setVkField(vkFieldMeta)
-    setFbField(fbFieldMeta)
-    setBlogField(blogFieldMeta)
-    setInstaField(instaFieldMeta)
-    setForum2plus2Field(forum2plus2FieldMeta)
-    setAdressField(adressFieldMeta)
-    setNetellerField(netellerFieldMeta)
-    setSkrillField(skrillFieldMeta)
-    setEcoPayzField(ecoPayzFieldMeta)
-    setWebMoneyField(webMoneyFieldMeta)
+
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const response = await WS.send('debts', 'debtFormData', {})
+      const {
+        arbitrageFieldMeta,
+        skypeFieldMeta,
+        credentialsFieldMeta,
+        nicknamesFieldMeta,
+        gipsyTeamFieldMeta,
+        pokerStrategyFieldMeta,
+        disciplineFieldMeta,
+        descriptionFieldMeta,
+        googleAccFieldMeta,
+        mailAccFieldMeta,
+        phoneFieldMeta,
+        vkFieldMeta,
+        fbFieldMeta,
+        blogFieldMeta,
+        instaFieldMeta,
+        forum2plus2FieldMeta,
+        adressFieldMeta,
+        netellerFieldMeta,
+        skrillFieldMeta,
+        ecoPayzFieldMeta,
+        webMoneyFieldMeta
+      } = response
+      if (arbitrageFieldMeta) {
+        setErrorMsg(false)
+
+        arbitrageFieldMeta && setArbitrageField(arbitrageFieldMeta)
+        skypeFieldMeta && setCredentialsField(credentialsFieldMeta)
+        credentialsFieldMeta && setSkypeField(skypeFieldMeta)
+        nicknamesFieldMeta && setNicknameField(nicknamesFieldMeta)
+        gipsyTeamFieldMeta && setGipsyTeamField(gipsyTeamFieldMeta)
+        pokerStrategyFieldMeta && setPokerStrategyField(pokerStrategyFieldMeta)
+        disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
+        descriptionFieldMeta && setDescriptionField(descriptionFieldMeta)
+        googleAccFieldMeta && setGoogleAccField(googleAccFieldMeta)
+        mailAccFieldMeta && setMailAccField(mailAccFieldMeta)
+        phoneFieldMeta && setPhoneField(phoneFieldMeta)
+        vkFieldMeta && setVkField(vkFieldMeta)
+        fbFieldMeta && setFbField(fbFieldMeta)
+        blogFieldMeta && setBlogField(blogFieldMeta)
+        instaFieldMeta && setInstaField(instaFieldMeta)
+        forum2plus2FieldMeta && setForum2plus2Field(forum2plus2FieldMeta)
+        adressFieldMeta && setAdressField(adressFieldMeta)
+        netellerFieldMeta && setNetellerField(netellerFieldMeta)
+        skrillFieldMeta && setSkrillField(skrillFieldMeta)
+        ecoPayzFieldMeta && setEcoPayzField(ecoPayzFieldMeta)
+        webMoneyFieldMeta && setWebMoneyField(webMoneyFieldMeta)
+
+      } else setErrorMsg('@(Ошибка подключения)')
+    }
+    fetcher()
   }, [])
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault()
     const formData = {
       arbitrageField,
-      credentialsField,
       skypeField,
-      nicknameField,
+      credentialsField,
+      nicknamesField,
       gipsyTeamField,
-      pokerStrategy
+      pokerStrategyField,
+      disciplineField,
+      descriptionField,
+      googleAccField,
+      mailAccField,
+      phoneField,
+      vkField,
+      fbField,
+      blogField,
+      instaField,
+      forum2plus2Field,
+      adressField,
+      netellerField,
+      skrillField,
+      ecoPayzField,
+      webMoneyField
     }
     console.log(formData)
+    const response = await WS.send('debts', 'debtFormData', {})
+    response.arbitrageFieldMeta ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
   }
 
   return (
     <div className="ui container">
       <form className="ui form" onSubmit={onSubmit}>
 
-        <h1 className="title">{title}</h1>
+        <h1 className="title">@(Форма должников)</h1>
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">{errorMsg ? errorMsg : '@(Ошибка соединения с сервером)'}</h5>
+          </div>
+        }
 
         <StringField name="arbitrage" label="@(Арбитраж)"
           isEditable={arbitrageField.isEditable} isRequired={arbitrageField.isRequired}
@@ -180,7 +233,7 @@ export const DebtForm = () => {
         />
 
         <InputsMapper label="Poker Strategy"
-          fieldMeta={pokerStrategy} setFieldMeta={setPokerStrategy}
+          fieldMeta={pokerStrategyField} setFieldMeta={setPokerStrategyField}
         />
 
         <SelectWrapper label="Discipline"
