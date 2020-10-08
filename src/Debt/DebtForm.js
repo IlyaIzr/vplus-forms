@@ -8,7 +8,8 @@ import {
   credentialsFieldMeta, nicknamesFieldMeta, gipsyTeamFieldMeta,
   pokerStrategyFieldMeta, disciplineFieldMeta, descriptionFieldMeta, phoneFieldMeta,
   googleAccFieldMeta, mailAccFieldMeta, vkFieldMeta, fbFieldMeta, blogFieldMeta,
-  instaFieldMeta, forum2plus2FieldMeta, adressFieldMeta
+  instaFieldMeta, forum2plus2FieldMeta, adressFieldMeta, netellerFieldMeta,
+  skrillFieldMeta, ecoPayzFieldMeta, webMoneyFieldMeta
 } from './fakeData'
 //
 import { ThreeFields } from './ThreeFields'
@@ -17,6 +18,7 @@ import { InputsMapper, InputsMapperDefaultState } from './InputsMapper'
 import { SelectWrapper } from './SelectWrapper'
 import { Description } from './Description'
 import { AdressThreeFields } from './AdressThreeFields'
+import { WMSubForm } from './WMSubForm'
 
 
 export const DebtForm = () => {
@@ -80,6 +82,10 @@ export const DebtForm = () => {
   const [instaField, setInstaField] = useState(selectNoOptDefaultState)
   const [forum2plus2Field, setForum2plus2Field] = useState(selectNoOptDefaultState)
   const [adressField, setAdressField] = useState(selectDefaultState)
+  const [netellerField, setNetellerField] = useState(selectDefaultState)
+  const [skrillField, setSkrillField] = useState(selectDefaultState)
+  const [ecoPayzField, setEcoPayzField] = useState(selectDefaultState)
+  const [webMoneyField, setWebMoneyField] = useState(selectNoOptDefaultState)
 
   useEffect(() => {
     setTitle(formTitle)
@@ -100,6 +106,10 @@ export const DebtForm = () => {
     setInstaField(instaFieldMeta)
     setForum2plus2Field(forum2plus2FieldMeta)
     setAdressField(adressFieldMeta)
+    setNetellerField(netellerFieldMeta)
+    setSkrillField(skrillFieldMeta)
+    setEcoPayzField(ecoPayzFieldMeta)
+    setWebMoneyField(webMoneyFieldMeta)
   }, [])
 
   const onSubmit = e => {
@@ -211,7 +221,21 @@ export const DebtForm = () => {
           fieldMeta={forum2plus2Field} setFieldMeta={setForum2plus2Field}
         />
 
-        <AdressThreeFields state={adressField} setState={setAdressField}/>
+        <AdressThreeFields state={adressField} setState={setAdressField} />
+
+        <SelectWrapper label="Neteller"
+          state={netellerField} setState={setNetellerField}
+        />
+
+        <SelectWrapper label="Skrill"
+          state={skrillField} setState={setSkrillField}
+        />
+
+        <SelectWrapper label="EcoPayz"
+          state={ecoPayzField} setState={setEcoPayzField}
+        />
+
+        <WMSubForm state={webMoneyField} setState={setWebMoneyField} />
 
         <button className="ui button teal" type="submit">@(Отправить)</button>
       </form>

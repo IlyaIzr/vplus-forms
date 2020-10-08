@@ -129,3 +129,38 @@ export const adressFieldMeta = {
   isEditable: true,
   isRequired: false
 }
+
+export const netellerFieldMeta = {
+  value: [],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const skrillFieldMeta = {
+  value: [],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const ecoPayzFieldMeta = {
+  value: [],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}
+
+export const webMoneyFieldMeta = {
+  value: [
+    {
+      WMID: 'testo123ud', WMWallets: [
+        { label: '145151616161', value: '145151616161' },  // если нужно, могу принимать просто массив айди, но мне нужно это прописать
+        { label: '145151616122', value: '145151616122' }
+      ]
+    }
+  ],
+  options: [],
+  isEditable: true,
+  isRequired: false
+}

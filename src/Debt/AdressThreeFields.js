@@ -32,7 +32,7 @@ export const AdressThreeFields = ({ state, setState }) => {
         }
         const onDelete = () => deleteField(index)
         return (
-          <div className="ui segment three fields">
+          <div className="ui segment three fields" key={index+'adress'}>
             <SelectCreatableField label="@(Страна)" name="country"
               options={options}
               value={field.country} onChange={onSelect}
