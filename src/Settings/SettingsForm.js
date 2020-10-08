@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { stringFieldDefaultState } from '../reusable'
+import { selectDefaultState, stringFieldDefaultState } from '../reusable'
 import { StringField } from '../components/StringField'
+import { components } from 'react-select';
 // Fake data
-import { emailFieldMeta, fundFieldMeta, skypeFieldMeta } from './fakeData'
+import {
+  emailFieldMeta, employeesListResponse, employeeResponse,
+  fundFieldMeta, skypeFieldMeta
+} from './fakeData'
+import { SelectField } from '../components/SelectField'
+import { EmployeeEditor } from './EmployeeEditor'
 
 export const SettingsForm = () => {
 
@@ -13,6 +19,9 @@ export const SettingsForm = () => {
   //Tabs
   const [activeTab, setActiveTab] = useState(null)
   const onTabClick = e => setActiveTab(e.target.name)
+  const onSecondTab = () => { setActiveTab("2"); if (!employeesField.options.length) employeesListRequest() }
+  //Error msg  
+  const [errorMsg, setErrorMsg] = useState(null)
   //Tab 1, passwords
   const [oldPWord, setOldPWord] = useState('')
   const onOldPWord = e => setOldPWord(e.target.value)
@@ -39,8 +48,42 @@ export const SettingsForm = () => {
     setNewPWord('')
     setNewPWord2('')
   }
+  // Tab 2, edit employees
+  const [employeesField, setEmployeesField] = useState(selectDefaultState)
+  const onEmployeeChange = option => {
+    setEmployeesField({ ...employeesField, value: option })
+    console.log(option)
+    employeeRequest(option)
+  }
+  const [employeeNameField, setEmployeeNameField] = useState(stringFieldDefaultState)
+  const [employeeEMailField, setEmployeeEMailField] = useState(stringFieldDefaultState)
+  const [employeeFundsField, setEmployeeFundsField] = useState(selectDefaultState)
+  const [employeeIsAdmin, setEmployeeIsAdmin] = useState(stringFieldDefaultState)
+
+  // Requests
+  const employeesListRequest = async () => {
+    const response = employeesListResponse
+    if (response.status === 'OK') {
+      setEmployeesField(response.employeeFieldMeta)
+    } else {
+      setErrorMsg('@(Ошибка запроса информации о работнике)')
+    }
+  }
+  const employeeRequest = async option => {
+    const response = employeeResponse
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      setEmployeeNameField(response.employeeNameFieldMeta)
+      setEmployeeEMailField(response.employeeEMailFieldMeta)
+      setEmployeeFundsField(response.employeeFundsFieldMeta)
+      setEmployeeIsAdmin(response.employeeIsAdminFieldMeta)
+    } else {
+      setErrorMsg('@(Ошибка запроса информации о работнике)')
+    }
+  }
 
   useEffect(() => {
+    //tab 1
     setFundField(fundFieldMeta)
     setEMailField(emailFieldMeta)
     setSkypeField(skypeFieldMeta)
@@ -70,7 +113,7 @@ export const SettingsForm = () => {
           <button className="ui button small teal" type="button" onClick={onTabClick} name="1">
             @(Изменить пароль)
             </button>
-          <button className="ui button small teal" type="button" onClick={onTabClick} name="2">
+          <button className="ui button small teal" type="button" onClick={onSecondTab} name="2">
             @(Редактировать сотрудников)
             </button>
           <button className="ui button small teal" type="button" onClick={onTabClick} name="3">
@@ -79,7 +122,8 @@ export const SettingsForm = () => {
         </div>
 
       </form>
-      {/* Active tab */}
+      {/* Active tabs */}
+      {/* Password change */}
       {activeTab == 1 && <form className="ui form" onSubmit={submitPWord} onReset={resetPWords}>
 
         <StringField name="password" label="@(Старый пароль)" type="password"
@@ -105,24 +149,58 @@ export const SettingsForm = () => {
           <h5 className="text red">{pWordStatus}</h5>
         </div>}
 
-        <button className="ui button green small" type="submit">
-          @(Подтвредить)
-        </button>
-
         <button className="ui button red small" type="reset">
           @(Сбросить)
         </button>
 
+        <button className="ui button green small" type="submit">
+          @(Подтвредить)
+        </button>
+
       </form>}
 
-      {activeTab == 2 && <div className="ui segment">
-        peps2
-        </div>}
+      {/* Members edit */}
+      {activeTab == 2 && <form className="ui form">
 
-      {activeTab == 3 && <div className="ui segment">
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">@(Ошибка соединения с сервером)</h5>
+          </div>
+        }
+
+        <SelectField label="@(Выбор сотрудника)" name="employee"
+          isEditable={employeesField.isEditable} isRequired={employeesField.isRequired}
+          value={employeesField.value} options={employeesField.options}
+          onChange={onEmployeeChange} optionWrapper={OptionWraper}
+        />
+
+        {employeesField.value &&
+          <EmployeeEditor
+            nameState={employeeNameField} setNameState={setEmployeeNameField}
+            eMailState={employeeEMailField} setEMailState={setEmployeeEMailField}
+            fundsState={employeeFundsField} setFundsState={setEmployeeFundsField}
+            isAdminState={employeeIsAdmin} setisAdminState={setEmployeeIsAdmin}
+          />
+        }
+
+      </form>}
+
+
+      {activeTab == 3 && <form className="ui form">
         peps3
-        </div>}
+        </form>}
 
     </div>
   )
 }
+
+const { Option } = components
+const OptionWraper = (props) => {
+  console.log(props.data)
+  return (<Option {...props}>
+    {props.data.label}
+    <br />
+    {props.data.email}
+  </Option>
+  )
+};
