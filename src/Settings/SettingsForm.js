@@ -4,9 +4,11 @@ import { StringField } from '../components/StringField'
 import { components } from 'react-select';
 // Fake data
 import {
-  emailFieldMeta, employeesListResponse, employeeResponse,
-  fundFieldMeta, skypeFieldMeta, employeeCreateOptions
+  employeeCreateOptions
 } from './fakeData'
+
+let WS
+
 import { SelectField } from '../components/SelectField'
 import { EmployeeEditor } from './EmployeeEditor'
 
@@ -29,7 +31,7 @@ export const SettingsForm = () => {
   const [newPWord2, setNewPWord2] = useState('')
   const onNewPWord2 = e => setNewPWord2(e.target.value)
   const [pWordStatus, setPWordStatus] = useState(null)
-  const submitPWord = e => {
+  const submitPWord = async e => {
     e.preventDefault()
     e.target.checkValidity()
     const data = {
@@ -39,30 +41,37 @@ export const SettingsForm = () => {
       newPassword: newPWord
     }
     console.log(data)
-    resetPWords()
-    setPWordStatus('Success')
+    const response = await passwordChange(data)
+    if (response.status === 'OK') {
+      resetPWords()
+      response.message ? setPWordStatus(response.message) : setPWordStatus('@(Успех)')
+    } else response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка)')
   }
   const resetPWords = () => {
     setOldPWord('')
     setNewPWord('')
     setNewPWord2('')
   }
+
   // Tab 2, edit employees
   const [employeesField, setEmployeesField] = useState(selectDefaultState)
   const onEmployeeChange = option => {
     setEmployeesField({ ...employeesField, value: option })
+    setUpdateStatus(null)
     employeeRequest(option)
   }
   const [employeeNameField, setEmployeeNameField] = useState(stringFieldDefaultState)
   const [employeeEMailField, setEmployeeEMailField] = useState(stringFieldDefaultState)
   const [employeeFundsField, setEmployeeFundsField] = useState(selectDefaultState)
   const [employeeIsAdmin, setEmployeeIsAdmin] = useState(stringFieldDefaultState)
+  const [updateStatus, setUpdateStatus] = useState(null)
 
   const deleteEmployee = async () => {
     const result = await employeeDeleteRequest()
-    if (result === 'OK') {
+    if (result.status === 'OK') {
       resetEmployeeEdit()
-      employeesListRequest()
+      result.message ? setUpdateStatus(result.message) : setUpdateStatus('@(Успех)')
+      await employeesListRequest()
     } else setErrorMsg('@(Ошибка при удалении работника)')
   }
   const submitEmployee = async e => {
@@ -75,7 +84,13 @@ export const SettingsForm = () => {
       employeeIsAdmin
     }
     console.log(data)
-    resetEmployeeEdit()
+    const response = await sendEmployeeData(employeeNameField.value, employeeEMailField.value,
+      employeeFundsField.value, employeeIsAdmin.value, 'employeeUpdate')
+    if (response.status === 'OK') {
+      resetEmployeeEdit()
+      response.message ? setUpdateStatus(response.message) : setUpdateStatus('@(Успех)')
+    } else response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка)')
+
   }
   const resetEmployeeEdit = () => {
     setEmployeesField({ ...employeesField, value: null })
@@ -83,12 +98,15 @@ export const SettingsForm = () => {
     setEmployeeEMailField({ ...employeeEMailField, value: null })
     setEmployeeFundsField({ ...employeeFundsField, value: null })
     setEmployeeIsAdmin({ ...employeeIsAdmin, value: null })
+    setUpdateStatus(null)
+    setErrorMsg(null)
   }
   // Tab 3, add employee
   const [addEmployeeNameField, setaddEmployeeNameField] = useState(stringFieldDefaultState)
   const [addEmployeeEMailField, setaddEmployeeEMailField] = useState(stringFieldDefaultState)
   const [addEmployeeFundsField, setaddEmployeeFundsField] = useState(selectDefaultState)
   const [addEmployeeIsAdmin, setaddEmployeeIsAdmin] = useState(stringFieldDefaultState)
+  const [createStatus, setCreateStatus] = useState(null)
 
   const submitEmployeeCreation = async e => {
     e.preventDefault()
@@ -100,25 +118,39 @@ export const SettingsForm = () => {
       employeeIsAdmin: addEmployeeIsAdmin
     }
     console.log(data)
+    const response = await sendEmployeeData(addEmployeeNameField.value, addEmployeeEMailField.value,
+      addEmployeeFundsField.value, addEmployeeIsAdmin.value, 'employeeCreate')
+    if (response.status === 'OK') {
+      resetEmployeeCreation()
+      response.message ? setCreateStatus(response.message) : setCreateStatus('@(Успех)')
+    } else response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка)')
   }
   const resetEmployeeCreation = () => {
     setaddEmployeeNameField({ ...addEmployeeNameField, value: '' })
     setaddEmployeeEMailField({ ...addEmployeeEMailField, value: '' })
     setaddEmployeeFundsField({ ...addEmployeeFundsField, value: '' })
     setaddEmployeeIsAdmin({ ...addEmployeeIsAdmin, value: '' })
+    setCreateStatus(null)
+    setErrorMsg(null)
   }
 
   // Requests with effects
   const employeesListRequest = async () => {
-    const response = employeesListResponse
+    const response = await WS.send('settings', 'employeesList', {})
     if (response.status === 'OK') {
       setEmployeesField(response.employeeFieldMeta)
     } else {
-      setErrorMsg('@(Ошибка запроса информации о работнике)')
+      response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка запроса информации о работнике)')
     }
   }
   const employeeRequest = async option => {
-    const response = employeeResponse
+    const payload = {
+      fundName: fundField,
+      fundEmail: eMailField,
+      employeeId: option.value,
+      employeeEmail: option.email
+    }
+    const response = await WS.send('settings', 'employeeData', { payload })
     if (response.status === 'OK') {
       setErrorMsg(false)
       setEmployeeNameField(response.employeeNameFieldMeta)
@@ -126,34 +158,62 @@ export const SettingsForm = () => {
       setEmployeeFundsField(response.employeeFundsFieldMeta)
       setEmployeeIsAdmin(response.employeeIsAdminFieldMeta)
     } else {
-      setErrorMsg('@(Ошибка запроса информации о работнике)')
+      response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка запроса информации о работнике)')
     }
-  }
-  const employeeDeleteRequest = async () => {
-    const payload = {
-      name: employeeNameField.value,
-      email: employeeEMailField.value,
-      funds: employeeFundsField.value
-    }
-    const response = 'OK'
-    return response
   }
   const createEmployeeOptions = async () => {
-    const response = employeeCreateOptions
+    const payload = {      
+      fundName: fundField,
+      fundEmail: eMailField,
+    }
+    const response = await WS.send('settings', 'employeeCreateOptions', { payload })
     if (response.status === 'OK') {
-      console.log(response)
       response.employeeNameFieldMeta && setaddEmployeeNameField(response.employeeNameFieldMeta)
       response.employeeEMailFieldMeta && setaddEmployeeEMailField(response.employeeEMailFieldMeta)
       response.employeeFundsFieldMeta && setaddEmployeeFundsField(response.employeeFundsFieldMeta)
       response.employeeIsAdminFieldMeta && setaddEmployeeIsAdmin(response.employeeIsAdminFieldMeta)
     } else setErrorMsg('@(Ошибка запроса информации о работнике)')
   }
+  // Pure requests
+  const passwordChange = async data => {
+    const payload = data
+    const response = await WS.send('settings', 'passwordUpdate', { payload })
+    return response
+  }
+  const sendEmployeeData = async (name, email, funds, isAdmin, method = 'employeeUpdate') => {
+    // method = 'employeeUpdate' | 'employeeCreate'
+    const payload = {
+      fundName: fundField,
+      fundEmail: eMailField,
+      name, email, funds, isAdmin
+    }
+    const response = await WS.send('settings', method, { payload })
+    return response
+  }
+  const employeeDeleteRequest = async (name, email) => {
+    const payload = {
+      name, email,
+      fundName: fundField,
+      fundEmail: eMailField,
+    }
+    const response = await WS.send('settings', 'employeeDelete', { payload })
+    return response
+  }
 
   useEffect(() => {
-    //tab 1
-    setFundField(fundFieldMeta)
-    setEMailField(emailFieldMeta)
-    setSkypeField(skypeFieldMeta)
+    async function fetcher() {
+      WS = new WebsocketPromiseLiteClient({
+        url: 'ws://localhost:5555'
+      })
+      await WS.connectionEstablished()
+      const response = await WS.send('settings', 'settingsFormData', {})
+      if (response.status === 'OK') {
+        response.fundName && setFundField(response.fundName)
+        response.fundEmail && setEMailField(response.fundEmail)
+        response.skypeFieldMeta && setSkypeField(response.skypeFieldMeta)
+      } else setErrorMsg('@(Ошибка подключения)')
+    }
+    fetcher()
   }, [])
 
   useEffect(() => {
@@ -258,6 +318,9 @@ export const SettingsForm = () => {
             isAdminState={employeeIsAdmin} setisAdminState={setEmployeeIsAdmin}
           />
         }
+        {updateStatus && <div className="ui alert message">
+          <h5 className="text red">{updateStatus}</h5>
+        </div>}
         {employeesField.value && <>
           <button className="ui button small red" type="button" onClick={deleteEmployee}>
             @(Удалить сотрудника)
@@ -289,6 +352,9 @@ export const SettingsForm = () => {
           isAdminState={addEmployeeIsAdmin} setisAdminState={setaddEmployeeIsAdmin}
         />
 
+        {createStatus && <div className="ui alert message">
+          <h5 className="text red">{createStatus}</h5>
+        </div>}
         <button className="ui button red small" type="reset">
           @(Сбросить)
         </button>
