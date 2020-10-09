@@ -11,6 +11,7 @@ export const EmployeeEditor = ({
   const onNameChange = e => setNameState({ ...nameState, value: e.target.value })
   const onEMailChange = e => setEMailState({ ...eMailState, value: e.target.value })
   const onSelect = option => setFundsState({ ...fundsState, value: option })
+  const onCheck = () => setisAdminState({ ...isAdminState, value: !isAdminState.value })
 
   return (
     <div>
@@ -30,6 +31,15 @@ export const EmployeeEditor = ({
         value={fundsState.value} onChange={onSelect} options={fundsState.options}
         isMulti={true}
       />
+
+      <div className="field">
+        <label htmlFor="isAdmin">@(Возможность добавлять сотрудников)</label>
+        <input type="checkbox" name="isAdmin" checked={isAdminState.value}
+          className={!isAdminState.isEditable ? 'disabled' : ''}
+          required={false}
+          onChange={onCheck}
+        />
+      </div>
 
     </div>
   )

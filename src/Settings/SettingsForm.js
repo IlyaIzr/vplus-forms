@@ -5,7 +5,7 @@ import { components } from 'react-select';
 // Fake data
 import {
   emailFieldMeta, employeesListResponse, employeeResponse,
-  fundFieldMeta, skypeFieldMeta
+  fundFieldMeta, skypeFieldMeta, employeeCreateOptions
 } from './fakeData'
 import { SelectField } from '../components/SelectField'
 import { EmployeeEditor } from './EmployeeEditor'
@@ -19,7 +19,6 @@ export const SettingsForm = () => {
   //Tabs
   const [activeTab, setActiveTab] = useState(null)
   const onTabClick = e => setActiveTab(e.target.name)
-  const onSecondTab = () => { setActiveTab("2"); if (!employeesField.options.length) employeesListRequest() }
   //Error msg  
   const [errorMsg, setErrorMsg] = useState(null)
   //Tab 1, passwords
@@ -52,7 +51,6 @@ export const SettingsForm = () => {
   const [employeesField, setEmployeesField] = useState(selectDefaultState)
   const onEmployeeChange = option => {
     setEmployeesField({ ...employeesField, value: option })
-    console.log(option)
     employeeRequest(option)
   }
   const [employeeNameField, setEmployeeNameField] = useState(stringFieldDefaultState)
@@ -60,7 +58,57 @@ export const SettingsForm = () => {
   const [employeeFundsField, setEmployeeFundsField] = useState(selectDefaultState)
   const [employeeIsAdmin, setEmployeeIsAdmin] = useState(stringFieldDefaultState)
 
-  // Requests
+  const deleteEmployee = async () => {
+    const result = await employeeDeleteRequest()
+    if (result === 'OK') {
+      resetEmployeeEdit()
+      employeesListRequest()
+    } else setErrorMsg('@(Ошибка при удалении работника)')
+  }
+  const submitEmployee = async e => {
+    e.preventDefault()
+    e.target.checkValidity()
+    const data = {
+      employeeNameField,
+      employeeEMailField,
+      employeeFundsField,
+      employeeIsAdmin
+    }
+    console.log(data)
+    resetEmployeeEdit()
+  }
+  const resetEmployeeEdit = () => {
+    setEmployeesField({ ...employeesField, value: null })
+    setEmployeeNameField({ ...employeeNameField, value: null })
+    setEmployeeEMailField({ ...employeeEMailField, value: null })
+    setEmployeeFundsField({ ...employeeFundsField, value: null })
+    setEmployeeIsAdmin({ ...employeeIsAdmin, value: null })
+  }
+  // Tab 3, add employee
+  const [addEmployeeNameField, setaddEmployeeNameField] = useState(stringFieldDefaultState)
+  const [addEmployeeEMailField, setaddEmployeeEMailField] = useState(stringFieldDefaultState)
+  const [addEmployeeFundsField, setaddEmployeeFundsField] = useState(selectDefaultState)
+  const [addEmployeeIsAdmin, setaddEmployeeIsAdmin] = useState(stringFieldDefaultState)
+
+  const submitEmployeeCreation = async e => {
+    e.preventDefault()
+    e.target.checkValidity()
+    const data = {
+      employeeNameField: addEmployeeNameField,
+      employeeEMailField: addEmployeeEMailField,
+      employeeFundsField: addEmployeeFundsField,
+      employeeIsAdmin: addEmployeeIsAdmin
+    }
+    console.log(data)
+  }
+  const resetEmployeeCreation = () => {
+    setaddEmployeeNameField({ ...addEmployeeNameField, value: '' })
+    setaddEmployeeEMailField({ ...addEmployeeEMailField, value: '' })
+    setaddEmployeeFundsField({ ...addEmployeeFundsField, value: '' })
+    setaddEmployeeIsAdmin({ ...addEmployeeIsAdmin, value: '' })
+  }
+
+  // Requests with effects
   const employeesListRequest = async () => {
     const response = employeesListResponse
     if (response.status === 'OK') {
@@ -81,6 +129,25 @@ export const SettingsForm = () => {
       setErrorMsg('@(Ошибка запроса информации о работнике)')
     }
   }
+  const employeeDeleteRequest = async () => {
+    const payload = {
+      name: employeeNameField.value,
+      email: employeeEMailField.value,
+      funds: employeeFundsField.value
+    }
+    const response = 'OK'
+    return response
+  }
+  const createEmployeeOptions = async () => {
+    const response = employeeCreateOptions
+    if (response.status === 'OK') {
+      console.log(response)
+      response.employeeNameFieldMeta && setaddEmployeeNameField(response.employeeNameFieldMeta)
+      response.employeeEMailFieldMeta && setaddEmployeeEMailField(response.employeeEMailFieldMeta)
+      response.employeeFundsFieldMeta && setaddEmployeeFundsField(response.employeeFundsFieldMeta)
+      response.employeeIsAdminFieldMeta && setaddEmployeeIsAdmin(response.employeeIsAdminFieldMeta)
+    } else setErrorMsg('@(Ошибка запроса информации о работнике)')
+  }
 
   useEffect(() => {
     //tab 1
@@ -88,6 +155,14 @@ export const SettingsForm = () => {
     setEMailField(emailFieldMeta)
     setSkypeField(skypeFieldMeta)
   }, [])
+
+  useEffect(() => {
+    if (activeTab == 2) {
+      if (!employeesField.options.length) employeesListRequest()
+    } else if (activeTab == 3) {
+      if (!employeesField.options.length) createEmployeeOptions()
+    }
+  }, [activeTab])
 
   return (
     <div>
@@ -113,7 +188,7 @@ export const SettingsForm = () => {
           <button className="ui button small teal" type="button" onClick={onTabClick} name="1">
             @(Изменить пароль)
             </button>
-          <button className="ui button small teal" type="button" onClick={onSecondTab} name="2">
+          <button className="ui button small teal" type="button" onClick={onTabClick} name="2">
             @(Редактировать сотрудников)
             </button>
           <button className="ui button small teal" type="button" onClick={onTabClick} name="3">
@@ -159,8 +234,8 @@ export const SettingsForm = () => {
 
       </form>}
 
-      {/* Members edit */}
-      {activeTab == 2 && <form className="ui form">
+      {/* Employee edit */}
+      {activeTab == 2 && <form className="ui form" onSubmit={submitEmployee} onReset={resetEmployeeEdit}>
 
         {//Error message
           errorMsg && <div className="ui alert message">
@@ -175,6 +250,7 @@ export const SettingsForm = () => {
         />
 
         {employeesField.value &&
+
           <EmployeeEditor
             nameState={employeeNameField} setNameState={setEmployeeNameField}
             eMailState={employeeEMailField} setEMailState={setEmployeeEMailField}
@@ -182,13 +258,45 @@ export const SettingsForm = () => {
             isAdminState={employeeIsAdmin} setisAdminState={setEmployeeIsAdmin}
           />
         }
+        {employeesField.value && <>
+          <button className="ui button small red" type="button" onClick={deleteEmployee}>
+            @(Удалить сотрудника)
+          </button>
+          <button className="ui button red small" type="reset">
+            @(Сбросить)
+          </button>
+          <button className="ui button green small" type="submit">
+            @(Подтвредить)
+          </button>
+        </>
+        }
 
       </form>}
 
+      {/* Add employee */}
+      {activeTab == 3 && <form className="ui form" onSubmit={submitEmployeeCreation} onReset={resetEmployeeCreation}>
 
-      {activeTab == 3 && <form className="ui form">
-        peps3
-        </form>}
+        {//Error message
+          errorMsg && <div className="ui alert message">
+            <h5 className="text red">@(Ошибка соединения с сервером)</h5>
+          </div>
+        }
+
+        <EmployeeEditor
+          nameState={addEmployeeNameField} setNameState={setaddEmployeeNameField}
+          eMailState={addEmployeeEMailField} setEMailState={setaddEmployeeEMailField}
+          fundsState={addEmployeeFundsField} setFundsState={setaddEmployeeFundsField}
+          isAdminState={addEmployeeIsAdmin} setisAdminState={setaddEmployeeIsAdmin}
+        />
+
+        <button className="ui button red small" type="reset">
+          @(Сбросить)
+        </button>
+        <button className="ui button green small" type="submit">
+          @(Подтвредить)
+        </button>
+
+      </form>}
 
     </div>
   )
@@ -196,7 +304,6 @@ export const SettingsForm = () => {
 
 const { Option } = components
 const OptionWraper = (props) => {
-  console.log(props.data)
   return (<Option {...props}>
     {props.data.label}
     <br />

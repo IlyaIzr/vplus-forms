@@ -15,8 +15,8 @@ const response = {
 
 //Employee edit
 const db_data_employees = [
-  { label: 'Pyotr Velikiy', value: 'pyotr@1.com', email: 'pyotr@1.com', isAdmin: true },
-  { label: 'Dmitriy Gordon', value: 'gor1341', email: 'gordon@bald.com', isAdmin: false }
+  { label: 'Pyotr Velikiy', value: 'pyotr@1.com', email: 'pyotr@1.com'},
+  { label: 'Dmitriy Gordon', value: 'gor1341', email: 'gordon@bald.com' }
 ]
 export const employeesListResponse = {
   status: 'OK',
@@ -55,6 +55,14 @@ const employeeIsAdminFieldMeta = {
   isRequired: true
 }
 export const employeeResponse = {
+  status: 'OK',
+  employeeNameFieldMeta,
+  employeeEMailFieldMeta,
+  employeeFundsFieldMeta,
+  employeeIsAdminFieldMeta
+}
+// Add employee
+export const employeeCreateOptions = {
   status: 'OK',
   employeeNameFieldMeta,
   employeeEMailFieldMeta,
