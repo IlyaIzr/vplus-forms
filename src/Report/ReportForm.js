@@ -102,7 +102,7 @@ export const ReportForm = () => {
         </div>
       }
       <button className="ui button teal small right floated" type="submit">@(Отправить)</button>
-      <table className="ui celled table">
+      <table className="ui celled table compact stackable">
         <thead>
           <tr>
             <th rowSpan="2">@(Название)</th>

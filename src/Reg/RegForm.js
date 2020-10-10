@@ -115,6 +115,7 @@ export const RegForm = () => {
 
   const onSubmit = async e => {
     e.preventDefault()
+    e.target.checkValidity()
     const formData = {
       main: {
         // login: loginField, "e-mail": eMailField, "password": passwordField

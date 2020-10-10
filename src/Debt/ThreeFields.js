@@ -29,7 +29,7 @@ export const ThreeFields = ({
       />
       <button className={`ui button red tiny ${!canDelete && ' disabled'}`}
         style={{ 'maxHeight': 32, 'marginTop': 26 }}
-        onClick={onClick}>
+        onClick={onClick} type="button">
         х
       </button>
     </div>

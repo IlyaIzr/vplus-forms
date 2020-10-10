@@ -34,7 +34,7 @@ export const DebtForm = () => {
   const delCredentialsField = index => {
     const mutable = [...credentialsField.value]
     mutable.splice(index, 1)
-    setCredentialsField(mutable)
+    setCredentialsField({ ...credentialsField, value: mutable })
   }
 
   const [skypeField, setSkypeField] = useState(selectDefaultState)
@@ -200,7 +200,8 @@ export const DebtForm = () => {
               />
             )
           })}
-          <button className={`ui button blue small ${!credentialsField.isEditable && 'disabled'}`}
+          {console.log(credentialsField.isEditable)}
+          <button className={`ui button blue small ${credentialsField.isEditable ? '' : ' disabled'}`}
             onClick={addExtraField} type="button"
           >@(Добавить поле)
             </button>
