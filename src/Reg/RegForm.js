@@ -145,7 +145,7 @@ export const RegForm = () => {
     } else {
       setValidationPopup(false)
       console.log(formData)
-      await WS.send('registrations', 'registrationFormData', formData)
+      const response = await WS.send('registrations', 'registrationFormData', formData)
       if (response.loginFieldMeta) {
         setErrorMsg(false)
         onReset()
