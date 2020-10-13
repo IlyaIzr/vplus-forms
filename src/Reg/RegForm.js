@@ -26,6 +26,19 @@ export const RegForm = () => {
   const [eMailField, setEMailField] = useState(stringFieldDefaultState)
   const onEMailFieldChange = e => setEMailField({ ...eMailField, value: e.target.value })
 
+  const [roleField, setRoleField] = useState({
+    options: [
+      { label: '@(Владелец)', value: 'root' },
+      { label: '@(Админ)', value: 'admin' },
+      { label: '@(Пользователь)', value: 'user' }
+    ],
+    value: { label: '@(Пользователь)', value: 'user' },
+    isRequired: true,
+    isEditable: true
+  })
+  const onRoleChange = option => setRoleField({ ...roleField, value: option })
+
+
   const [passwordField, setPasswordField] = useState({ stringFieldDefaultState, minLength: 4 })
   const onPasswordFieldChange = e => setPasswordField({ ...passwordField, value: e.target.value })
   const [passwordField2, setPasswordField2] = useState(stringFieldDefaultState)
@@ -119,7 +132,7 @@ export const RegForm = () => {
     const formData = {
       main: {
         // login: loginField, "e-mail": eMailField, "password": passwordField
-        loginField, eMailField, passwordField
+        loginField, eMailField, passwordField, role: roleField.value.value
       },
       personal: {
         firstName: firstNameField,
@@ -207,6 +220,7 @@ export const RegForm = () => {
     setEMailField({ ...eMailField, value: '' })
     setPasswordField({ ...passwordField, value: '' })
     setPasswordField2({ ...passwordField2, value: '' })
+    setRoleField({ ...roleField, value: { label: '@(Пользователь)', value: 'user' } })
     // Personal info
     setFirstNameField({ ...firstNameField, value: '' })
     setSecondNameField({ ...secondNameField, value: '' })
@@ -255,6 +269,12 @@ export const RegForm = () => {
             isEditable={eMailField.isEditable} isRequired={eMailField.isRequired}
             value={eMailField.value} onChange={onEMailFieldChange}
           />
+
+          <SelectField name="role" label="@(Роль)"
+            isRequired={roleField.isRequired} isEditable={roleField.isEditable}
+            value={roleField.value} options={roleField.options} onChange={onRoleChange}
+          />
+
           <StringField name="password" label="@(Пароль)" type="password"
             isEditable={passwordField.isEditable} isRequired={passwordField.isRequired}
             value={passwordField.value} onChange={onPasswordFieldChange}
