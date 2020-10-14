@@ -120,7 +120,36 @@ export const FormTransactions = () => {
       }
     }
     fetcher()
+    // Form publoc APIs
+    // const formAPI = {
+    //   ...window.formAPI,
+    //   submit: () => {
+    //     const subButton = document.getElementById('subButton')
+    //     subButton.click() // submits form
+    //     return 'clicked'
+    //   }
+    // }
+    // window.formAPI = formAPI
   }, []);
+
+  // useEffect(() => {
+  //   const formAPI = {
+  //     ...window.formAPI,
+  //     reset: () => resetSomeFields(),
+  //     setGroupValue: (value) => {
+  //       setGroupField({ ...groupField, value })
+  //     }
+  //   }
+  //   window.formAPI = formAPI
+  // }, [
+  //   groupField,
+  //   senderField,
+  //   senderAccsField,
+  //   recipientField,
+  //   recipientsAcc,
+  //   sum,
+  //   comission,
+  //   comment])
 
 
   // Change listeners
