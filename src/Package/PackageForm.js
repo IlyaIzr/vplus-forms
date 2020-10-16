@@ -4,6 +4,7 @@ import { SelectField } from '../components/SelectField'
 // Extra stuff
 
 let WS
+let userInfoPayload = {}
 const numberFieldDefaultState = {
   value: '',
   isEditable: true,
@@ -17,7 +18,16 @@ const stringFieldDefaultState = {
   isRequired: true
 }
 
+
 export const PackageForm = () => {
+  
+  const formAPI = {
+    callPackageForm: (userInfo = {}) => {
+      userInfoPayload = {...userInfo}
+      fetcher(userInfoPayload)
+    }
+  }
+  window.formAPI = formAPI
 
   const [roomsField, setRoomsField] = useState({
     options: [],
@@ -66,60 +76,64 @@ export const PackageForm = () => {
   const [errorMsg, setErrorMsg] = useState(null)
 
 
-  useEffect(() => {
-    
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
+  async function fetcher(userInfo) {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    console.log('request did run with user info of');
+    console.log(userInfo);
+    const response = await WS.send('packages', 'packageFormData', { userInfo })
+    const {
+      roomsFieldMeta,
+      tournamentsNumberMeta,
+      playerRiskMeta,
+      fundRiskMeta,
+      BIMeta,
+      BRSumField,
+      RollbackField,
+      BuyInsField,
+      ExtraInfoField
+    } = response
+
+    if (roomsFieldMeta) {
+      setErrorMsg(false)
+      const options = []
+      await roomsFieldMeta.options.forEach((serverOption) => {
+        options.push({ value: serverOption.id, label: serverOption.name })
       })
-      await WS.connectionEstablished()
-      const response = await WS.send('packages', 'packageFormData', {})
-      const {
-        roomsFieldMeta,
-        tournamentsNumberMeta,
-        playerRiskMeta,
-        fundRiskMeta,
-        BIMeta,
-        BRSumField,
-        RollbackField,
-        BuyInsField,
-        ExtraInfoField
-      } = response
 
-      if (roomsFieldMeta) {
-        setErrorMsg(false)
-        const options = []
-        await roomsFieldMeta.options.forEach((serverOption) => {
-          options.push({ value: serverOption.id, label: serverOption.name })
-        })
+      const value = []
+      await roomsFieldMeta.value.forEach((serverValue) => {
+        value.push({ value: serverValue.id, label: serverValue.name })
+      })
+      setRoomsField({ ...roomsFieldMeta, options, value })
+    } else setErrorMsg('@(Ошибка подключения)')
 
-        const value = []
-        await roomsFieldMeta.value.forEach((serverValue) => {
-          value.push({ value: serverValue.id, label: serverValue.name })
-        })
-        setRoomsField({ ...roomsFieldMeta, options, value })
-      } else setErrorMsg('@(Ошибка подключения)')
+    tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
+    // slider sets
+    playerRiskMeta && setPlayerRiskField(playerRiskMeta)
+    fundRiskMeta && setFundRiskField(fundRiskMeta)
+    playerRiskMeta && setPlayerRisk(playerRiskMeta.value)
+    // end of slider sets
+    BIMeta && setABIField(BIMeta)
+    BRSumField && setBRSumField(BRSumField)
+    RollbackField && setRollbackField(RollbackField)
+    BuyInsField && setBuyInsField(BuyInsField)
+    ExtraInfoField && setExtraInfoField(ExtraInfoField)
 
-      tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
-      // slider sets
-      playerRiskMeta && setPlayerRiskField(playerRiskMeta)
-      fundRiskMeta && setFundRiskField(fundRiskMeta)
-      playerRiskMeta && setPlayerRisk(playerRiskMeta.value)
-      // end of slider sets
-      BIMeta && setABIField(BIMeta)
-      BRSumField && setBRSumField(BRSumField)
-      RollbackField && setRollbackField(RollbackField)
-      BuyInsField && setBuyInsField(BuyInsField)
-      ExtraInfoField && setExtraInfoField(ExtraInfoField)
+    // WS.close()
+  }
 
-      // WS.close()
-    }
-    fetcher()
+  useEffect(() => {
+
+    fetcher(userInfoPayload)
   }, [])
 
   const onSubmit = async (e) => {
     e.preventDefault()
     const formData = {
+      userInfo: userInfoPayload,
       roomsField,
       tournamentsField,
       playerRiskField,
@@ -130,20 +144,19 @@ export const PackageForm = () => {
       buyInsField,
       extraInfoField
     }
-    console.log(formData)
     const response = await WS.send('packages', 'packageFormData', formData)
     response.roomsFieldMeta ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения при отправлении)')
   }
   const onReset = () => {
     setRoomsField({ ...roomsField, value: [] })
-    setTournamentsField({...tournamentsField, value: ''})
+    setTournamentsField({ ...tournamentsField, value: '' })
     setPlayerRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
     setFundRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
     setPlayerRisk(50)
-    setABIField({...aBIField, value: ''})
-    setBRSumField({...bRSumField, value: ''})
-    setRollbackField({...rollbackField, value: ''})
-    setBuyInsField({...buyInsField, value: ''})
+    setABIField({ ...aBIField, value: '' })
+    setBRSumField({ ...bRSumField, value: '' })
+    setRollbackField({ ...rollbackField, value: '' })
+    setBuyInsField({ ...buyInsField, value: '' })
     setExtraInfoField({ ...stringFieldDefaultState, isRequired: false })
   }
 
