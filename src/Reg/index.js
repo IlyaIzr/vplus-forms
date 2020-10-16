@@ -3,4 +3,4 @@ import ReactDOM from "react-dom"
 import { RegForm } from './RegForm'
 
 
-ReactDOM.render(<RegForm />, document.getElementById("root"))
+ReactDOM.render(<RegForm />, document.getElementById("regFormRoot"))

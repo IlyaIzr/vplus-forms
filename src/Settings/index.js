@@ -3,4 +3,4 @@ import ReactDOM from "react-dom"
 import { SettingsForm } from './SettingsForm'
 
 
-ReactDOM.render(<SettingsForm />, document.getElementById("root"))
+ReactDOM.render(<SettingsForm />, document.getElementById("settingsFormRoot"))

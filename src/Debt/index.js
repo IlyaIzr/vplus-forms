@@ -3,4 +3,4 @@ import ReactDOM from "react-dom"
 import { DebtForm } from './DebtForm'
 
 
-ReactDOM.render(<DebtForm />, document.getElementById("root"))
+ReactDOM.render(<DebtForm />, document.getElementById("debtFormRoot"))

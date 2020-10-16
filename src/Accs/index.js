@@ -3,4 +3,4 @@ import ReactDOM from "react-dom"
 import { AccountForm } from './AccountForm'
 
 
-ReactDOM.render(<AccountForm />, document.getElementById("root"))
+ReactDOM.render(<AccountForm />, document.getElementById("accountsFormRoot"))
