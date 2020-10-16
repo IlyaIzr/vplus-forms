@@ -163,7 +163,7 @@ export const GroupForm = () => {
   }
 
   const onReset = () => {
-    setGroupNameField(stringFieldDefaultState)
+    setGroupNameField({...groupNameField, value: ''})
     setDisciplineField({...disciplineField, value: []})
     setInvestorsField({ ...investorsField, investors: [] })
     setManagersField({...managersField, managers: []})

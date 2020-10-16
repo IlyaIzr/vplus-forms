@@ -254,7 +254,7 @@ export const RegForm = () => {
         </div>}
         {//Error message
           errorMsg && <div className="ui alert message">
-            <h5 className="text red">@(Ошибка соединения с сервером)</h5>
+            <h5 className="text red">{errorMsg ? errorMsg : '@(Ошибка соединения с сервером)'}</h5>
           </div>}
       </div>
       <br />

@@ -118,13 +118,39 @@ export const FormTransactions = () => {
           await recipientAccsRequest()
         }
       }
-      // WS.close()
     }
     fetcher()
+    // Form publoc APIs
+    // const formAPI = {
+    //   ...window.formAPI,
+    //   submit: () => {
+    //     const subButton = document.getElementById('subButton')
+    //     subButton.click() // submits form
+    //     return 'clicked'
+    //   }
+    // }
+    // window.formAPI = formAPI
   }, []);
 
-  // const testo = async () => {
-  // } 
+  // useEffect(() => {
+  //   const formAPI = {
+  //     ...window.formAPI,
+  //     reset: () => resetSomeFields(),
+  //     setGroupValue: (value) => {
+  //       setGroupField({ ...groupField, value })
+  //     }
+  //   }
+  //   window.formAPI = formAPI
+  // }, [
+  //   groupField,
+  //   senderField,
+  //   senderAccsField,
+  //   recipientField,
+  //   recipientsAcc,
+  //   sum,
+  //   comission,
+  //   comment])
+
 
   // Change listeners
   const onChangeGroup = async (option) => {
@@ -149,18 +175,18 @@ export const FormTransactions = () => {
   }
 
   const resetSomeFields = (e) => {
-    e.preventDefault()
-    setSenderField(fieldSettings)
-    setSenderAccs(fieldSettings)
-    setRecipientsField(fieldSettings)
-    setRecipientsAcc(fieldSettings)
+    e && e.preventDefault()
+    setSenderField({ ...senderField, value: '' })
+    setSenderAccs({ ...senderAccsField, value: '' })
+    setRecipientsField({ ...recipientField, value: '' })
+    setRecipientsAcc({ ...recipientsAcc, value: '' })
     setSum('')
     setComission('')
     setComment('')
   }
 
   const onSubmit = e => {
-    e.preventDefault()
+    e && e.preventDefault()
     const result = {
       groupField,
       senderField,
@@ -188,7 +214,7 @@ export const FormTransactions = () => {
 
   return (
     <div>
-      <form onSubmit={onSubmit} onReset={resetSomeFields} className="ui form">
+      <form onSubmit={onSubmit} onReset={resetSomeFields} className="ui form" id="transactionsForm">
 
         {//Error message
           errorMsg && <div className="ui alert message">
@@ -257,7 +283,7 @@ export const FormTransactions = () => {
         </div>
 
         <button type="reset" className="ui button red">@(Сбросить)</button>
-        <button type="submit" className="ui button teal">@(Подтвердить)</button>
+        <button type="submit" className="ui button teal" id="subButton">@(Подтвердить)</button>
       </form>
     </div>
   )

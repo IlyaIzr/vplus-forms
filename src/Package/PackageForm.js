@@ -136,14 +136,14 @@ export const PackageForm = () => {
   }
   const onReset = () => {
     setRoomsField({ ...roomsField, value: [] })
-    setTournamentsField(numberFieldDefaultState)
+    setTournamentsField({...tournamentsField, value: ''})
     setPlayerRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
     setFundRiskField({ ...numberFieldDefaultState, max: 100, min: 0 })
     setPlayerRisk(50)
-    setABIField(numberFieldDefaultState)
-    setBRSumField(numberFieldDefaultState)
-    setRollbackField(numberFieldDefaultState)
-    setBuyInsField(numberFieldDefaultState)
+    setABIField({...aBIField, value: ''})
+    setBRSumField({...bRSumField, value: ''})
+    setRollbackField({...rollbackField, value: ''})
+    setBuyInsField({...buyInsField, value: ''})
     setExtraInfoField({ ...stringFieldDefaultState, isRequired: false })
   }
 
