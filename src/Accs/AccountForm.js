@@ -7,9 +7,9 @@ import { CustomForm } from './CustomForm'
 //Other
 let WS
 const accountsSpreader = options => {
-  const res = options.length && options.map(option => {
+  const res = options.length ? options.map(option => {
     return ({ value: option.type, ...option })
-  })
+  }) : []
   return res
 }
 
