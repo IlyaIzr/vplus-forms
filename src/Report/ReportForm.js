@@ -4,6 +4,7 @@ let WS
 export const ReportForm = () => {
   const [formData, setFormData] = useState([])
   const [listOfUsers, setListOfUsers] = useState([])
+  const [accountsInfo, setAccountsInfo] = useState({})
   const [newData, setNewData] = useState({
     date: 'SET ON SERVER?',
     accounts: null
@@ -20,16 +21,21 @@ export const ReportForm = () => {
       })
       await WS.connectionEstablished()
       const response = await WS.send('reports', 'reportFormData', {})
-      const reportForm = response && response.data
-      if (reportForm) {
+      const reportForm = response && response.reports
+      const accountsMeta = response && response.accountsMeta
+      if (response.status === 'OK') {
         setErrorMsg(false)
         setFormData(reportForm)
-        const alisia = Object.keys(reportForm[0].accounts)
+        setAccountsInfo(accountsMeta)
+        const alisia = Object.keys(accountsMeta)
         setListOfUsers(alisia)
         let testo = { ...newData }
         alisia.map(user => {
           const mutable = { ...testo.accounts }
-          mutable[user] = { name: user, loadSum: '', tournCount: '' }
+          mutable[user] = { 
+            name: user, 
+            loadSum: accountsMeta[user].loadSumValue, 
+            tournCount: accountsMeta[user].tournCountValue }
           testo = { ...testo, accounts: mutable }
         })
         setNewData(testo)
@@ -125,7 +131,7 @@ export const ReportForm = () => {
 
               <tr><td colSpan="7" className="positive">{item}</td></tr>
               <tr>
-                <td>@(Количество турниров)</td>
+                <td>{accountsInfo[item].loadSumName}</td>
                 <td>
 
                   {newData.accounts && newData.accounts[item] &&
@@ -139,7 +145,7 @@ export const ReportForm = () => {
               </tr>
 
               <tr>
-                <td>@(Сумма загрузки)</td>
+                <td>{accountsInfo[item].tournCountName}</td>
                 <td>
 
                   {newData.accounts && newData.accounts[item] &&
