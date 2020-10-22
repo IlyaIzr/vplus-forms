@@ -73,7 +73,6 @@ export const SettingsForm = () => {
   const [employeeNameField, setEmployeeNameField] = useState(stringFieldDefaultState)
   const [employeeEMailField, setEmployeeEMailField] = useState(stringFieldDefaultState)
   const [employeeFundsField, setEmployeeFundsField] = useState(selectDefaultState)
-  const [employeeIsAdmin, setEmployeeIsAdmin] = useState(stringFieldDefaultState)
   const [updateStatus, setUpdateStatus] = useState(null)
 
   const deleteEmployee = async () => {
@@ -91,11 +90,10 @@ export const SettingsForm = () => {
       employeeNameField,
       employeeEMailField,
       employeeFundsField,
-      employeeIsAdmin
     }
     console.log(data)
     const response = await sendEmployeeData(employeeNameField.value, employeeEMailField.value,
-      employeeFundsField.value, employeeIsAdmin.value, 'employeeUpdate')
+      employeeFundsField.value, 'employeeUpdate')
     if (response.status === 'OK') {
       resetEmployeeEdit()
       response.message ? setUpdateStatus(response.message) : setUpdateStatus('@(Успех)')
@@ -107,7 +105,6 @@ export const SettingsForm = () => {
     setEmployeeNameField({ ...employeeNameField, value: null })
     setEmployeeEMailField({ ...employeeEMailField, value: null })
     setEmployeeFundsField({ ...employeeFundsField, value: null })
-    setEmployeeIsAdmin({ ...employeeIsAdmin, value: null })
     setUpdateStatus(null)
     setErrorMsg(null)
   }
@@ -115,7 +112,6 @@ export const SettingsForm = () => {
   const [addEmployeeNameField, setaddEmployeeNameField] = useState(stringFieldDefaultState)
   const [addEmployeeEMailField, setaddEmployeeEMailField] = useState(stringFieldDefaultState)
   const [addEmployeeFundsField, setaddEmployeeFundsField] = useState(selectDefaultState)
-  const [addEmployeeIsAdmin, setaddEmployeeIsAdmin] = useState(stringFieldDefaultState)
   const [createStatus, setCreateStatus] = useState(null)
 
   const submitEmployeeCreation = async e => {
@@ -125,11 +121,10 @@ export const SettingsForm = () => {
       employeeNameField: addEmployeeNameField,
       employeeEMailField: addEmployeeEMailField,
       employeeFundsField: addEmployeeFundsField,
-      employeeIsAdmin: addEmployeeIsAdmin
     }
     console.log(data)
     const response = await sendEmployeeData(addEmployeeNameField.value, addEmployeeEMailField.value,
-      addEmployeeFundsField.value, addEmployeeIsAdmin.value, 'employeeCreate')
+      addEmployeeFundsField.value, 'employeeCreate')
     if (response.status === 'OK') {
       resetEmployeeCreation()
       response.message ? setCreateStatus(response.message) : setCreateStatus('@(Успех)')
@@ -139,7 +134,6 @@ export const SettingsForm = () => {
     setaddEmployeeNameField({ ...addEmployeeNameField, value: '' })
     setaddEmployeeEMailField({ ...addEmployeeEMailField, value: '' })
     setaddEmployeeFundsField({ ...addEmployeeFundsField, value: '' })
-    setaddEmployeeIsAdmin({ ...addEmployeeIsAdmin, value: '' })
     setCreateStatus(null)
     setErrorMsg(null)
   }
@@ -167,7 +161,6 @@ export const SettingsForm = () => {
       setEmployeeNameField(response.employeeNameFieldMeta)
       setEmployeeEMailField(response.employeeEMailFieldMeta)
       setEmployeeFundsField(response.employeeFundsFieldMeta)
-      setEmployeeIsAdmin(response.employeeIsAdminFieldMeta)
     } else {
       response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка запроса информации о работнике)')
     }
@@ -183,7 +176,6 @@ export const SettingsForm = () => {
       response.employeeNameFieldMeta && setaddEmployeeNameField(response.employeeNameFieldMeta)
       response.employeeEMailFieldMeta && setaddEmployeeEMailField(response.employeeEMailFieldMeta)
       response.employeeFundsFieldMeta && setaddEmployeeFundsField(response.employeeFundsFieldMeta)
-      response.employeeIsAdminFieldMeta && setaddEmployeeIsAdmin(response.employeeIsAdminFieldMeta)
     } else setErrorMsg('@(Ошибка запроса информации о работнике)')
   }
   // Pure requests
@@ -192,12 +184,12 @@ export const SettingsForm = () => {
     const response = await WS.send('settings', 'passwordUpdate', payload)
     return response
   }
-  const sendEmployeeData = async (name, email, funds, isAdmin, method = 'employeeUpdate') => {
+  const sendEmployeeData = async (name, email, funds, method = 'employeeUpdate') => {
     // method = 'employeeUpdate' | 'employeeCreate'
     const payload = {
       fundName: fundField,
       fundEmail: eMailField,
-      name, email, funds, isAdmin,
+      name, email, funds, 
       payload: settingsPayload
     }
     const response = await WS.send('settings', method, payload)
