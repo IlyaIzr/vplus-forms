@@ -135,7 +135,8 @@ export const AccountForm = () => {
         socialThirdNameField
       },
       accountsMeta,
-      extraContacts
+      extraContacts,
+      payload: accountFormPayload
     }
     console.log(formData)
     const response = await WS.send('accounts', 'formSubmit', formData)

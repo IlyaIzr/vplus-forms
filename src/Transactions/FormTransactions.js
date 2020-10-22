@@ -199,7 +199,8 @@ export const FormTransactions = () => {
       recipientsAcc : {...recipientsAcc, value: oneOptionDBFormat(recipientsAcc.value)},
       playerSum: sum,
       comission,
-      comment
+      comment,
+      payload: transactionsFormPayload
     }
     console.log(result)
     postFormRequest(result)

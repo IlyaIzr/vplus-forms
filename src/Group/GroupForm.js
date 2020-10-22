@@ -168,7 +168,8 @@ export const GroupForm = () => {
       buyInsField,
       playerRiskField,
       fundRiskField,
-      rollbackField
+      rollbackField,
+      payload: groupFormPayload
     }
     console.log(formData)
     const response = await WS.send('groups', 'formSubmit', formData)    

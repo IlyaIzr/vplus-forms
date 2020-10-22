@@ -95,7 +95,7 @@ export const ReportForm = () => {
     mutable.push(newData)
 
     console.log(mutable)
-    const response = await WS.send('reports', 'reportFormData', { data: mutable })
+    const response = await WS.send('reports', 'reportFormData', { data: mutable, payload: reportFormPayload })
     const msg = responseHandler(response)
     console.log(msg)
     setSubmitMsg(msg)

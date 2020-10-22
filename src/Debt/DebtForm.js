@@ -177,7 +177,8 @@ export const DebtForm = () => {
       netellerField,
       skrillField,
       ecoPayzField,
-      webMoneyField
+      webMoneyField,
+      payload: debtFormPayload
     }
     console.log(formData)
     const response = await WS.send('debts', 'formSubmit', formData)

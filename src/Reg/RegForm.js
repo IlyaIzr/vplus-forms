@@ -155,7 +155,8 @@ export const RegForm = () => {
         phone: phoneField,
         birthday: bDateField
       },
-      accounts: accountsMeta
+      accounts: accountsMeta,
+      payload: regFormPayload
     }
 
     // Tab 1 validation failed case

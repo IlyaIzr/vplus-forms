@@ -46,7 +46,8 @@ export const SettingsForm = () => {
     const data = {
       email: eMailField,
       oldPassword: oldPWord,
-      newPassword: newPWord
+      newPassword: newPWord,
+      payload: settingsPayload
     }
     console.log(data)
     const response = await passwordChange(data)
@@ -193,9 +194,10 @@ export const SettingsForm = () => {
     const payload = {
       fundName: fundField,
       fundEmail: eMailField,
-      name, email, funds, isAdmin
+      name, email, funds, isAdmin,
+      payload: settingsPayload
     }
-    const response = await WS.send('settings', method, { payload })
+    const response = await WS.send('settings', method, payload )
     return response
   }
   const employeeDeleteRequest = async (name, email) => {

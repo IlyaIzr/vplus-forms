@@ -125,7 +125,6 @@ export const PackageForm = () => {
   const onSubmit = async (e) => {
     e.preventDefault()
     const formData = {
-      userInfo: userInfoPayload,
       roomsField,
       tournamentsField,
       playerRiskField,
@@ -134,7 +133,8 @@ export const PackageForm = () => {
       bRSumField,
       rollbackField,
       buyInsField,
-      extraInfoField
+      extraInfoField,
+      payload: userInfoPayload
     }
     const response = await WS.send('packages', 'formSubmit', formData)
     if (response.status === 'OK') {
