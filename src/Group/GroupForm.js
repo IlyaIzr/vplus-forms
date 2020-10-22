@@ -7,6 +7,7 @@ import { StringField } from '../components/StringField'
 import { NumberField } from '../components/NumberField'
 import { ManagerSubForm } from './ManagerSubForm'
 import { numberFieldDefaultState, selectDefaultState, stringFieldDefaultState } from '../reusable'
+import { Submit } from '../components/Submit'
 let WS
 let groupFormPayload = {}
 
@@ -150,8 +151,9 @@ export const GroupForm = () => {
   const onRollbackChange = e => {
     setRollbackField({ ...rollbackField, value: e.target.value })
   }
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [submitMsg, setSubmitMsg] = useState(null)
 
   const onSubmit = async e => {
     e.preventDefault();
@@ -169,8 +171,11 @@ export const GroupForm = () => {
       rollbackField
     }
     console.log(formData)
-    const response = await WS.send('groups', 'groupFormData', formData)
-    response ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
+    const response = await WS.send('groups', 'formSubmit', formData)    
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
+    } else setErrorMsg('@(Ошибка подключения при отправлении)')
   }
 
   const onReset = () => {
@@ -376,9 +381,7 @@ export const GroupForm = () => {
         </div>
 
         <button className="ui red button" type="reset">@(Сбросить поля)</button>
-        <button type="submit" className={`ui teal button ${(!managersField.managers.length) && 'disabled'}`}>
-          @(Отправить)
-        </button>
+        <Submit state={submitMsg} setState={setSubmitMsg} isDisabled={!managersField.managers.length}/>
       </form>
 
     </div>

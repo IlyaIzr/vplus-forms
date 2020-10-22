@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { selectDefaultState, stringFieldDefaultState } from '../reusable'
 import { StringField } from '../components/StringField'
 import { components } from 'react-select';
-// Fake data
-import {
-  employeeCreateOptions
-} from './fakeData'
 
 let WS
 let settingsPayload = {}
 
 import { SelectField } from '../components/SelectField'
 import { EmployeeEditor } from './EmployeeEditor'
+import { Submit } from '../components/Submit';
 
 export const SettingsForm = () => {
 
@@ -32,8 +29,9 @@ export const SettingsForm = () => {
   //Tabs
   const [activeTab, setActiveTab] = useState(null)
   const onTabClick = e => setActiveTab(e.target.name)
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [submitMsg, setSubmitMsg] = useState(null)
   //Tab 1, passwords
   const [oldPWord, setOldPWord] = useState('')
   const onOldPWord = e => setOldPWord(e.target.value)
@@ -46,7 +44,6 @@ export const SettingsForm = () => {
     e.preventDefault()
     e.target.checkValidity()
     const data = {
-      fund: fundField,
       email: eMailField,
       oldPassword: oldPWord,
       newPassword: newPWord
@@ -301,9 +298,7 @@ export const SettingsForm = () => {
           @(Сбросить)
         </button>
 
-        <button className="ui button green small" type="submit">
-          @(Подтвредить)
-        </button>
+        <Submit state={submitMsg} setState={setSubmitMsg} />
 
       </form>}
 
@@ -341,9 +336,8 @@ export const SettingsForm = () => {
           <button className="ui button red small" type="reset">
             @(Сбросить)
           </button>
-          <button className="ui button green small" type="submit">
-            @(Подтвредить)
-          </button>
+
+          <Submit state={submitMsg} setState={setSubmitMsg} />
         </>
         }
 
@@ -370,10 +364,8 @@ export const SettingsForm = () => {
         </div>}
         <button className="ui button red small" type="reset">
           @(Сбросить)
-        </button>
-        <button className="ui button green small" type="submit">
-          @(Подтвредить)
-        </button>
+        </button>        
+        <Submit state={submitMsg} setState={setSubmitMsg} />
 
       </form>}
 

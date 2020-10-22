@@ -3,6 +3,7 @@ import { SelectField } from '../components/SelectField'
 import { StringField } from '../components/StringField'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../reusable'
 import { AccountSubForm } from '../Accs/AccountSubForm'
+import { Submit } from '../components/Submit'
 //Other
 let WS
 let regFormPayload = {}
@@ -12,6 +13,7 @@ const accountsSpreader = options => {
   }) : []
   return res
 }
+const stringFieldNotRequired = { ...stringFieldDefaultState, isRequired: false }
 
 export const RegForm = () => {
   const formAPI = {
@@ -27,8 +29,9 @@ export const RegForm = () => {
   const [tabIndex, setTabIndex] = useState(0)
   const onTabClick = e => setTabIndex(Number(e.target.name))
   const [validationPopup, setValidationPopup] = useState(false)
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [submitMsg, setSubmitMsg] = useState(null)
   // Tab 1 fields
   const [loginField, setLoginField] = useState(stringFieldDefaultState)
   const onLoginFieldChange = e => setLoginField({ ...loginField, value: e.target.value })
@@ -57,23 +60,22 @@ export const RegForm = () => {
   const [firstNameField, setFirstNameField] = useState(stringFieldDefaultState)
   const onFirstNameChange = e => setFirstNameField({ ...firstNameField, value: e.target.value })
 
-
   const [secondNameField, setSecondNameField] = useState(stringFieldDefaultState)
   const onSecondNameChange = e => setSecondNameField({ ...secondNameField, value: e.target.value })
 
-  const [thirdNameField, setThirdNameField] = useState(stringFieldDefaultState)
+  const [thirdNameField, setThirdNameField] = useState(stringFieldNotRequired)
   const onThirdNameChange = e => setThirdNameField({ ...thirdNameField, value: e.target.value })
 
-  const [countryField, setCountryField] = useState(stringFieldDefaultState)
+  const [countryField, setCountryField] = useState(stringFieldNotRequired)
   const onCountryChange = e => setCountryField({ ...countryField, value: e.target.value })
 
-  const [adressField, setAdressField] = useState(stringFieldDefaultState)
+  const [adressField, setAdressField] = useState(stringFieldNotRequired)
   const onAdressChange = e => setAdressField({ ...adressField, value: e.target.value })
 
   const [phoneField, setPhoneField] = useState(stringFieldDefaultState)
   const onPhoneChange = e => setPhoneField({ ...phoneField, value: e.target.value })
 
-  const [bDateField, setBDateField] = useState(stringFieldDefaultState)
+  const [bDateField, setBDateField] = useState(stringFieldNotRequired)
   const onBDateChange = e => setBDateField({ ...bDateField, value: e.target.value })
 
   // Tab 3 fields
@@ -168,10 +170,10 @@ export const RegForm = () => {
     } else {
       setValidationPopup(false)
       console.log(formData)
-      const response = await WS.send('registrations', 'registrationFormData', formData)
-      if (response.loginFieldMeta) {
+      const response = await WS.send('registrations', 'formSubmit', formData)
+      if (response.status === 'OK') {
         setErrorMsg(false)
-        onReset()
+        response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
       } else setErrorMsg('@(Ошибка подключения при отправлении)')
     }
   }
@@ -399,7 +401,7 @@ export const RegForm = () => {
         </>}
 
         <button className="ui button red" type="reset">@(Сбросить поля)</button>
-        <button type='submit' className="ui button teal">@(Отправить)</button>
+        <Submit state={submitMsg} setState={setSubmitMsg} />
       </form>
     </div>
   )

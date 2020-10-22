@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './Package.css'
 import { SelectField } from '../components/SelectField'
 import { numberFieldDefaultState, stringFieldDefaultState } from '../reusable'
+import { Submit } from '../components/Submit'
 // Extra stuff
 let WS
 let userInfoPayload = {}
@@ -62,8 +63,9 @@ export const PackageForm = () => {
 
   const [extraInfoField, setExtraInfoField] = useState({ ...stringFieldDefaultState, isRequired: false })
   const onExtraInfoChange = e => setExtraInfoField({ ...extraInfoField, value: e.target.value })
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [submitMsg, setSubmitMsg] = useState(null)
 
 
   async function fetcher(userInfo) {
@@ -134,8 +136,11 @@ export const PackageForm = () => {
       buyInsField,
       extraInfoField
     }
-    const response = await WS.send('packages', 'packageFormData', formData)
-    response.roomsFieldMeta ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения при отправлении)')
+    const response = await WS.send('packages', 'formSubmit', formData)
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
+    } else setErrorMsg('@(Ошибка подключения при отправлении)')
   }
   const onReset = () => {
     setRoomsField({ ...roomsField, value: [] })
@@ -249,7 +254,7 @@ export const PackageForm = () => {
 
 
         <button type='reset' className='ui button red'>@(Сбросить поля)</button>
-        <button type='submit' className='ui button green'>@(Отправить)</button>
+        <Submit state={submitMsg} setState={setSubmitMsg} />
       </form>
     </div>
   )

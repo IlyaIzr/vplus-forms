@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-export const Submit = ({ state, setState, timeout = 1200 }) => {
+export const Submit = ({ state, setState, timeout = 2200, isDisabled = false }) => {
 
   const close = () => setState(null)
   useEffect(() => {
@@ -14,7 +14,9 @@ export const Submit = ({ state, setState, timeout = 1200 }) => {
   return (
     <>
 
-      <button type="submit" className="ui button teal" id="subButton">@(Подтвердить)</button>
+      <button type="submit" id="subButton"
+        className={`ui teal button ${(isDisabled) && 'disabled'}`}
+      >@(Подтвердить)</button>
 
       {Boolean(state) && <div className="top right ui toast-container">
         <div className="floating toast-box compact transition visible" onClick={close}>

@@ -11,6 +11,7 @@ import { SelectWrapper } from './SelectWrapper'
 import { Description } from './Description'
 import { AdressThreeFields } from './AdressThreeFields'
 import { WMSubForm } from './WMSubForm'
+import { Submit } from '../components/Submit'
 // Backend
 let WS
 let debtFormPayload = {}
@@ -90,8 +91,9 @@ export const DebtForm = () => {
   const [skrillField, setSkrillField] = useState(selectDefaultState)
   const [ecoPayzField, setEcoPayzField] = useState(selectDefaultState)
   const [webMoneyField, setWebMoneyField] = useState(selectNoOptDefaultState)
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [submitMsg, setSubmitMsg] = useState(null)
 
   const fetcher = async (payload = {}) => {
     WS = new WebsocketPromiseLiteClient({
@@ -158,7 +160,7 @@ export const DebtForm = () => {
       arbitrageField,
       skypeField,
       credentialsField,
-      nicknamesField,
+      nicknameField,
       gipsyTeamField,
       pokerStrategyField,
       disciplineField,
@@ -178,12 +180,15 @@ export const DebtForm = () => {
       webMoneyField
     }
     console.log(formData)
-    const response = await WS.send('debts', 'debtFormData', {})
-    response.arbitrageFieldMeta ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
+    const response = await WS.send('debts', 'formSubmit', formData)
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
+    } else setErrorMsg('@(Ошибка подключения при отправлении)')
   }
 
   return (
-    <div className="ui container">
+    <div>
       <form className="ui form" onSubmit={onSubmit}>
 
         <h1 className="title">@(Форма должников)</h1>
@@ -209,7 +214,6 @@ export const DebtForm = () => {
               />
             )
           })}
-          {console.log(credentialsField.isEditable)}
           <button className={`ui button blue small ${credentialsField.isEditable ? '' : ' disabled'}`}
             onClick={addExtraField} type="button"
           >@(Добавить поле)
@@ -300,7 +304,7 @@ export const DebtForm = () => {
 
         <WMSubForm state={webMoneyField} setState={setWebMoneyField} />
 
-        <button className="ui button teal" type="submit">@(Отправить)</button>
+        <Submit state={submitMsg} setState={setSubmitMsg} />
       </form>
     </div>
   )

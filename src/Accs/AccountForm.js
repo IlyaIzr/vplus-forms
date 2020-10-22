@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SelectField } from '../components/SelectField'
 import { StringField } from '../components/StringField'
+import { Submit } from '../components/Submit'
 import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../reusable'
 import { AccountSubForm } from './AccountSubForm'
 import { CustomForm } from './CustomForm'
@@ -100,8 +101,9 @@ export const AccountForm = () => {
     mutableContacts.splice(index, 1)
     setExtraContacts(mutableContacts)
   }
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [submitMsg, setSubmitMsg] = useState(null)
 
   const fetcher = async (payload = {}) => {
     WS = new WebsocketPromiseLiteClient({
@@ -136,8 +138,11 @@ export const AccountForm = () => {
       extraContacts
     }
     console.log(formData)
-    const response = await WS.send('accounts', 'accountsFormData', formData)
-    response.accountsMetaData ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения при отправлении)')
+    const response = await WS.send('accounts', 'formSubmit', formData)
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
+    } else setErrorMsg('@(Ошибка подключения при отправлении)')
   }
 
   const onReset = () => {
@@ -225,8 +230,7 @@ export const AccountForm = () => {
         </div>
 
         <button className="ui button red" type="reset">@(Сбросить поля)</button>
-        <button className="ui button teal" type="submit">@(Отправить)</button>
-
+        <Submit state={submitMsg} setState={setSubmitMsg} />
       </form>
     </div>
   )

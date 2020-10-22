@@ -3,6 +3,8 @@ import { components } from 'react-select';
 import { SelectField } from '../components/SelectField';
 import { NumberField } from '../components/NumberField'
 import { Submit } from '../components/Submit';
+import { optionFormatter, oneOptionFormatter, oneOptionDBFormat } from '../reusable'
+// import { optionFormatter } from '../reusable'
 //Other
 let WS
 let transactionsFormPayload = {}
@@ -13,15 +15,6 @@ const fieldSettings = {
   isRequired: true
 }
 
-const optionFormatter = options => {
-  const formatedOptions = options && options.map((option) => {
-    return ({ label: option.name, value: option.id, subtitle: option.subtitle })
-  })
-  return formatedOptions
-}
-const oneOptionFormatter = option => {
-  if (option) return { label: option.name, value: option.id, subtitle: option.subtitle }
-}
 
 
 export const FormTransactions = () => {
@@ -161,22 +154,25 @@ export const FormTransactions = () => {
   const onChangeGroup = async (option) => {
     const newState = { ...groupField, value: option }
     setGroupField(newState)
-    await senderRequest(newState)
-    await recipientRequest(newState) //TODO
+    const formated = oneOptionDBFormat(option)
+    await senderRequest(formated)
+    await recipientRequest(formated) //TODO
   }
 
   const onChangeSender = async option => {
     const newState = { ...senderField, value: option }
+    const formated = oneOptionDBFormat(option)
     setSenderField(newState)
-    await senderAccsRequest(newState)
+    await senderAccsRequest(formated)
   }
   const onChangeSenderAcc = option => {
     setSenderAccs({ ...senderAccsField, value: option })
   }
   const onChangeRecipient = async option => {
     const newState = { ...recipientField, value: option }
+    const formated = oneOptionDBFormat(option)
     setRecipientsField(newState)
-    await recipientAccsRequest(newState)
+    await recipientAccsRequest(formated)
   }
   const onChangeRecipientAcc = option => {
     setRecipientsAcc({ ...senderAccsField, value: option })
@@ -196,11 +192,11 @@ export const FormTransactions = () => {
   const onSubmit = e => {
     e && e.preventDefault()
     const result = {
-      groupField,
-      senderField,
-      senderAccsField,
-      recipientField,
-      recipientsAcc,
+      groupField: {...groupField, value: oneOptionDBFormat(groupField.value)},
+      senderField : {...senderField, value: oneOptionDBFormat(senderField.value)},
+      senderAccsField : {...senderAccsField, value: oneOptionDBFormat(senderAccsField.value)},
+      recipientField : {...recipientField, value: oneOptionDBFormat(recipientField.value)},
+      recipientsAcc : {...recipientsAcc, value: oneOptionDBFormat(recipientsAcc.value)},
       playerSum: sum,
       comission,
       comment
@@ -236,7 +232,6 @@ export const FormTransactions = () => {
         />
 
         {/* USERS AND ACCOUNTS */}
-        {/* TODO enable fields, but make disable by def */}
         {(groupField.value) && <><div className="two fields">
 
           <SelectField label="@(Отправитель)" name="sender"

@@ -44,5 +44,11 @@ export const optionSpreader = (options) => {
 export const oneOptionFormatter = option => {
   if (option && option.subtitle) return { label: option.name, value: option.id, subtitle: option.subtitle }
   if (option) return { label: option.name, value: option.id }
-  else return {}
+  else return null
+}
+
+export const oneOptionDBFormat = option => {
+  if (option && option.subtitle) return { name: option.label, id: option.value, subtitle: option.subtitle }
+  if (option) return {  name: option.label, id: option.value }
+  else return null
 }
