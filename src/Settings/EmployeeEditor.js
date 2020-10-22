@@ -1,17 +1,16 @@
 import React from 'react'
 import { SelectField } from '../components/SelectField'
 import { StringField } from '../components/StringField'
+import { components } from 'react-select';
 
 export const EmployeeEditor = ({
   nameState, setNameState,
   eMailState, setEMailState,
-  fundsState, setFundsState,
-  isAdminState, setisAdminState
+  fundsState, setFundsState
 }) => {
   const onNameChange = e => setNameState({ ...nameState, value: e.target.value })
   const onEMailChange = e => setEMailState({ ...eMailState, value: e.target.value })
   const onSelect = option => setFundsState({ ...fundsState, value: option })
-  const onCheck = () => setisAdminState({ ...isAdminState, value: !isAdminState.value })
 
   return (
     <div>
@@ -29,18 +28,40 @@ export const EmployeeEditor = ({
       <SelectField label="@(Фонд)" name="fund"
         isEditable={fundsState.isEditable} isRequired={fundsState.isRequired}
         value={fundsState.value} onChange={onSelect} options={fundsState.options}
-        isMulti={true}
+        isMulti={true} optionWrapper={OptionWraper}
       />
-
-      <div className="field">
-        <label htmlFor="isAdmin">@(Возможность добавлять сотрудников)</label>
-        <input type="checkbox" name="isAdmin" checked={isAdminState.value}
-          className={!isAdminState.isEditable ? 'disabled' : ''}
-          required={false}
-          onChange={onCheck}
-        />
-      </div>
+      <h4>@(Возможность добавлять сотрудников)</h4>
+      {Boolean(fundsState.value) && Boolean(fundsState.value.length) && fundsState.value.map((fund, index) => {
+        const onCheckbox = e => {
+          const mutable = [...fundsState.value]
+          {/* mutable[index].isAdmin = e.target.checked */}
+          mutable[index].isAdmin = !mutable[index].isAdmin
+          setFundsState({ ...fundsState, value: mutable })
+        }
+        const pe = ()=> onCheckbox()
+        return (<div key={fund.value} onClick={onCheckbox}
+          className={`employeeAdditionRow ${fund.isAdmin ? "employeeIsAdmin" : "employeeNotAdmin"}`} >
+          <span>{fund.label}</span>
+          <input type="checkbox" checked={fund.isAdmin} onClick={pe} />
+        </div>)
+      })
+      }
 
     </div>
   )
 }
+
+
+const { Option } = components
+const OptionWraper = (props) => {
+  return (<Option {...props} className={props.data.isAdmin ? "optionHasExtra" : "optionDefault"}>
+    {props.data.label}
+    <div>
+      @(Возможность добавлять) <input
+        type="checkbox" name={props.data.value} checked={props.data.isAdmin}
+        style={{ marginTop: 4 }}
+      />
+    </div>
+  </Option>
+  )
+};

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { selectDefaultState, stringFieldDefaultState } from '../reusable'
 import { StringField } from '../components/StringField'
 import { components } from 'react-select';
+import './Settings.css'
 
 let WS
 let settingsPayload = {}
@@ -76,7 +77,7 @@ export const SettingsForm = () => {
   const [updateStatus, setUpdateStatus] = useState(null)
 
   const deleteEmployee = async () => {
-    const result = await employeeDeleteRequest()
+    const result = await employeeDeleteRequest(employeeNameField.value, employeeEMailField.value)
     if (result.status === 'OK') {
       resetEmployeeEdit()
       result.message ? setUpdateStatus(result.message) : setUpdateStatus('@(Успех)')
@@ -157,9 +158,10 @@ export const SettingsForm = () => {
       fundName: fundField,
       fundEmail: eMailField,
       employeeId: option.value,
-      employeeEmail: option.email
+      employeeEmail: option.email,
+      payload: settingsPayload
     }
-    const response = await WS.send('settings', 'employeeData', { payload })
+    const response = await WS.send('settings', 'employeeData', payload)
     if (response.status === 'OK') {
       setErrorMsg(false)
       setEmployeeNameField(response.employeeNameFieldMeta)
@@ -174,8 +176,9 @@ export const SettingsForm = () => {
     const payload = {
       fundName: fundField,
       fundEmail: eMailField,
+      payload: settingsPayload
     }
-    const response = await WS.send('settings', 'employeeCreateOptions', { payload })
+    const response = await WS.send('settings', 'employeeCreateOptions', payload)
     if (response.status === 'OK') {
       response.employeeNameFieldMeta && setaddEmployeeNameField(response.employeeNameFieldMeta)
       response.employeeEMailFieldMeta && setaddEmployeeEMailField(response.employeeEMailFieldMeta)
@@ -185,8 +188,8 @@ export const SettingsForm = () => {
   }
   // Pure requests
   const passwordChange = async data => {
-    const payload = data
-    const response = await WS.send('settings', 'passwordUpdate', { payload })
+    const payload = { ...data, payload: settingsPayload }
+    const response = await WS.send('settings', 'passwordUpdate', payload)
     return response
   }
   const sendEmployeeData = async (name, email, funds, isAdmin, method = 'employeeUpdate') => {
@@ -197,7 +200,7 @@ export const SettingsForm = () => {
       name, email, funds, isAdmin,
       payload: settingsPayload
     }
-    const response = await WS.send('settings', method, payload )
+    const response = await WS.send('settings', method, payload)
     return response
   }
   const employeeDeleteRequest = async (name, email) => {
@@ -205,8 +208,10 @@ export const SettingsForm = () => {
       name, email,
       fundName: fundField,
       fundEmail: eMailField,
+      payload: settingsPayload
     }
-    const response = await WS.send('settings', 'employeeDelete', { payload })
+    console.log(payload)
+    const response = await WS.send('settings', 'employeeDelete', payload)
     return response
   }
 
@@ -232,7 +237,7 @@ export const SettingsForm = () => {
     if (activeTab == 2) {
       if (!employeesField.options.length) employeesListRequest()
     } else if (activeTab == 3) {
-      if (!employeesField.options.length) createEmployeeOptions()
+      if (!addEmployeeFundsField.options.length) createEmployeeOptions()
     }
   }, [activeTab])
 
@@ -325,7 +330,6 @@ export const SettingsForm = () => {
             nameState={employeeNameField} setNameState={setEmployeeNameField}
             eMailState={employeeEMailField} setEMailState={setEmployeeEMailField}
             fundsState={employeeFundsField} setFundsState={setEmployeeFundsField}
-            isAdminState={employeeIsAdmin} setisAdminState={setEmployeeIsAdmin}
           />
         }
         {updateStatus && <div className="ui alert message">
@@ -358,7 +362,6 @@ export const SettingsForm = () => {
           nameState={addEmployeeNameField} setNameState={setaddEmployeeNameField}
           eMailState={addEmployeeEMailField} setEMailState={setaddEmployeeEMailField}
           fundsState={addEmployeeFundsField} setFundsState={setaddEmployeeFundsField}
-          isAdminState={addEmployeeIsAdmin} setisAdminState={setaddEmployeeIsAdmin}
         />
 
         {createStatus && <div className="ui alert message">
@@ -366,7 +369,7 @@ export const SettingsForm = () => {
         </div>}
         <button className="ui button red small" type="reset">
           @(Сбросить)
-        </button>        
+        </button>
         <Submit state={submitMsg} setState={setSubmitMsg} />
 
       </form>}

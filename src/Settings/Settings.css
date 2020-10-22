@@ -1,0 +1,40 @@
+.optionHasExtra {
+  background-color: rgb(244, 241, 255) !important;
+}
+
+.optionHasExtra:hover {
+  background-color: rgb(222, 233, 241) !important;
+}
+
+.optionDefault {
+  background-color: rgb(247, 255, 253) !important;
+}
+
+.optionDefault:hover {
+  background-color: rgb(222, 233, 241) !important;
+}
+
+.employeeAdditionRow {
+  margin: 10px 5px;
+  min-height: 25px;
+  border-bottom: 1px royalblue dashed;
+}
+
+.employeeAdditionRow>span {
+  margin-right: 10px;
+}
+
+.employeeAdditionRow input {
+  float: right;
+}
+
+.employeeAdditionRow:hover {
+  background-color: rgb(242, 248, 251);
+  cursor: pointer;
+}
+.employeeIsAdmin{  
+  background-color: rgb(247, 245, 255);
+}
+.employeeNotAdmin{
+  background-color: rgb(254, 255, 255);
+}
