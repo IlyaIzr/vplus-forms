@@ -5,6 +5,7 @@ import { stringFieldDefaultState, selectDefaultState, optionSpreader } from '../
 import { AccountSubForm } from '../Accs/AccountSubForm'
 //Other
 let WS
+let regFormPayload = {}
 const accountsSpreader = options => {
   const res = options.length ? options.map(option => {
     return ({ value: option.type, ...option })
@@ -13,6 +14,15 @@ const accountsSpreader = options => {
 }
 
 export const RegForm = () => {
+  const formAPI = {
+    regForm: {
+      callForm: (payload = {}) => {
+        regFormPayload = { ...payload }
+        fetcher(regFormPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
   // Tabs
   const [tabIndex, setTabIndex] = useState(0)
   const onTabClick = e => setTabIndex(Number(e.target.name))
@@ -166,49 +176,48 @@ export const RegForm = () => {
     }
   }
 
-  useEffect(() => {
-
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
-      })
-      await WS.connectionEstablished()
-      const regResponse = await WS.send('registrations', 'registrationFormData', {})
-      if (regResponse.loginFieldMeta) {
-        setErrorMsg(false)
-        const {
-          loginFieldMeta,
-          eMailFieldMeta,
-          passwordFieldMeta,
-          firstNameFieldMeta,
-          secondNameFieldMeta,
-          thirdNameFieldMeta,
-          countryFieldMeta,
-          adressFieldMeta,
-          phoneFieldMeta,
-          bDateFieldMeta,
-          accountsMetaData
-        } = regResponse
-        setLoginField(loginFieldMeta)
-        setEMailField(eMailFieldMeta)
-        setPasswordField(passwordFieldMeta)
-        setPasswordField2(passwordFieldMeta)
-        setFirstNameField(firstNameFieldMeta)
-        setSecondNameField(secondNameFieldMeta)
-        setThirdNameField(thirdNameFieldMeta)
-        setCountryField(countryFieldMeta)
-        setAdressField(adressFieldMeta)
-        setPhoneField(phoneFieldMeta)
-        setBDateField(bDateFieldMeta)
-        const options = optionSpreader(accountsMetaData.options)
-        const accounts = accountsSpreader(accountsMetaData.accounts)
-        setAccounts({ ...accountsMetaData, options, accounts })
-      } else {
-        setErrorMsg(true)
-      }
-
+  const fetcher = async (payload = {}) => {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    const regResponse = await WS.send('registrations', 'registrationFormData', payload)
+    if (regResponse.loginFieldMeta) {
+      setErrorMsg(false)
+      const {
+        loginFieldMeta,
+        eMailFieldMeta,
+        passwordFieldMeta,
+        firstNameFieldMeta,
+        secondNameFieldMeta,
+        thirdNameFieldMeta,
+        countryFieldMeta,
+        adressFieldMeta,
+        phoneFieldMeta,
+        bDateFieldMeta,
+        accountsMetaData
+      } = regResponse
+      setLoginField(loginFieldMeta)
+      setEMailField(eMailFieldMeta)
+      setPasswordField(passwordFieldMeta)
+      setPasswordField2(passwordFieldMeta)
+      setFirstNameField(firstNameFieldMeta)
+      setSecondNameField(secondNameFieldMeta)
+      setThirdNameField(thirdNameFieldMeta)
+      setCountryField(countryFieldMeta)
+      setAdressField(adressFieldMeta)
+      setPhoneField(phoneFieldMeta)
+      setBDateField(bDateFieldMeta)
+      const options = optionSpreader(accountsMetaData.options)
+      const accounts = accountsSpreader(accountsMetaData.accounts)
+      setAccounts({ ...accountsMetaData, options, accounts })
+    } else {
+      setErrorMsg(true)
     }
-    fetcher()
+  }
+
+  useEffect(() => {
+    fetcher(regFormPayload)
     // return () => {
     //   cleanup
     // }

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { components } from 'react-select';
 import { SelectField } from '../components/SelectField';
 import { NumberField } from '../components/NumberField'
+import { Submit } from '../components/Submit';
 //Other
 let WS
+let transactionsFormPayload = {}
 const fieldSettings = {
   options: [],
   value: false,
@@ -23,6 +25,15 @@ const oneOptionFormatter = option => {
 
 
 export const FormTransactions = () => {
+  const formAPI = {
+    transactionsForm: {
+      callForm: (payload = {}) => {
+        transactionsFormPayload = { ...payload }
+        fetcher(transactionsFormPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
 
   const [groupField, setGroupField] = useState(fieldSettings)
   const [senderField, setSenderField] = useState(fieldSettings)
@@ -35,12 +46,13 @@ export const FormTransactions = () => {
   const onComissionChange = e => setComission(e.target.value)
   const [comment, setComment] = useState('')
   const onCommentChange = e => setComment(e.target.value)
-  //Error msg  
+  //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
+  const [alertMsg, setAlertMsg] = useState(null)
 
-  // Requests
-  const groupRequest = async (msg) => {
-    const data = await WS.send('transactions', 'groupData', {})
+  // Requests with effects
+  const groupRequest = async (msg = {}) => {
+    const data = await WS.send('transactions', 'groupData', msg)
     if (data) {
       setErrorMsg(false)
       const formatedOptions = optionFormatter(data.options)
@@ -52,8 +64,7 @@ export const FormTransactions = () => {
   }
 
   const senderRequest = async (msg = {}) => {
-    console.log('sender req')
-    const data = await WS.send('transactions', 'usersData', msg)
+    const data = await WS.send('transactions', 'usersDataSenders', msg)
     if (data) {
       setErrorMsg(false)
       const options = optionFormatter(data.options)
@@ -65,7 +76,7 @@ export const FormTransactions = () => {
     } else setErrorMsg(true)
   }
   const senderAccsRequest = async (msg = {}) => {
-    const data = await WS.send('transactions', 'accountsData', msg)
+    const data = await WS.send('transactions', 'accountsDataSender', msg)
     if (data) {
       setErrorMsg(false)
       const options = optionFormatter(data.options)
@@ -74,7 +85,7 @@ export const FormTransactions = () => {
     } else setErrorMsg(true)
   }
   const recipientRequest = async (msg = {}) => {
-    const data = await WS.send('transactions', 'usersData', msg)
+    const data = await WS.send('transactions', 'usersDataRecipients', msg)
     if (data) {
       setErrorMsg(false)
       const options = optionFormatter(data.options)
@@ -86,7 +97,7 @@ export const FormTransactions = () => {
     } else setErrorMsg(true)
   }
   const recipientAccsRequest = async (msg = {}) => {
-    const data = await WS.send('transactions', 'accountsData', msg)
+    const data = await WS.send('transactions', 'accountsDataRecipients', msg)
     if (data) {
       setErrorMsg(false)
       const options = optionFormatter(data.options)
@@ -95,41 +106,35 @@ export const FormTransactions = () => {
     } else setErrorMsg(true)
   }
   const postFormRequest = async data => {
-    const response = await WS.send('transactions', 'accountsData', data)
-    if (!response) setErrorMsg(true)
-    else setErrorMsg(false)
+    const response = await WS.send('transactions', 'formSubmit', data)
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      response.message ? setAlertMsg(response.message) : setAlertMsg(true)
+    } else setErrorMsg(true)
+  }
+  
+  const fetcher = async (payload = {}) => {
+    console.log('transactions called with payload: ')
+    console.log(payload)
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    const groupField = await groupRequest(payload)
+    if (groupField.value && groupField.value.value) {
+      const senderField = await senderRequest(groupField.value)
+      if (senderField.value && senderField.value.value) {
+        await senderAccsRequest(senderField.value)
+      }
+      const recipField = await recipientRequest(groupField.value)
+      if (recipField.value && recipField.value.value) {
+        await recipientAccsRequest(recipField.value)
+      }
+    }
   }
 
   useEffect(() => {
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
-      })
-      await WS.connectionEstablished()
-      const groupField = await groupRequest()
-      console.log(groupField)
-      if (groupField.value && groupField.value.value) {
-        const senderField = await senderRequest()
-        if (senderField.value && senderField.value.value) {
-          await senderAccsRequest()
-        }
-        const recipField = await recipientRequest()
-        if (recipField.value && recipField.value.value) {
-          await recipientAccsRequest()
-        }
-      }
-    }
-    fetcher()
-    // Form publoc APIs
-    // const formAPI = {
-    //   ...window.formAPI,
-    //   submit: () => {
-    //     const subButton = document.getElementById('subButton')
-    //     subButton.click() // submits form
-    //     return 'clicked'
-    //   }
-    // }
-    // window.formAPI = formAPI
+    fetcher(transactionsFormPayload)
   }, []);
 
   // useEffect(() => {
@@ -154,21 +159,24 @@ export const FormTransactions = () => {
 
   // Change listeners
   const onChangeGroup = async (option) => {
-    setGroupField({ ...groupField, value: option })
-    await senderRequest(groupField)
-    await recipientRequest(groupField) //TODO
+    const newState = { ...groupField, value: option }
+    setGroupField(newState)
+    await senderRequest(newState)
+    await recipientRequest(newState) //TODO
   }
 
   const onChangeSender = async option => {
-    setSenderField({ ...senderField, value: option })
-    await senderAccsRequest(senderField)
+    const newState = { ...senderField, value: option }
+    setSenderField(newState)
+    await senderAccsRequest(newState)
   }
   const onChangeSenderAcc = option => {
     setSenderAccs({ ...senderAccsField, value: option })
   }
   const onChangeRecipient = async option => {
-    setRecipientsField({ ...recipientField, value: option })
-    await recipientAccsRequest(recipientField)
+    const newState = { ...recipientField, value: option }
+    setRecipientsField(newState)
+    await recipientAccsRequest(newState)
   }
   const onChangeRecipientAcc = option => {
     setRecipientsAcc({ ...senderAccsField, value: option })
@@ -253,7 +261,7 @@ export const FormTransactions = () => {
               value={recipientField.value}
             />
 
-            <SelectField label="@(Счёт отправителя)" name="recipientAccout"
+            <SelectField label="@(Счёт получателя)" name="recipientAccout"
               isRequired={recipientsAcc.isRequired} isEditable={recipientsAcc.isEditable}
               onChange={onChangeRecipientAcc} options={recipientsAcc.options}
               value={recipientsAcc.value}
@@ -283,7 +291,7 @@ export const FormTransactions = () => {
         </div>
 
         <button type="reset" className="ui button red">@(Сбросить)</button>
-        <button type="submit" className="ui button teal" id="subButton">@(Подтвердить)</button>
+        <Submit state={alertMsg} setState={setAlertMsg} timeout={2000}/>
       </form>
     </div>
   )

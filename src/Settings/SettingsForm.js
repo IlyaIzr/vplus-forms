@@ -8,11 +8,22 @@ import {
 } from './fakeData'
 
 let WS
+let settingsPayload = {}
 
 import { SelectField } from '../components/SelectField'
 import { EmployeeEditor } from './EmployeeEditor'
 
 export const SettingsForm = () => {
+
+  const formAPI = {
+    settingsForm: {
+      callForm: (payload = {}) => {
+        settingsPayload = { ...payload }
+        fetcher(settingsPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
 
   const [fundField, setFundField] = useState('')
   const [eMailField, setEMailField] = useState('')
@@ -162,7 +173,7 @@ export const SettingsForm = () => {
     }
   }
   const createEmployeeOptions = async () => {
-    const payload = {      
+    const payload = {
       fundName: fundField,
       fundEmail: eMailField,
     }
@@ -200,20 +211,22 @@ export const SettingsForm = () => {
     return response
   }
 
+
+  const fetcher = async (payload = {}) => {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    const response = await WS.send('settings', 'settingsFormData', payload)
+    if (response.status === 'OK') {
+      response.fundName && setFundField(response.fundName)
+      response.fundEmail && setEMailField(response.fundEmail)
+      response.skypeFieldMeta && setSkypeField(response.skypeFieldMeta)
+    } else setErrorMsg('@(Ошибка подключения)')
+  }
+
   useEffect(() => {
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
-      })
-      await WS.connectionEstablished()
-      const response = await WS.send('settings', 'settingsFormData', {})
-      if (response.status === 'OK') {
-        response.fundName && setFundField(response.fundName)
-        response.fundEmail && setEMailField(response.fundEmail)
-        response.skypeFieldMeta && setSkypeField(response.skypeFieldMeta)
-      } else setErrorMsg('@(Ошибка подключения)')
-    }
-    fetcher()
+    fetcher(settingsPayload)
   }, [])
 
   useEffect(() => {

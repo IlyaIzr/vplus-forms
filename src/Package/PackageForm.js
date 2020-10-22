@@ -1,33 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import './Package.css'
 import { SelectField } from '../components/SelectField'
+import { numberFieldDefaultState, stringFieldDefaultState } from '../reusable'
 // Extra stuff
-
 let WS
 let userInfoPayload = {}
-const numberFieldDefaultState = {
-  value: '',
-  isEditable: true,
-  isRequired: true,
-  min: '',
-  max: ''
-}
-const stringFieldDefaultState = {
-  value: '',
-  isEditable: true,
-  isRequired: true
-}
 
 
 export const PackageForm = () => {
-  
+
   const formAPI = {
-    callPackageForm: (userInfo = {}) => {
-      userInfoPayload = {...userInfo}
-      fetcher(userInfoPayload)
+    packageForm: {
+      callForm: (userInfo = {}) => {
+        userInfoPayload = { ...userInfo }
+        fetcher(userInfoPayload)
+      }
     }
   }
-  window.formAPI = formAPI
+  window.formAPI = { ...window.formAPI, ...formAPI }
 
   const [roomsField, setRoomsField] = useState({
     options: [],

@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from 'react'
 let WS
+let reportFormPayload = {}
 
 export const ReportForm = () => {
+
+  const formAPI = {
+    reportForm: {
+      callForm: (payload = {}) => {
+        reportFormPayload = { ...payload }
+        fetcher(reportFormPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
+
   const [formData, setFormData] = useState([])
   const [listOfUsers, setListOfUsers] = useState([])
   const [accountsInfo, setAccountsInfo] = useState({})
@@ -13,37 +25,36 @@ export const ReportForm = () => {
   //Error msg  
   const [errorMsg, setErrorMsg] = useState(null)
 
-  useEffect(() => {
-
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
+  const fetcher = async (payload = {}) => {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    const response = await WS.send('reports', 'reportFormData', payload)
+    const reportForm = response && response.reports
+    const accountsMeta = response && response.accountsMeta
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      setFormData(reportForm)
+      setAccountsInfo(accountsMeta)
+      const alisia = Object.keys(accountsMeta)
+      setListOfUsers(alisia)
+      let testo = { ...newData }
+      alisia.map(user => {
+        const mutable = { ...testo.accounts }
+        mutable[user] = {
+          name: user,
+          loadSum: accountsMeta[user].loadSumValue,
+          tournCount: accountsMeta[user].tournCountValue
+        }
+        testo = { ...testo, accounts: mutable }
       })
-      await WS.connectionEstablished()
-      const response = await WS.send('reports', 'reportFormData', {})
-      const reportForm = response && response.reports
-      const accountsMeta = response && response.accountsMeta
-      if (response.status === 'OK') {
-        setErrorMsg(false)
-        setFormData(reportForm)
-        setAccountsInfo(accountsMeta)
-        const alisia = Object.keys(accountsMeta)
-        setListOfUsers(alisia)
-        let testo = { ...newData }
-        alisia.map(user => {
-          const mutable = { ...testo.accounts }
-          mutable[user] = { 
-            name: user, 
-            loadSum: accountsMeta[user].loadSumValue, 
-            tournCount: accountsMeta[user].tournCountValue }
-          testo = { ...testo, accounts: mutable }
-        })
-        setNewData(testo)
-      } else setErrorMsg('@(Ошибка подключения)')
-    }
+      setNewData(testo)
+    } else setErrorMsg('@(Ошибка подключения)')
+  }
 
-    fetcher()
-
+  useEffect(() => {
+    fetcher(reportFormPayload)
   }, [])
 
   const dateLooperTh = array => {

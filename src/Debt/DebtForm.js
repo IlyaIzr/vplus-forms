@@ -13,9 +13,20 @@ import { AdressThreeFields } from './AdressThreeFields'
 import { WMSubForm } from './WMSubForm'
 // Backend
 let WS
+let debtFormPayload = {}
 
 
 export const DebtForm = () => {
+  const formAPI = {
+    debtForm: {
+      callForm: (payload = {}) => {
+        debtFormPayload = { ...payload }
+        fetcher(debtFormPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
+
   //Fields
   const [arbitrageField, setArbitrageField] = useState(stringFieldDefaultState)
   const onArbitrageChange = e => setArbitrageField({ ...arbitrageField, value: e.target.value })
@@ -82,65 +93,63 @@ export const DebtForm = () => {
   //Error msg  
   const [errorMsg, setErrorMsg] = useState(null)
 
+  const fetcher = async (payload = {}) => {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    const response = await WS.send('debts', 'debtFormData', payload)
+    const {
+      arbitrageFieldMeta,
+      skypeFieldMeta,
+      credentialsFieldMeta,
+      nicknamesFieldMeta,
+      gipsyTeamFieldMeta,
+      pokerStrategyFieldMeta,
+      disciplineFieldMeta,
+      descriptionFieldMeta,
+      googleAccFieldMeta,
+      mailAccFieldMeta,
+      phoneFieldMeta,
+      vkFieldMeta,
+      fbFieldMeta,
+      blogFieldMeta,
+      instaFieldMeta,
+      forum2plus2FieldMeta,
+      adressFieldMeta,
+      netellerFieldMeta,
+      skrillFieldMeta,
+      ecoPayzFieldMeta,
+      webMoneyFieldMeta
+    } = response
+    if (arbitrageFieldMeta) {
+      setErrorMsg(false)
+      arbitrageFieldMeta && setArbitrageField(arbitrageFieldMeta)
+      skypeFieldMeta && setCredentialsField(credentialsFieldMeta)
+      credentialsFieldMeta && setSkypeField(skypeFieldMeta)
+      nicknamesFieldMeta && setNicknameField(nicknamesFieldMeta)
+      gipsyTeamFieldMeta && setGipsyTeamField(gipsyTeamFieldMeta)
+      pokerStrategyFieldMeta && setPokerStrategyField(pokerStrategyFieldMeta)
+      disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
+      descriptionFieldMeta && setDescriptionField(descriptionFieldMeta)
+      googleAccFieldMeta && setGoogleAccField(googleAccFieldMeta)
+      mailAccFieldMeta && setMailAccField(mailAccFieldMeta)
+      phoneFieldMeta && setPhoneField(phoneFieldMeta)
+      vkFieldMeta && setVkField(vkFieldMeta)
+      fbFieldMeta && setFbField(fbFieldMeta)
+      blogFieldMeta && setBlogField(blogFieldMeta)
+      instaFieldMeta && setInstaField(instaFieldMeta)
+      forum2plus2FieldMeta && setForum2plus2Field(forum2plus2FieldMeta)
+      adressFieldMeta && setAdressField(adressFieldMeta)
+      netellerFieldMeta && setNetellerField(netellerFieldMeta)
+      skrillFieldMeta && setSkrillField(skrillFieldMeta)
+      ecoPayzFieldMeta && setEcoPayzField(ecoPayzFieldMeta)
+      webMoneyFieldMeta && setWebMoneyField(webMoneyFieldMeta)
+    } else setErrorMsg('@(Ошибка подключения)')
+  }
+
   useEffect(() => {
-
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
-      })
-      await WS.connectionEstablished()
-      const response = await WS.send('debts', 'debtFormData', {})
-      const {
-        arbitrageFieldMeta,
-        skypeFieldMeta,
-        credentialsFieldMeta,
-        nicknamesFieldMeta,
-        gipsyTeamFieldMeta,
-        pokerStrategyFieldMeta,
-        disciplineFieldMeta,
-        descriptionFieldMeta,
-        googleAccFieldMeta,
-        mailAccFieldMeta,
-        phoneFieldMeta,
-        vkFieldMeta,
-        fbFieldMeta,
-        blogFieldMeta,
-        instaFieldMeta,
-        forum2plus2FieldMeta,
-        adressFieldMeta,
-        netellerFieldMeta,
-        skrillFieldMeta,
-        ecoPayzFieldMeta,
-        webMoneyFieldMeta
-      } = response
-      if (arbitrageFieldMeta) {
-        setErrorMsg(false)
-
-        arbitrageFieldMeta && setArbitrageField(arbitrageFieldMeta)
-        skypeFieldMeta && setCredentialsField(credentialsFieldMeta)
-        credentialsFieldMeta && setSkypeField(skypeFieldMeta)
-        nicknamesFieldMeta && setNicknameField(nicknamesFieldMeta)
-        gipsyTeamFieldMeta && setGipsyTeamField(gipsyTeamFieldMeta)
-        pokerStrategyFieldMeta && setPokerStrategyField(pokerStrategyFieldMeta)
-        disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
-        descriptionFieldMeta && setDescriptionField(descriptionFieldMeta)
-        googleAccFieldMeta && setGoogleAccField(googleAccFieldMeta)
-        mailAccFieldMeta && setMailAccField(mailAccFieldMeta)
-        phoneFieldMeta && setPhoneField(phoneFieldMeta)
-        vkFieldMeta && setVkField(vkFieldMeta)
-        fbFieldMeta && setFbField(fbFieldMeta)
-        blogFieldMeta && setBlogField(blogFieldMeta)
-        instaFieldMeta && setInstaField(instaFieldMeta)
-        forum2plus2FieldMeta && setForum2plus2Field(forum2plus2FieldMeta)
-        adressFieldMeta && setAdressField(adressFieldMeta)
-        netellerFieldMeta && setNetellerField(netellerFieldMeta)
-        skrillFieldMeta && setSkrillField(skrillFieldMeta)
-        ecoPayzFieldMeta && setEcoPayzField(ecoPayzFieldMeta)
-        webMoneyFieldMeta && setWebMoneyField(webMoneyFieldMeta)
-
-      } else setErrorMsg('@(Ошибка подключения)')
-    }
-    fetcher()
+    fetcher(debtFormPayload)
   }, [])
 
   const onSubmit = async e => {

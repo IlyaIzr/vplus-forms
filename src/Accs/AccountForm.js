@@ -6,6 +6,7 @@ import { AccountSubForm } from './AccountSubForm'
 import { CustomForm } from './CustomForm'
 //Other
 let WS
+let accountFormPayload = {}
 const accountsSpreader = options => {
   const res = options.length ? options.map(option => {
     return ({ value: option.type, ...option })
@@ -14,6 +15,16 @@ const accountsSpreader = options => {
 }
 
 export const AccountForm = () => {
+  const formAPI = {
+    accountForm: {
+      callForm: (payload = {}) => {
+        accountFormPayload = { ...payload }
+        fetcher(accountFormPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
+
   const [socialField, setSocialField] = useState({
     options: [
       { label: '@(Отменить выбор)', value: '' },
@@ -92,22 +103,23 @@ export const AccountForm = () => {
   //Error msg  
   const [errorMsg, setErrorMsg] = useState(null)
 
+  const fetcher = async (payload = {}) => {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    const response = await WS.send('accounts', 'accountsFormData', payload)
+    const { accountsMetaData } = response
+    if (accountsMetaData) {
+      setErrorMsg(false)
+      const options = optionSpreader(accountsMetaData.options)
+      const accounts = accountsSpreader(accountsMetaData.accounts)
+      setAccounts({ ...accountsMetaData, options, accounts })
+    } else setErrorMsg('@(Ошибка подключения)')
+  }
+
   useEffect(() => {
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
-      })
-      await WS.connectionEstablished()
-      const response = await WS.send('accounts', 'accountsFormData', {})
-      const { accountsMetaData } = response
-      if (accountsMetaData) {
-        setErrorMsg(false)
-        const options = optionSpreader(accountsMetaData.options)
-        const accounts = accountsSpreader(accountsMetaData.accounts)
-        setAccounts({ ...accountsMetaData, options, accounts })
-      } else setErrorMsg('@(Ошибка подключения)')
-    }
-    fetcher()
+    fetcher(accountFormPayload)
   }, [])
 
   const onSubmit = async e => {

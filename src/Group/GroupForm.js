@@ -8,9 +8,20 @@ import { NumberField } from '../components/NumberField'
 import { ManagerSubForm } from './ManagerSubForm'
 import { numberFieldDefaultState, selectDefaultState, stringFieldDefaultState } from '../reusable'
 let WS
+let groupFormPayload = {}
 
 
 export const GroupForm = () => {
+
+  const formAPI = {
+    groupForm: {
+      callForm: (payload = {}) => {
+        groupFormPayload = { ...payload }
+        fetcher(groupFormPayload)
+      }
+    }
+  }
+  window.formAPI = { ...window.formAPI, ...formAPI }
 
   const [groupNameField, setGroupNameField] = useState(stringFieldDefaultState)
   const onGroupNameChange = e => {
@@ -163,55 +174,58 @@ export const GroupForm = () => {
   }
 
   const onReset = () => {
-    setGroupNameField({...groupNameField, value: ''})
-    setDisciplineField({...disciplineField, value: []})
+    setGroupNameField({ ...groupNameField, value: '' })
+    setDisciplineField({ ...disciplineField, value: [] })
     setInvestorsField({ ...investorsField, investors: [] })
-    setManagersField({...managersField, managers: []})
-    setTournamentsField({...tournamentsField, value: ''})
-    setPlayerSumField({...playerSumField, value: ''})
-    setBuyInsField({...buyInsField, value: ''})
-    setPlayerRiskField({...playerRiskField, value: 50})
-    setFundRiskField({...fundRiskField, value: 50})
+    setManagersField({ ...managersField, managers: [] })
+    setTournamentsField({ ...tournamentsField, value: '' })
+    setPlayerSumField({ ...playerSumField, value: '' })
+    setBuyInsField({ ...buyInsField, value: '' })
+    setPlayerRiskField({ ...playerRiskField, value: 50 })
+    setFundRiskField({ ...fundRiskField, value: 50 })
     setPlayerRisk(50)
-    setRollbackField({...rollbackField, value: 0})
+    setRollbackField({ ...rollbackField, value: 0 })
   }
 
 
+  const fetcher = async (payload = {}) => {
+    WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+    await WS.connectionEstablished()
+    console.log('form called with payload: ')
+    console.log(payload)
+    const response = await WS.send('groups', 'groupFormData', payload)
+    response ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
+    const {
+      groupFieldMeta,
+      disciplineFieldMeta,
+      investorsFieldMeta,
+      managersFieldMeta,
+      tournamentsNumberMeta,
+      playerSumNumberMeta,
+      playerBuyInsMeta,
+      playerRiskMeta,
+      fundRiskMeta,
+      rollbackMeta } = response
+    groupFieldMeta && setGroupNameField(groupFieldMeta)
+    disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
+    investorsFieldMeta && setInvestorsField(investorsFieldMeta)
+    managersFieldMeta && setManagersField(managersFieldMeta)
+    tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
+    playerSumNumberMeta && setPlayerSumField(playerSumNumberMeta)
+    playerBuyInsMeta && setBuyInsField(playerBuyInsMeta)
+    // slider sets
+    playerRiskMeta && setPlayerRiskField(playerRiskMeta)
+    fundRiskMeta && setFundRiskField(fundRiskMeta)
+    playerRiskMeta && setPlayerRisk(playerRiskMeta.value)
+    // end of slider sets
+    rollbackMeta && setRollbackField(rollbackMeta)
+    // WS.close()
+  }
+
   useEffect(() => {
-    async function fetcher() {
-      WS = new WebsocketPromiseLiteClient({
-        url: 'ws://localhost:5555'
-      })
-      await WS.connectionEstablished()
-      const response = await WS.send('groups', 'groupFormData', {})
-      response ? setErrorMsg(false) : setErrorMsg('@(Ошибка подключения)')
-      const {
-        groupFieldMeta,
-        disciplineFieldMeta,
-        investorsFieldMeta,
-        managersFieldMeta,
-        tournamentsNumberMeta,
-        playerSumNumberMeta,
-        playerBuyInsMeta,
-        playerRiskMeta,
-        fundRiskMeta,
-        rollbackMeta } = response
-      groupFieldMeta && setGroupNameField(groupFieldMeta)
-      disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
-      investorsFieldMeta && setInvestorsField(investorsFieldMeta)
-      managersFieldMeta && setManagersField(managersFieldMeta)
-      tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
-      playerSumNumberMeta && setPlayerSumField(playerSumNumberMeta)
-      playerBuyInsMeta && setBuyInsField(playerBuyInsMeta)
-      // slider sets
-      playerRiskMeta && setPlayerRiskField(playerRiskMeta)
-      fundRiskMeta && setFundRiskField(fundRiskMeta)
-      playerRiskMeta && setPlayerRisk(playerRiskMeta.value)
-      // end of slider sets
-      rollbackMeta && setRollbackField(rollbackMeta)
-      // WS.close()
-    }
-    fetcher()
+    fetcher(groupFormPayload)
   }, [])
 
 
@@ -345,7 +359,7 @@ export const GroupForm = () => {
           <div className="two fields">
 
             <div className={`field ${rollbackField.isRequired && 'required'}`} >
-              <label htmlFor="rollbackField">@(Игрок)</label>
+              <label htmlFor="rollbackField">@(Откат игрока)</label>
               <input type="number" value={rollbackField.value} required={rollbackField.isRequired}
                 disabled={!rollbackField.isEditable} min={rollbackField.min} max={rollbackField.max}
                 onChange={onRollbackChange} name='rollbackField'
