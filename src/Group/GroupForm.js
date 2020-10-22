@@ -79,6 +79,7 @@ export const GroupForm = () => {
   }
   let total = 0; investorsField.investors.map(investor => total += Number(investor.share))
 
+  // Managers
   const [managersField, setManagersField] = useState({
     options: [],
     payOptions: [],
@@ -94,7 +95,6 @@ export const GroupForm = () => {
     setManagersField({ ...managersField, managers })
   }
   const addManagerField = () => {
-    console.log(managersField.payOptions[0])
     const managers = [...managersField.managers, {
       name: managersField.options[0] && managersField.options[0].name,
       id: managersField.options[0] && managersField.options[0].id,
@@ -115,6 +115,43 @@ export const GroupForm = () => {
     managers[index] = { ...managers[index], [name]: value }
     setManagersField({ ...managersField, managers })
   }
+  //Trainers
+  const [coachesField, setCoachesField] = useState({
+    options: [],
+    payOptions: [],
+    coaches: [
+      { name: '', id: '' },
+    ],
+    isEditable: true,
+    isRequired: true
+  })
+  const removeCoachField = index => {
+    const coaches = [...coachesField.coaches]
+    coaches.splice(index, 1)
+    setCoachesField({ ...coachesField, coaches })
+  }
+  const addCoachField = () => {
+    const coaches = [...coachesField.coaches, {
+      name: coachesField.options[0] && coachesField.options[0].name,
+      id: coachesField.options[0] && coachesField.options[0].id,
+      payMethodId: coachesField.payOptions[0] && coachesField.payOptions[0].payMethodId,
+      payValue: coachesField.payOptions[0] && coachesField.payOptions[0].payValueField && coachesField.payOptions[0].payValueField.value
+    }]
+    setCoachesField({
+      ...coachesField, coaches
+    })
+  }
+  const onCoachChange = (name, id, index) => {
+    const coaches = [...coachesField.coaches]
+    coaches[index] = { ...coaches[index], name, id }
+    setCoachesField({ ...coachesField, coaches })
+  }
+  const onCoachValueChange = (name, value, index) => {
+    const coaches = [...coachesField.coaches]
+    coaches[index] = { ...coaches[index], [name]: value }
+    setCoachesField({ ...coachesField, coaches })
+  }
+
 
   const [contractField, setContractField] = useState(null)
   const onChangeContract = (value) => {
@@ -162,6 +199,7 @@ export const GroupForm = () => {
       disciplineField,
       investorsField,
       managersField,
+      coachesField,
       contractField,
       tournamentsField,
       playerSumField,
@@ -172,7 +210,7 @@ export const GroupForm = () => {
       payload: groupFormPayload
     }
     console.log(formData)
-    const response = await WS.send('groups', 'formSubmit', formData)    
+    const response = await WS.send('groups', 'formSubmit', formData)
     if (response.status === 'OK') {
       setErrorMsg(false)
       response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
@@ -184,6 +222,7 @@ export const GroupForm = () => {
     setDisciplineField({ ...disciplineField, value: [] })
     setInvestorsField({ ...investorsField, investors: [] })
     setManagersField({ ...managersField, managers: [] })
+    setCoachesField({ ...coachesField, coaches: [] })
     setTournamentsField({ ...tournamentsField, value: '' })
     setPlayerSumField({ ...playerSumField, value: '' })
     setBuyInsField({ ...buyInsField, value: '' })
@@ -208,6 +247,7 @@ export const GroupForm = () => {
       disciplineFieldMeta,
       investorsFieldMeta,
       managersFieldMeta,
+      coachesFieldMeta,
       tournamentsNumberMeta,
       playerSumNumberMeta,
       playerBuyInsMeta,
@@ -218,6 +258,7 @@ export const GroupForm = () => {
     disciplineFieldMeta && setDisciplineField(disciplineFieldMeta)
     investorsFieldMeta && setInvestorsField(investorsFieldMeta)
     managersFieldMeta && setManagersField(managersFieldMeta)
+    coachesFieldMeta && setCoachesField(coachesFieldMeta)
     tournamentsNumberMeta && setTournamentsField(tournamentsNumberMeta)
     playerSumNumberMeta && setPlayerSumField(playerSumNumberMeta)
     playerBuyInsMeta && setBuyInsField(playerBuyInsMeta)
@@ -294,7 +335,7 @@ export const GroupForm = () => {
             const isDeletable = managersField.managers.length > 1
             return (<ManagerSubForm key={index + 'manag'}
               manager={field} options={managersField.options} payOptions={managersField.payOptions}
-              isEditable={managersField.managersField}
+              isEditable={managersField.isEditable}
               changeFunc={onManagerValueChange} removeFunc={removeManagerField} onManagerChange={onManagerChange}
               index={index} isDeletable={isDeletable}
             />
@@ -302,6 +343,24 @@ export const GroupForm = () => {
           }) : null}
           <button type="button" onClick={addManagerField}
             className={managersField.options <= managersField.managers ? "ui button green disabled" : "ui button green"}
+          >@(Добавить)</button>
+
+        </div>
+
+        <div className="ui segment">
+          <h4 className="ui title">@(Назначьте одного или нескольких тренеров)</h4>
+          {coachesField.coaches && coachesField.coaches.length ? coachesField.coaches.map((field, index) => {
+            const isDeletable = coachesField.coaches.length > 1
+            return (<ManagerSubForm key={index + 'manag'}
+              manager={field} options={coachesField.options} payOptions={coachesField.payOptions}
+              isEditable={coachesField.isEditable}
+              changeFunc={onCoachValueChange} removeFunc={removeCoachField} onManagerChange={onCoachChange}
+              index={index} isDeletable={isDeletable}
+            />
+            )
+          }) : null}
+          <button type="button" onClick={addCoachField}
+            className={coachesField.options <= coachesField.coaches ? "ui button green disabled" : "ui button green"}
           >@(Добавить)</button>
 
         </div>
@@ -382,7 +441,7 @@ export const GroupForm = () => {
         </div>
 
         <button className="ui red button" type="reset">@(Сбросить поля)</button>
-        <Submit state={submitMsg} setState={setSubmitMsg} isDisabled={!managersField.managers.length}/>
+        <Submit state={submitMsg} setState={setSubmitMsg} isDisabled={!managersField.managers.length} />
       </form>
 
     </div>
