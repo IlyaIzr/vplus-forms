@@ -174,7 +174,7 @@ export const ReportForm = () => {
           })}
         </>
       </table>
-      <button className="ui button red small" type="reset">@(Сбросить)</button>
+      <button className="ui button red" type="reset">@(Сбросить)</button>
       <Submit state={submitMsg} setState={setSubmitMsg} />
 
     </form>

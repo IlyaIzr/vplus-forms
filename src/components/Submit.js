@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-export const Submit = ({ state, setState, timeout = 2200, isDisabled = false }) => {
+export const Submit = ({ state, setState, timeout = 8200, isDisabled = false }) => {
 
   const close = () => setState(null)
   useEffect(() => {
@@ -14,16 +14,14 @@ export const Submit = ({ state, setState, timeout = 2200, isDisabled = false }) 
   return (
     <>
 
-      <button type="submit" id="subButton"
+      <button type="submit"
         className={`ui teal button ${(isDisabled) && 'disabled'}`}
-      >@(Подтвердить)</button>
+      >@(Отправить)</button>
 
       {Boolean(state) && <div className="top right ui toast-container">
         <div className="floating toast-box compact transition visible" onClick={close}>
-          <div className="neutral ui toast compact visible">
-            <div className="content">
-              <p>{(state && typeof state === 'string') ? state : "@(Выполнено)"}</p>
-            </div>
+          <div className="ui green toast compact visible">
+            {(state && typeof state === 'string') ? state : "@(Выполнено)"}
           </div>
         </div>
       </div>
