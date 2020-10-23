@@ -271,13 +271,13 @@ export const FormTransactions = () => {
           <NumberField label="@(Сумма)" name="payment"
             isRequired={true} isEditable={true}
             onChange={onSumChange} value={sum}
-            min={1} step={0.01}
+            min={1} 
           />
 
           <NumberField label="@(Комиссия)" name="comission"
             isRequired={false} isEditable={true}
             onChange={onComissionChange} value={comission}
-            min={0} step={0.01}
+            min={0} 
           />
         </div>
 

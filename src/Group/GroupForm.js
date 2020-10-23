@@ -382,7 +382,7 @@ export const GroupForm = () => {
               <label htmlFor="playerSumField">@(Сумма игрока в свой БР)</label>
               <input type="number" value={playerSumField.value} required={playerSumField.isRequired}
                 disabled={!playerSumField.isEditable} min={playerSumField.min} max={playerSumField.max}
-                onChange={onPlayerSumFieldChange}
+                onChange={onPlayerSumFieldChange} step={0.01}
               />
             </div>
 
@@ -390,7 +390,7 @@ export const GroupForm = () => {
               <label htmlFor="buyInsField">@(Кол-во байинов на счету)</label>
               <input type="number" value={buyInsField.value} required={buyInsField.isRequired}
                 disabled={!buyInsField.isEditable} min={buyInsField.min} max={buyInsField.max}
-                onChange={onBuyInsFieldChange}
+                onChange={onBuyInsFieldChange} step={0.01}
               />
             </div>
 
@@ -403,7 +403,7 @@ export const GroupForm = () => {
               <label htmlFor="playerRiskField">@(Игрок)</label>
               <input type="number" value={playerRisk} required={playerRiskField.isRequired}
                 disabled={!playerRiskField.isEditable} min={playerRiskField.min} max={playerRiskField.max}
-                onChange={onRiskChange} name='playerRiskField'
+                onChange={onRiskChange} name='playerRiskField' step={0.01}
               />
             </div>
 
@@ -415,7 +415,7 @@ export const GroupForm = () => {
               <label htmlFor="fundRiskField">@(Фонд)</label>
               <input type="number" value={100 - playerRisk} required={fundRiskField.isRequired}
                 disabled={!fundRiskField.isEditable} min={fundRiskField.min} max={fundRiskField.max}
-                onChange={onRiskChange} name='fundRiskField'
+                onChange={onRiskChange} name='fundRiskField' step={0.01}
               />
             </div>
 
@@ -427,7 +427,7 @@ export const GroupForm = () => {
               <label htmlFor="rollbackField">@(Откат игрока)</label>
               <input type="number" value={rollbackField.value} required={rollbackField.isRequired}
                 disabled={!rollbackField.isEditable} min={rollbackField.min} max={rollbackField.max}
-                onChange={onRollbackChange} name='rollbackField'
+                onChange={onRollbackChange} name='rollbackField' step={0.01}
               />
             </div>
 

@@ -147,7 +147,7 @@ export const ReportForm = () => {
                   {newData.accounts && newData.accounts[item] &&
                     <input type="number" name="loadSum" required
                       value={newData.accounts[item].loadSum ? newData.accounts[item].loadSum : '0'}
-                      onChange={onChange} min="0"
+                      onChange={onChange} min="0" step={0.01}
                     />
                   }
 
@@ -162,7 +162,7 @@ export const ReportForm = () => {
                   {newData.accounts && newData.accounts[item] &&
                     <input type="number" name="tournCount" required
                       value={newData.accounts[item].tournCount ? newData.accounts[item].tournCount : '0'}
-                      onChange={onChange} min="0"
+                      onChange={onChange} min="0" step={0.01}
                     />
                   }
 

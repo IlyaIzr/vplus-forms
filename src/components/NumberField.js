@@ -6,7 +6,7 @@ export const NumberField = ({
   label = false,
   min = false,
   max = false,
-  step = false,
+  step = 0.01,
   isEditable = true,
   value,
   onChange

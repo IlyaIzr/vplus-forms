@@ -29,7 +29,7 @@ export const Description = ({ state, setState }) => {
 
           <NumberField label="@(Claim amount $)" name="claimAmount"
             isRequired={true}
-            value={item.claimAmount} onChange={onChange}
+            value={item.claimAmount} onChange={onChange} step={0.01}
           />
           <button className={`ui button red tiny ${!state.isEditable && ' disabled'}`}
             onClick={onDelete} type="button">x</button>

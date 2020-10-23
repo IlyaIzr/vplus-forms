@@ -46,7 +46,7 @@ export const AccountSubForm = ({
             <NumberField label={item.label} name={item.name}
               isRequired={item.isRequired} isEditable={item.isEditable}
               value={account[item.name]} onChange={onFieldChange}
-              step={item.step} min={item.min} max={item.max}
+              step={item.step ? item.step : 0.01} min={item.min} max={item.max}
               key={item.name + 'txt' + account.value}
             />
           )
