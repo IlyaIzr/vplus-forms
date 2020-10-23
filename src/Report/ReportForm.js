@@ -94,11 +94,13 @@ export const ReportForm = () => {
     const mutable = [...formData]
     mutable.push(newData)
 
-    console.log(mutable)
-    const response = await WS.send('reports', 'reportFormData', { data: mutable, payload: reportFormPayload })
-    const msg = responseHandler(response)
-    console.log(msg)
-    setSubmitMsg(msg)
+    const response = await WS.send('reports', 'formSubmit', { data: newData.accounts, payload: reportFormPayload })
+    if (response.status === 'OK') {
+      const response = await WS.send('reports', 'reportFormData', reportFormPayload)
+      const msg = responseHandler(response)
+      setErrorMsg(false)      
+      msg ? setSubmitMsg(msg) : setSubmitMsg(true)
+    } else setErrorMsg(response.message ? response.message : '@(Ошибка подключения при отправлении)')
   }
 
   const onReset = () => {
