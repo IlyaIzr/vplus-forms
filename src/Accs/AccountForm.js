@@ -139,7 +139,7 @@ export const AccountForm = () => {
       payload: accountFormPayload
     }
     console.log(formData)
-    const response = await WS.send('accounts', 'formSubmit', formData)
+    const response = await WS.send('accounts', 'formSubmit', { dataSubmit: formData, dataSender: accountFormPayload })
     if (response.status === 'OK') {
       setErrorMsg(false)
       response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)

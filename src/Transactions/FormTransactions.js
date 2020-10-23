@@ -99,7 +99,7 @@ export const FormTransactions = () => {
     } else setErrorMsg(true)
   }
   const postFormRequest = async data => {
-    const response = await WS.send('transactions', 'formSubmit', data)
+    const response = await WS.send('transactions', 'formSubmit', { dataSubmit: data, dataSender: transactionsFormPayload })
     if (response.status === 'OK') {
       setErrorMsg(false)
       response.message ? setAlertMsg(response.message) : setAlertMsg(true)
@@ -107,8 +107,6 @@ export const FormTransactions = () => {
   }
   
   const fetcher = async (payload = {}) => {
-    console.log('transactions called with payload: ')
-    console.log(payload)
     WS = new WebsocketPromiseLiteClient({
       url: 'ws://localhost:5555'
     })

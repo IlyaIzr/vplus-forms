@@ -210,7 +210,7 @@ export const GroupForm = () => {
       payload: groupFormPayload
     }
     console.log(formData)
-    const response = await WS.send('groups', 'formSubmit', formData)
+    const response = await WS.send('groups', 'formSubmit', { dataSubmit: formData, dataSender: groupFormPayload })
     if (response.status === 'OK') {
       setErrorMsg(false)
       response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)

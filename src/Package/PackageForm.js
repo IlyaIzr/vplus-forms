@@ -136,7 +136,7 @@ export const PackageForm = () => {
       extraInfoField,
       payload: userInfoPayload
     }
-    const response = await WS.send('packages', 'formSubmit', formData)
+    const response = await WS.send('packages', 'formSubmit', { dataSubmit: formData, dataSender: userInfoPayload })
     if (response.status === 'OK') {
       setErrorMsg(false)
       response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)

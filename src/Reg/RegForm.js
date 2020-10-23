@@ -171,7 +171,7 @@ export const RegForm = () => {
     } else {
       setValidationPopup(false)
       console.log(formData)
-      const response = await WS.send('registrations', 'formSubmit', formData)
+      const response = await WS.send('registrations', 'formSubmit', { dataSubmit: formData, dataSender: regFormPayload })
       if (response.status === 'OK') {
         setErrorMsg(false)
         response.message ? setSubmitMsg(response.message) : setSubmitMsg(true)
