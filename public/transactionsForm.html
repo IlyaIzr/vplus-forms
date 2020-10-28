@@ -15,6 +15,11 @@
   <div id="transactionsFormRoot">
     <!-- js to be injected here -->
   </div>
+  <script>
+    let WS = new WebsocketPromiseLiteClient({
+      url: 'ws://localhost:5555'
+    })
+  </script>
 </body>
 
 </html>

@@ -30,6 +30,14 @@ export const SettingsForm = () => {
   //Tabs
   const [activeTab, setActiveTab] = useState(null)
   const onTabClick = e => setActiveTab(e.target.name)
+  const onSkypeSubmit = async e => {
+    e.preventDefault()
+    const response = await sendSkype(skypeField.value)    
+    if (response.status === 'OK') {
+      setErrorMsg(false)
+      response.message ? setSubmitMsg(response.message) : setSubmitMsg('@(Успех)')
+    } else response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка)')
+  }
   //Alerts
   const [errorMsg, setErrorMsg] = useState(null)
   const [submitMsg, setSubmitMsg] = useState(null)
@@ -66,6 +74,7 @@ export const SettingsForm = () => {
   // Tab 2, edit employees
   const [employeesField, setEmployeesField] = useState(selectDefaultState)
   const onEmployeeChange = option => {
+    console.log(option)
     setEmployeesField({ ...employeesField, value: option })
     setUpdateStatus(null)
     employeeRequest(option)
@@ -91,6 +100,7 @@ export const SettingsForm = () => {
       employeeEMailField,
       employeeFundsField,
     }
+    console.log('WE NEED TAT: ')
     console.log(data)
     const response = await sendEmployeeData(employeeNameField.value, employeeEMailField.value,
       employeeFundsField.value, 'employeeUpdate')
@@ -179,6 +189,10 @@ export const SettingsForm = () => {
     } else setErrorMsg('@(Ошибка запроса информации о работнике)')
   }
   // Pure requests
+  const sendSkype = async payload => {
+    const response = await WS.send('settings', 'skypeUpdate', payload)
+    return response
+  }
   const passwordChange = async data => {
     const payload = { ...data, payload: settingsPayload }
     const response = await WS.send('settings', 'passwordUpdate', payload)
@@ -189,7 +203,7 @@ export const SettingsForm = () => {
     const payload = {
       fundName: fundField,
       fundEmail: eMailField,
-      name, email, funds, 
+      name, email, funds,
       payload: settingsPayload
     }
     const response = await WS.send('settings', method, payload)
@@ -235,7 +249,7 @@ export const SettingsForm = () => {
 
   return (
     <div>
-      <form className="ui form">
+      <form className="ui form" onSubmit={onSkypeSubmit}>
 
         <div className="inline field">
           <label htmlFor="fund">@(Фонд): </label>
@@ -251,6 +265,8 @@ export const SettingsForm = () => {
           isEditable={skypeField.isEditable} isRequired={skypeField.isRequired}
           value={skypeField.value} onChange={onSkypeChange}
         />
+
+        <Submit state={submitMsg} setState={setSubmitMsg} />
 
         {/* Tab control */}
         <div className="inline">

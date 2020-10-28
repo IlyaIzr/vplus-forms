@@ -6,7 +6,6 @@ import { Submit } from '../components/Submit';
 import { optionFormatter, oneOptionFormatter, oneOptionDBFormat } from '../reusable'
 // import { optionFormatter } from '../reusable'
 //Other
-let WS
 let transactionsFormPayload = {}
 const fieldSettings = {
   options: [],
@@ -107,9 +106,6 @@ export const FormTransactions = () => {
   }
   
   const fetcher = async (payload = {}) => {
-    WS = new WebsocketPromiseLiteClient({
-      url: 'ws://localhost:5555'
-    })
     await WS.connectionEstablished()
     const groupField = await groupRequest(payload)
     if (groupField.value && groupField.value.value) {
