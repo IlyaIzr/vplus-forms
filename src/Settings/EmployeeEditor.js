@@ -39,7 +39,7 @@ export const EmployeeEditor = ({
           setFundsState({ ...fundsState, value: mutable })
         }
         const pe = ()=> onCheckbox()
-        return (<div key={fund.value} onClick={onCheckbox}
+        return (<div key={fund.id} onClick={onCheckbox}
           className={`employeeAdditionRow ${fund.isAdmin ? "employeeIsAdmin" : "employeeNotAdmin"}`} >
           <span>{fund.label}</span>
           <input type="checkbox" checked={fund.isAdmin} onClick={pe} />

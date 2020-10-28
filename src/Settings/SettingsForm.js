@@ -3,13 +3,13 @@ import { selectDefaultState, stringFieldDefaultState } from '../reusable'
 import { StringField } from '../components/StringField'
 import { components } from 'react-select';
 import './Settings.css'
-
-let WS
-let settingsPayload = {}
-
 import { SelectField } from '../components/SelectField'
 import { EmployeeEditor } from './EmployeeEditor'
 import { Submit } from '../components/Submit';
+import { optionEmailFormatter, optionSpreader, optionsDBSpreaderFormatter } from '../reusable'
+
+let WS
+let settingsPayload = {}
 
 export const SettingsForm = () => {
 
@@ -32,7 +32,7 @@ export const SettingsForm = () => {
   const onTabClick = e => setActiveTab(e.target.name)
   const onSkypeSubmit = async e => {
     e.preventDefault()
-    const response = await sendSkype(skypeField.value)    
+    const response = await sendSkype(skypeField.value)
     if (response.status === 'OK') {
       setErrorMsg(false)
       response.message ? setSubmitMsg(response.message) : setSubmitMsg('@(Успех)')
@@ -74,7 +74,6 @@ export const SettingsForm = () => {
   // Tab 2, edit employees
   const [employeesField, setEmployeesField] = useState(selectDefaultState)
   const onEmployeeChange = option => {
-    console.log(option)
     setEmployeesField({ ...employeesField, value: option })
     setUpdateStatus(null)
     employeeRequest(option)
@@ -95,15 +94,14 @@ export const SettingsForm = () => {
   const submitEmployee = async e => {
     e.preventDefault()
     e.target.checkValidity()
+    const fundsValue = optionsDBSpreaderFormatter(employeeFundsField.value)
     const data = {
       employeeNameField,
       employeeEMailField,
       employeeFundsField,
     }
-    console.log('WE NEED TAT: ')
-    console.log(data)
     const response = await sendEmployeeData(employeeNameField.value, employeeEMailField.value,
-      employeeFundsField.value, 'employeeUpdate')
+      fundsValue, 'employeeUpdate', employeesField.value.value)
     if (response.status === 'OK') {
       resetEmployeeEdit()
       response.message ? setUpdateStatus(response.message) : setUpdateStatus('@(Успех)')
@@ -152,7 +150,9 @@ export const SettingsForm = () => {
   const employeesListRequest = async () => {
     const response = await WS.send('settings', 'employeesList', {})
     if (response.status === 'OK') {
-      setEmployeesField(response.employeeFieldMeta)
+      const options = optionEmailFormatter(response.employeeFieldMeta.options)
+      const value = response.employeeFieldMeta.value && optionSpreader(response.employeeFieldMeta.value)
+      setEmployeesField({ ...response.employeeFieldMeta, options, value })
     } else {
       response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка запроса информации о работнике)')
     }
@@ -170,7 +170,9 @@ export const SettingsForm = () => {
       setErrorMsg(false)
       setEmployeeNameField(response.employeeNameFieldMeta)
       setEmployeeEMailField(response.employeeEMailFieldMeta)
-      setEmployeeFundsField(response.employeeFundsFieldMeta)
+      const options = optionEmailFormatter(response.employeeFundsFieldMeta.options)
+      const value = response.employeeFundsFieldMeta.value && optionSpreader(response.employeeFundsFieldMeta.value)
+      setEmployeeFundsField({ ...response.employeeFundsFieldMeta, options, value })
     } else {
       response.message ? setErrorMsg(response.message) : setErrorMsg('@(Ошибка запроса информации о работнике)')
     }
@@ -185,7 +187,9 @@ export const SettingsForm = () => {
     if (response.status === 'OK') {
       response.employeeNameFieldMeta && setaddEmployeeNameField(response.employeeNameFieldMeta)
       response.employeeEMailFieldMeta && setaddEmployeeEMailField(response.employeeEMailFieldMeta)
-      response.employeeFundsFieldMeta && setaddEmployeeFundsField(response.employeeFundsFieldMeta)
+      const options = optionEmailFormatter(response.employeeFundsFieldMeta.options)
+      const value = response.employeeFundsFieldMeta.value && optionSpreader(response.employeeFundsFieldMeta.value)
+      response.employeeFundsFieldMeta && setaddEmployeeFundsField({ ...response.employeeFundsFieldMeta, options, value })
     } else setErrorMsg('@(Ошибка запроса информации о работнике)')
   }
   // Pure requests
@@ -198,14 +202,15 @@ export const SettingsForm = () => {
     const response = await WS.send('settings', 'passwordUpdate', payload)
     return response
   }
-  const sendEmployeeData = async (name, email, funds, method = 'employeeUpdate') => {
+  const sendEmployeeData = async (name, email, funds, method = 'employeeUpdate', id) => {
     // method = 'employeeUpdate' | 'employeeCreate'
     const payload = {
       fundName: fundField,
       fundEmail: eMailField,
-      name, email, funds,
+      name, email, funds, id,
       payload: settingsPayload
     }
+    console.log(payload)
     const response = await WS.send('settings', method, payload)
     return response
   }
@@ -214,7 +219,8 @@ export const SettingsForm = () => {
       name, email,
       fundName: fundField,
       fundEmail: eMailField,
-      payload: settingsPayload
+      payload: settingsPayload,
+      id: employeesField.value.value
     }
     console.log(payload)
     const response = await WS.send('settings', 'employeeDelete', payload)

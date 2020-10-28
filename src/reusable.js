@@ -35,6 +35,25 @@ export const optionFormatter = options => {
   }) : [];
   return formatedOptions
 }
+export const optionEmailFormatter = options => {
+  const formatedOptions = options.length ? options.map((option) => {
+    if (option.email) return ({ label: option.name, value: option.id, email: option.email })
+    if (option) return { label: option.name, value: option.id }
+  }) : [];
+  return formatedOptions
+}
+export const optionsDBSpreaderFormatter = options => {
+  const formatedOptions = options.length ? options.map((option) => {
+    if (option.email) return ({ ...option, name: option.label, id: option.value })
+    if (option) return { ...option, name: option.label, id: option.value }
+  }) : [];
+  return formatedOptions
+}
+export const oneOptionEmailDBFormat = option => {
+  if (option && option.email) return {...option, name: option.label, id: option.value, email: option.email }
+  if (option) return { name: option.label, id: option.value }
+  else return null
+}
 export const optionSpreader = (options) => {
   const formatedOptions = options.length ? options.map((option) => {
     return ({ label: option.name, value: option.type, ...option })
@@ -49,6 +68,6 @@ export const oneOptionFormatter = option => {
 
 export const oneOptionDBFormat = option => {
   if (option && option.subtitle) return { name: option.label, id: option.value, subtitle: option.subtitle }
-  if (option) return {  name: option.label, id: option.value }
+  if (option) return { name: option.label, id: option.value }
   else return null
 }
